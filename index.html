@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>小鹿AI编程英语词汇大全-完整单词库版</title>
+    <title>小鹿AI编程全能英语词汇库-优秀学员专属</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Font Awesome -->
@@ -109,15 +109,155 @@
             animation: bounce-in 0.5s;
         }
         
+        /* 预览单词动画 */
+        @keyframes wordAppear {
+            0% {
+                opacity: 0;
+                transform: scale(0.8) translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+        
+        .preview-word {
+            animation: wordAppear 0.5s ease-out forwards;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 1.1rem;
+            font-weight: bold;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            user-select: none;
+        }
+        
+        .preview-word .meaning {
+            font-size: 0.9rem;
+            font-weight: normal;
+            margin-top: 4px;
+            opacity: 0.9;
+        }
+        
+        /* 倒计时动画 */
+        @keyframes timerPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        /* 记忆完毕按钮动画 */
+        #preview-finish-btn {
+            animation: buttonPulse 2s infinite;
+        }
+        
+        @keyframes buttonPulse {
+            0%, 100% {
+                box-shadow: 0 4px 6px rgba(59, 130, 246, 0.5);
+            }
+            50% {
+                box-shadow: 0 8px 16px rgba(59, 130, 246, 0.7);
+            }
+        }
+        
+        #preview-timer {
+            animation: timerPulse 1s infinite;
+        }
+        
+        #preview-timer.timer-warning {
+            color: #f59e0b;
+            animation: timerPulse 0.5s infinite;
+        }
+        
+        #preview-timer.timer-danger {
+            color: #ef4444;
+            animation: timerPulse 0.3s infinite;
+        }
+        
         /* 记忆游戏卡片 */
         .memory-card {
+            user-select: none; /* 防止文字被选中 */
             position: relative;
             transform-style: preserve-3d;
-            transition: transform 0.5s;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+        }
+        
+        .memory-card:hover:not(.flipped):not(.matched) {
+            transform: translateY(-5px) scale(1.03);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15), 0 0 0 3px rgba(59, 130, 246, 0.3);
         }
         
         .memory-card.flipped {
             transform: rotateY(180deg);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .memory-card.matched {
+            animation: matchedPulse 0.6s ease-in-out, fadeOutUp 0.5s ease-out 0.6s forwards;
+            box-shadow: 0 0 15px rgba(74, 222, 128, 0.6);
+            cursor: default;
+        }
+        
+        @keyframes matchedPulse {
+            0%, 100% {
+                transform: scale(1) rotateY(180deg);
+            }
+            50% {
+                transform: scale(1.1) rotateY(180deg);
+                box-shadow: 0 0 20px rgba(74, 222, 128, 0.8);
+            }
+        }
+        
+        @keyframes fadeOutUp {
+            0% {
+                opacity: 1;
+                transform: scale(1) rotateY(180deg) translateY(0);
+            }
+            50% {
+                opacity: 0.8;
+                transform: scale(1.05) rotateY(180deg) translateY(-10px);
+            }
+            100% {
+                opacity: 0;
+                transform: scale(0.8) rotateY(180deg) translateY(-30px);
+                height: 0;
+                margin: 0;
+                padding: 0;
+                overflow: hidden;
+            }
+        }
+        
+        /* 粒子效果容器 */
+        .particle-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 10;
+        }
+        
+        /* 粒子 */
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 1;
+        }
+        
+        @keyframes mismatchShake {
+            0%, 100% { transform: rotateY(180deg) translateX(0); }
+            25% { transform: rotateY(180deg) translateX(-10px); }
+            75% { transform: rotateY(180deg) translateX(10px); }
+        }
+        
+        .memory-card.mismatch {
+            animation: mismatchShake 0.4s ease-in-out;
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.6);
         }
         
         .memory-card-front, .memory-card-back {
@@ -125,12 +265,13 @@
             width: 100%;
             height: 100%;
             backface-visibility: hidden;
-            border-radius: 8px;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: bold;
             cursor: pointer;
+            transition: all 0.3s ease;
         }
         
         .memory-card-back {
@@ -161,24 +302,301 @@
         }
         
         @keyframes twinkle {
-            0%, 100% { opacity: 0.2; }
-            50% { opacity: 1; }
-        }
+                0%, 100% { opacity: 0.2; }
+                50% { opacity: 1; }
+            }
+            
+            /* 浮动动画 - 适合卡通形象 */
+            @keyframes float-slow {
+                0%, 100% { transform: translateY(0px); }
+                50% { transform: translateY(-10px); }
+            }
+            
+            @keyframes float-medium {
+                0%, 100% { transform: translateY(0px); }
+                50% { transform: translateY(-15px); }
+            }
+            
+            @keyframes float-fast {
+                0%, 100% { transform: translateY(0px); }
+                50% { transform: translateY(-20px); }
+            }
+            
+            @keyframes bounce-slow {
+                0%, 100% { transform: translateY(0px); }
+                50% { transform: translateY(-10px); }
+            }
+            
+            @keyframes pulse-slow {
+                0%, 100% { transform: scale(1); }
+                50% { transform: scale(1.05); }
+            }
+            
+            /* 星星背景效果 */
+            .star-field {
+                background: transparent;
+                perspective: 500px;
+            }
+            
+            .star-field::before {
+                content: '';
+                position: absolute;
+                top: -100%;
+                left: -100%;
+                width: 300%;
+                height: 300%;
+                background-image: radial-gradient(white 1px, transparent 1px),
+                                 radial-gradient(white 1px, transparent 1px),
+                                 radial-gradient(white 1px, transparent 1px);
+                background-size: 150px 150px, 100px 100px, 80px 80px;
+                background-position: 50px 50px, 25px 75px, 75px 25px;
+                animation: twinkle 8s infinite ease-in-out;
+            }
+            
+            /* 气泡动画 */
+            .bubbles {
+                overflow: hidden;
+            }
+            
+            .bubbles::before, .bubbles::after {
+                content: '';
+                position: absolute;
+                border-radius: 50%;
+                background: rgba(255, 255, 255, 0.2);
+                animation: float-up 8s infinite ease-in-out;
+            }
+            
+            .bubbles::before {
+                width: 120px;
+                height: 120px;
+                bottom: -60px;
+                left: 10%;
+                animation-delay: 0s;
+            }
+            
+            .bubbles::after {
+                width: 80px;
+                height: 80px;
+                bottom: -40px;
+                right: 15%;
+                animation-delay: 2s;
+            }
+            
+            @keyframes float-up {
+                0% {
+                    transform: translateY(0) scale(1);
+                    opacity: 0.2;
+                }
+                50% {
+                    opacity: 0.3;
+                }
+                100% {
+                    transform: translateY(-100vh) scale(1.2);
+                    opacity: 0;
+                }
+            }
+            
+            @keyframes twinkle {
+                0%, 100% {
+                    opacity: 0.7;
+                    transform: translateY(0) scale(1);
+                }
+                25% {
+                    opacity: 0.9;
+                    transform: translateY(-5px) scale(1.1);
+                }
+                50% {
+                    opacity: 0.7;
+                    transform: translateY(0) scale(1);
+                }
+                75% {
+                    opacity: 0.5;
+                    transform: translateY(5px) scale(0.9);
+                }
+            }
+            
+            .animate-float-slow {
+                animation: float-slow 4s ease-in-out infinite;
+            }
+            
+            .animate-float-medium {
+                animation: float-medium 3s ease-in-out infinite;
+            }
+            
+            .animate-float-fast {
+                animation: float-fast 2.5s ease-in-out infinite;
+            }
+            
+            .animate-bounce-slow {
+                animation: bounce-slow 2s ease-in-out infinite;
+            }
+            
+            .animate-pulse-slow {
+                animation: pulse-slow 3s ease-in-out infinite;
+            }
         
-        /* 自定义按钮样式 */
+        /* 自定义按钮样式 - 儿童友好版 */
         .btn-primary {
-            background-color: #3B82F6;
+            background: linear-gradient(135deg, #4F46E5, #3B82F6);
             color: white;
-            font-weight: 500;
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            transition: all 0.2s;
+            font-weight: 600;
+            padding: 0.75rem 1.5rem;
+            border-radius: 1.5rem;
+            border: 2px solid #60A5FA;
+            box-shadow: 0 6px 12px rgba(59, 130, 246, 0.3), 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
         }
         
-        .btn-primary:hover {
-            background-color: #2563EB;
-            transform: translateY(-1px);
+        /* 科技文字发光效果 */
+        .text-glow {
+            text-shadow: 0 0 10px rgba(59, 130, 246, 0.7),
+                         0 0 20px rgba(59, 130, 246, 0.5),
+                         0 0 30px rgba(59, 130, 246, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .text-glow:hover {
+            text-shadow: 0 0 15px rgba(59, 130, 246, 0.9),
+                         0 0 30px rgba(59, 130, 246, 0.7),
+                         0 0 45px rgba(59, 130, 246, 0.5);
+        }
+        
+        /* 科技按钮样式 */
+        .tech-button {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            border-radius: 8px;
+            border: 2px solid transparent;
+            background-image: linear-gradient(to right, #3b82f6, #60a5fa);
+            background-origin: border-box;
+            background-clip: padding-box, border-box;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* 上浮渐入动画 */
+        .animate-float-up {
+            animation: float-up-appear 0.7s forwards;
+        }
+        
+        @keyframes float-up-appear {
+            from { 
+                transform: translateY(20px); 
+                opacity: 0;
+            }
+            to { 
+                transform: translateY(0); 
+                opacity: 1;
+            }
+        }
+        
+        /* 单词卡片悬停效果优化 */
+        .word-card-hover:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        /* 标签美化 */
+        .category-tag {
+            transition: all 0.3s ease;
+            border-radius: 20px;
+            font-weight: 600;
+            background: linear-gradient(135deg, #3b82f6, #60a5fa);
+            color: white;
+            padding: 0.25rem 1rem;
+            font-size: 0.875rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+        }
+        
+        .category-tag:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+        }
+        
+        /* 标题样式优化 */
+        h1, h2, h3, h4 {
+            transition: all 0.3s ease;
+            position: relative;
+            display: inline-block;
+        }
+        
+        h1::after, h2::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #3b82f6, transparent);
+            transition: width 0.5s ease;
+        }
+        
+        h1:hover::after, h2:hover::after {
+            width: 100%;
+        }
+        
+        /* 星星和气泡优化 */
+        .star-field, .bubbles {
+            z-index: -1;
+            opacity: 0.7;
+        }
+        
+        /* 科技元素边框效果 */
+        .tech-border {
+            position: relative;
+            border: 2px solid rgba(59, 130, 246, 0.5);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        
+        .tech-border::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #3b82f6, transparent);
+            animation: border-shine 3s infinite;
+        }
+        
+        @keyframes border-shine {
+             0% { transform: translateX(-100%); }
+             100% { transform: translateX(100%); }
+         }
+         
+         .btn-primary:hover {
+            background: linear-gradient(135deg, #4338CA, #2563EB);
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 10px 20px rgba(59, 130, 246, 0.4), 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+        
+        .btn-primary:active {
+            transform: translateY(0) scale(0.98);
+            box-shadow: 0 3px 6px rgba(59, 130, 246, 0.3);
+        }
+        
+        .btn-primary::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+        
+        .btn-primary:active::after {
+            width: 300px;
+            height: 300px;
         }
         
         /* 通知样式 */
@@ -209,6 +627,1642 @@
         .word-card-hover:hover {
             transform: translateY(-5px);
             box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        /* ===== 中小学生友好的UI设计 ===== */
+         
+        /* 明亮活泼的配色方案 */
+        :root {
+            --primary-kid: #4F46E5;
+            --secondary-kid: #10B981;
+            --accent-kid: #F59E0B;
+            --danger-kid: #EF4444;
+            --info-kid: #3B82F6;
+            --text-primary: #1F2937;
+            --text-secondary: #4B5563;
+            --bg-light: #F9FAFB;
+        }
+        
+        /* 友好的字体大小和行高 */
+        body {
+            font-family: 'Comic Sans MS', 'Bubblegum Sans', cursive, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-size: 16px;
+            line-height: 1.6;
+            color: var(--text-primary);
+            background-color: var(--bg-light);
+        }
+        
+        /* 标题字体优化 - 适合中小学生阅读 */
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Comic Sans MS', 'Bubblegum Sans', cursive, sans-serif;
+            color: var(--primary-kid);
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            font-size: 2.5rem !important;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        
+        h2 {
+            font-size: 2rem !important;
+            margin-bottom: 0.75rem;
+        }
+        
+        h3 {
+            font-size: 1.5rem !important;
+            margin-bottom: 0.5rem;
+        }
+        
+        /* 段落文本优化 */
+        p {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+        
+        /* 按钮优化 - 更大、更明显的点击区域 */
+        button, .btn {
+            padding: 0.75rem 2rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 2rem;
+            border: 3px solid;
+            transition: all 0.3s ease;
+            text-transform: none;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #4F46E5, #3B82F6);
+            border-color: #60A5FA;
+            color: white;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(135deg, #10B981, #34D399);
+            border-color: #34D399;
+            color: white;
+        }
+        
+        .btn-accent {
+            background: linear-gradient(135deg, #F59E0B, #FBBF24);
+            border-color: #FBBF24;
+            color: white;
+        }
+        
+        /* 卡片样式优化 - 圆角更大更友好 */
+        .card, .word-card-hover, .stat-card {
+            border-radius: 16px !important;
+            border: 2px solid rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            background-color: white;
+        }
+        
+        /* 图标大小优化 */
+        .fa, .fas, .far, .fab {
+            font-size: 1.5em;
+            margin-right: 0.5rem;
+            color: var(--primary-kid);
+        }
+        
+        /* 进度条美化 */
+        .progress-bar {
+            height: 12px;
+            border-radius: 6px;
+            background: linear-gradient(90deg, var(--info-kid), var(--secondary-kid));
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* 输入框优化 */
+        input, textarea, select {
+            font-size: 1.1rem;
+            padding: 0.75rem 1rem;
+            border-radius: 12px;
+            border: 2px solid #D1D5DB;
+            transition: all 0.3s ease;
+            background-color: white;
+        }
+        
+        input:focus, textarea:focus, select:focus {
+            border-color: var(--primary-kid);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+            outline: none;
+        }
+        
+        /* 响应式设计 - 为中小学生常用设备优化 */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem !important;
+            }
+            
+            h2 {
+                font-size: 1.75rem !important;
+            }
+            
+            h3 {
+                font-size: 1.4rem !important;
+            }
+            
+            body {
+                font-size: 18px; /* 大屏幕上字体更大，更易读 */
+            }
+            
+            button, .btn {
+                padding: 0.8rem 1.5rem;
+                font-size: 1.2rem;
+                width: 100%; /* 移动设备上按钮宽度更大 */
+            }
+            
+            .card, .word-card-hover, .stat-card {
+                margin-bottom: 1.5rem;
+                padding: 1.5rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.8rem !important;
+            }
+            
+            h2 {
+                font-size: 1.5rem !important;
+            }
+            
+            body {
+                font-size: 16px;
+            }
+            
+            /* 触摸目标优化 - 确保足够大的点击区域 */
+            button, .btn, .category-tag, .word-card-hover {
+                min-height: 48px;
+                touch-action: manipulation;
+            }
+        }
+        
+        /* 可爱元素 - 为中小学生添加视觉趣味 */
+        .cute-element {
+            position: relative;
+        }
+        
+        .cute-element::before {
+            content: '✨';
+            position: absolute;
+            left: -25px;
+            font-size: 1.5rem;
+            animation: float-slow 3s infinite ease-in-out;
+        }
+        
+        /* ===== 单词卡片美化 ===== */
+        
+        /* 单词卡片基础样式 - 更加活泼有趣 */
+        .word-card-hover {
+            position: relative;
+            background: linear-gradient(135deg, #ffffff, #f0f9ff);
+            border: 3px solid #38bdf8;
+            border-radius: 20px !important;
+            padding: 1.5rem;
+            margin: 1rem;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.2),
+                        0 0 0 5px rgba(59, 130, 246, 0.1);
+            overflow: hidden;
+        }
+        
+        /* 单词卡片悬停效果 - 更加生动 */
+        .word-card-hover:hover {
+            transform: translateY(-8px) scale(1.03);
+            box-shadow: 0 15px 30px rgba(59, 130, 246, 0.3),
+                        0 0 0 8px rgba(59, 130, 246, 0.15);
+            border-color: #3b82f6;
+        }
+        
+        /* 单词卡片装饰元素 */
+        .word-card-hover::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(59,130,246,0.1) 0%, rgba(59,130,246,0) 70%);
+            animation: rotate-slow 15s linear infinite;
+            z-index: 0;
+        }
+        
+        /* 单词卡片内容层 */
+        .word-card-hover > * {
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* 单词标题样式 */
+        .word-card-hover h3 {
+            color: var(--primary-kid);
+            font-size: 1.8rem !important;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            position: relative;
+            display: inline-block;
+        }
+        
+        /* 单词标题装饰 */
+        .word-card-hover h3::after {
+            content: '📚';
+            margin-left: 0.5rem;
+            font-size: 1.5rem;
+            animation: bounce-slow 2s infinite;
+        }
+        
+        /* 单词释义样式 */
+        .word-card-hover .meaning {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            padding-left: 1rem;
+            border-left: 4px solid var(--secondary-kid);
+        }
+        
+        /* 单词例句样式 */
+        .word-card-hover .example {
+            font-size: 1.1rem;
+            color: #64748b;
+            font-style: italic;
+            background-color: rgba(248, 250, 252, 0.8);
+            padding: 0.75rem;
+            border-radius: 12px;
+            border: 1px dashed var(--info-kid);
+        }
+        
+        /* 单词音频按钮美化 */
+        .word-card-hover .audio-btn {
+            background: linear-gradient(135deg, var(--info-kid), #60a5fa);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
+            transition: all 0.3s ease;
+            margin-top: 0.5rem;
+        }
+        
+        .word-card-hover .audio-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 12px rgba(59, 130, 246, 0.4);
+            background: linear-gradient(135deg, #2563eb, #3b82f6);
+        }
+        
+        /* 单词标签美化 */
+        .category-tag {
+            background: linear-gradient(135deg, var(--accent-kid), #fbbf24);
+            color: white;
+            font-weight: 600;
+            padding: 0.5rem 1.25rem;
+            border-radius: 30px;
+            margin: 0.5rem;
+            display: inline-block;
+            box-shadow: 0 4px 8px rgba(245, 158, 11, 0.3);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            font-size: 0.95rem;
+        }
+        
+        /* 标签悬停效果 */
+        .category-tag:hover {
+            transform: scale(1.1) translateY(-3px);
+            box-shadow: 0 6px 16px rgba(245, 158, 11, 0.4);
+        }
+        
+        /* 标签装饰 */
+        .category-tag::before {
+            content: '🏷️';
+            margin-right: 0.5rem;
+            font-size: 1rem;
+        }
+        
+        /* 标签容器样式 */
+        #category-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            padding: 1rem;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 16px;
+            border: 2px solid rgba(245, 158, 11, 0.3);
+            margin-bottom: 2rem;
+        }
+        
+        /* 已学习标记 */
+        .learned-badge {
+            background: linear-gradient(135deg, var(--secondary-kid), #34d399);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);
+            animation: pulse-slow 2s infinite;
+        }
+        
+        /* 旋转动画 */
+        @keyframes rotate-slow {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        /* 每日单词特殊样式 */
+        .daily-word-card {
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+            border-color: var(--accent-kid);
+        }
+        
+        .daily-word-card h3::after {
+            content: '🌟';
+        }
+        
+        /* 单词游戏卡片美化 */
+        .game-word-card {
+            background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+            border-color: var(--info-kid);
+            cursor: pointer;
+        }
+        
+        .game-word-card:hover {
+            transform: translateY(-10px) scale(1.05);
+        }
+        
+        /* ===== 视觉引导和激励元素 ===== */
+        
+        /* 成就徽章系统 */
+        .achievement-badge {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 60px;
+            height: 60px;
+            margin: 0.5rem;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            color: white;
+            font-size: 1.8rem;
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            animation: float-slow 3s infinite ease-in-out;
+        }
+        
+        .achievement-badge:hover {
+            transform: scale(1.15);
+            box-shadow: 0 6px 16px rgba(245, 158, 11, 0.5);
+        }
+        
+        .achievement-badge::after {
+            content: attr(data-count);
+            position: absolute;
+            bottom: -5px;
+            right: -5px;
+            background: var(--error-kid);
+            color: white;
+            font-size: 0.8rem;
+            font-weight: bold;
+            min-width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 5px;
+        }
+        
+        /* 学习进度指示器 */
+        .progress-container {
+            position: relative;
+            width: 100%;
+            max-width: 300px;
+            margin: 1.5rem auto;
+        }
+        
+        .progress-bar {
+            height: 20px;
+            background-color: #e5e7eb;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-kid), var(--secondary-kid));
+            border-radius: 10px;
+            transition: width 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* 进度条动画装饰 */
+        .progress-fill::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            animation: shimmer 2s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        .progress-text {
+            text-align: center;
+            margin-top: 0.5rem;
+            color: var(--text-secondary);
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+        
+        /* 学习目标卡片 */
+        .goal-card {
+            background: linear-gradient(135deg, #f0fdfa, #d1fae5);
+            border: 2px solid var(--secondary-kid);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin: 1rem;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .goal-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.2);
+        }
+        
+        .goal-card h4 {
+            color: var(--secondary-kid);
+            margin-bottom: 0.5rem;
+            font-size: 1.3rem;
+        }
+        
+        .goal-card p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+        
+        /* 吉祥物角色 */
+        .mascot {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3.5rem;
+            box-shadow: 0 8px 20px rgba(245, 158, 11, 0.3);
+            cursor: pointer;
+            transition: all 0.4s ease;
+            z-index: 100;
+        }
+        
+        .mascot:hover {
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 10px 25px rgba(245, 158, 11, 0.4);
+            animation: bounce 1s infinite;
+        }
+        
+        /* 提示气泡 */
+        .hint-bubble {
+            position: absolute;
+            bottom: 130%;
+            right: 0;
+            background: white;
+            padding: 1rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            max-width: 250px;
+            font-size: 1rem;
+            color: var(--text-primary);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            border: 2px solid var(--primary-kid);
+        }
+        
+        .mascot:hover .hint-bubble {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(-10px);
+        }
+        
+        .hint-bubble::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            right: 30px;
+            border: 10px solid transparent;
+            border-top-color: var(--primary-kid);
+        }
+        
+        /* 学习提示 */
+        .learning-tip {
+            background: linear-gradient(135deg, #eff6ff, #dbeafe);
+            border-left: 4px solid var(--info-kid);
+            padding: 1rem 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 0 12px 12px 0;
+            position: relative;
+        }
+        
+        .learning-tip::before {
+            content: '💡';
+            position: absolute;
+            left: -20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: white;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+            font-size: 1.2rem;
+        }
+        
+        /* 庆祝动画容器 */
+        .celebration-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+            overflow: hidden;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease;
+        }
+        
+        .celebration-container.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        /* 庆祝粒子 */
+        .celebration-particle {
+            position: absolute;
+            bottom: -50px;
+            width: 20px;
+            height: 20px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            animation: celebration-float var(--duration) ease-in-out forwards;
+        }
+        
+        @keyframes celebration-float {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+            70% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) rotate(var(--rotation));
+                opacity: 0;
+            }
+        }
+        
+        /* 学习等级标签 */
+        .level-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--primary-kid), var(--info-kid));
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 30px;
+            font-weight: bold;
+            margin: 0.5rem;
+            box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
+        }
+        
+        /* 学习完成徽章 */
+        .completion-badge {
+            position: absolute;
+            top: -15px;
+            right: -15px;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--secondary-kid), #34d399);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+            animation: pulse 1.5s infinite;
+        }
+        
+        /* 互动提示按钮 */
+        .interactive-hint-btn {
+            background: linear-gradient(135deg, var(--accent-kid), #fbbf24);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+        }
+        
+        .interactive-hint-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(245, 158, 11, 0.4);
+        }
+        
+        /* ===== 响应式设计优化 ===== */
+        
+        /* 移动设备优化 */
+        @media (max-width: 768px) {
+            /* 调整字体大小 */
+            :root {
+                --font-size-base: 16px;
+                --font-size-heading: 1.5rem;
+                --font-size-subheading: 1.2rem;
+            }
+            
+            /* 整体布局优化 */
+            #game-page .bg-white {
+                padding: 1rem;
+                margin: 0.5rem;
+            }
+            
+            /* 游戏标题栏优化 */
+            .flex.justify-between.items-center.mb-8 {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+                margin-bottom: 2rem;
+            }
+            
+            #game-title {
+                font-size: 1.5rem !important;
+                margin-bottom: 0.25rem !important;
+            }
+            
+            #game-description {
+                font-size: 1rem;
+            }
+            
+            #exit-game {
+                align-self: flex-end;
+                padding: 0.5rem 1rem;
+                font-size: 0.9rem;
+            }
+            
+            /* 单词卡片优化 */
+            .word-card-hover {
+                padding: 1.2rem;
+                margin: 0.75rem 0.5rem;
+                border-radius: 16px !important;
+            }
+            
+            .word-card-hover h3 {
+                font-size: 1.5rem !important;
+            }
+            
+            .word-card-hover .meaning {
+                font-size: 1.1rem;
+            }
+            
+            .word-card-hover .example {
+                font-size: 1rem;
+                padding: 0.6rem;
+            }
+            
+            /* 标签优化 */
+            .category-tag {
+                padding: 0.4rem 1rem;
+                font-size: 0.85rem;
+                margin: 0.3rem;
+            }
+            
+            #category-tags {
+                gap: 0.5rem;
+                padding: 0.75rem;
+            }
+            
+            /* 吉祥物优化 */
+            .mascot {
+                width: 80px;
+                height: 80px;
+                font-size: 2.5rem;
+                bottom: 1rem;
+                right: 1rem;
+            }
+            
+            .hint-bubble {
+                max-width: 180px;
+                font-size: 0.85rem;
+                padding: 0.75rem;
+                right: calc(80px + 1.5rem);
+                bottom: calc(80px - 20px);
+            }
+            
+            /* 进度条优化 */
+            .progress-container {
+                max-width: 280px;
+                margin: 1rem auto;
+            }
+            
+            .progress-bar {
+                height: 18px;
+            }
+            
+            .progress-text {
+                font-size: 1rem;
+            }
+            
+            /* 按钮优化 */
+            .btn-primary {
+                padding: 0.8rem 1.5rem;
+                font-size: 1rem;
+                width: 100%;
+            }
+            
+            .interactive-hint-btn {
+                padding: 0.6rem 1.2rem;
+                font-size: 0.9rem;
+            }
+            
+            /* 标题优化 */
+            h1, h2, h3, h4, h5, h6 {
+                line-height: 1.3;
+            }
+            
+            h1 {
+                font-size: 1.8rem !important;
+            }
+            
+            h2 {
+                font-size: 1.5rem !important;
+            }
+            
+            h3 {
+                font-size: 1.3rem !important;
+            }
+            
+            /* 成就徽章优化 */
+            .achievement-badge {
+                width: 50px;
+                height: 50px;
+                font-size: 1.5rem;
+                margin: 0.4rem;
+            }
+            
+            /* 学习提示优化 */
+            .learning-tip {
+                padding: 0.75rem 1.25rem;
+                margin: 1rem 0;
+            }
+            
+            .learning-tip::before {
+                width: 30px;
+                height: 30px;
+                font-size: 1rem;
+                left: -15px;
+            }
+            
+            /* 听音辨义游戏优化 */
+            #listening-game .max-w-2xl {
+                width: 100%;
+                max-width: 100%;
+            }
+            
+            #listening-word-display {
+                font-size: 2rem !important;
+                min-height: 50px;
+            }
+            
+            #listening-options {
+                grid-template-columns: 1fr !important;
+                gap: 0.75rem;
+            }
+            
+            #listening-options .btn-primary {
+                padding: 1rem;
+                text-align: left;
+                font-size: 1rem;
+            }
+            
+            /* 单词记忆游戏优化 */
+            #difficulty-selector .max-w-4xl {
+                width: 100%;
+                max-width: 100%;
+            }
+            
+            #difficulty-selector .grid-cols-1.sm\:grid-cols-2 {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .difficulty-btn {
+                padding: 1rem !important;
+            }
+            
+            #memory-preview .max-w-4xl {
+                width: 100%;
+                max-width: 100%;
+            }
+            
+            #preview-words {
+                grid-template-columns: 1fr 1fr !important;
+                gap: 0.75rem;
+            }
+            
+            #memory-cards {
+                grid-template-columns: 1fr 1fr !important;
+                gap: 0.5rem;
+            }
+            
+            /* 游戏状态优化 */
+            .flex.flex-wrap.justify-between.items-center.bg-gray-50.p-4 {
+                flex-direction: column;
+                gap: 0.5rem;
+                padding: 1rem !important;
+            }
+            
+            /* 游戏结果优化 */
+            #game-result .max-w-md {
+                width: 100%;
+                max-width: 100%;
+            }
+            
+            #result-icon {
+                font-size: 5rem !important;
+            }
+            
+            #result-title {
+                font-size: 2rem !important;
+            }
+            
+            #result-message {
+                font-size: 1rem;
+            }
+            
+            .flex.flex-col.sm\:flex-row.gap-4.justify-center {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            /* 模态框优化 */
+            .modal-content {
+                margin: 1rem;
+                width: calc(100% - 2rem) !important;
+                max-width: none !important;
+                max-height: calc(100vh - 2rem);
+                overflow-y: auto;
+            }
+            
+            /* 底部导航优化 */
+            footer {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                z-index: 100;
+                margin-bottom: 0 !important;
+                border-top-left-radius: 20px !important;
+                border-top-right-radius: 20px !important;
+                box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+            }
+            
+            /* 为底部导航留出空间 */
+            main {
+                padding-bottom: 80px;
+            }
+            
+            /* 语音设置模态框优化 */
+            #voice-modal .modal-content,
+            #user-modal .modal-content {
+                width: calc(100% - 2rem) !important;
+                margin: 1rem;
+            }
+            
+            /* 成就模态框优化 */
+            #achievements-modal .modal-content {
+                width: calc(100% - 2rem) !important;
+                margin: 1rem;
+            }
+            
+            #achievements-list {
+                grid-template-columns: 1fr !important;
+            }
+        }
+        
+        /* 超小屏幕优化 */
+        @media (max-width: 480px) {
+            /* 单词卡片进一步优化 */
+            .word-card-hover {
+                padding: 1rem;
+                margin: 0.5rem;
+            }
+            
+            .word-card-hover h3 {
+                font-size: 1.3rem !important;
+            }
+            
+            /* 吉祥物进一步优化 */
+            .mascot {
+                width: 80px;
+                height: 80px;
+                font-size: 2.5rem;
+                bottom: 1rem;
+                right: 1rem;
+            }
+            
+            .hint-bubble {
+                max-width: 180px;
+                font-size: 0.85rem;
+            }
+            
+            /* 标题进一步优化 */
+            h1 {
+                font-size: 1.8rem !important;
+            }
+            
+            h2 {
+                font-size: 1.5rem !important;
+            }
+            
+            /* 进度条进一步优化 */
+            .progress-container {
+                max-width: 250px;
+            }
+        }
+        
+        /* 平板设备优化 */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            /* 调整字体大小 */
+            :root {
+                --font-size-base: 17px;
+                --font-size-heading: 1.75rem;
+                --font-size-subheading: 1.4rem;
+            }
+            
+            /* 整体布局优化 */
+            #game-page .bg-white {
+                padding: 1.5rem;
+                margin: 1rem auto;
+                max-width: 900px;
+            }
+            
+            /* 游戏标题栏优化 */
+            .flex.justify-between.items-center.mb-8 {
+                margin-bottom: 3rem;
+            }
+            
+            #game-title {
+                font-size: 1.75rem !important;
+            }
+            
+            #game-description {
+                font-size: 1.1rem;
+            }
+            
+            #exit-game {
+                padding: 0.75rem 1.5rem;
+                font-size: 1rem;
+            }
+            
+            /* 调整布局 */
+            .word-card-hover {
+                padding: 1.3rem;
+                margin: 0.8rem;
+            }
+            
+            /* 吉祥物调整 */
+            .mascot {
+                width: 90px;
+                height: 90px;
+                font-size: 3rem;
+                bottom: 1.5rem;
+                right: 1.5rem;
+            }
+            
+            .hint-bubble {
+                max-width: 220px;
+                font-size: 1rem;
+                right: calc(90px + 1.5rem);
+                bottom: calc(90px - 15px);
+            }
+            
+            /* 标题优化 */
+            h1 {
+                font-size: 2.25rem !important;
+            }
+            
+            h2 {
+                font-size: 1.9rem !important;
+            }
+            
+            h3 {
+                font-size: 1.5rem !important;
+            }
+            
+            /* 听音辨义游戏优化 */
+            #listening-game .max-w-2xl {
+                width: 100%;
+                max-width: 700px;
+                margin: 0 auto;
+            }
+            
+            #listening-word-display {
+                font-size: 2.5rem !important;
+                min-height: 60px;
+            }
+            
+            #listening-options {
+                grid-template-columns: 1fr 1fr;
+                gap: 1rem;
+            }
+            
+            #listening-options .btn-primary {
+                padding: 1.25rem;
+                font-size: 1.1rem;
+            }
+            
+            /* 单词记忆游戏优化 */
+            #difficulty-selector .max-w-4xl,
+            #memory-preview .max-w-4xl {
+                width: 100%;
+                max-width: 800px;
+                margin: 0 auto;
+            }
+            
+            #difficulty-selector .grid-cols-1.sm\:grid-cols-2 {
+                grid-template-columns: 1fr 1fr;
+                gap: 1.25rem;
+            }
+            
+            #preview-words {
+                grid-template-columns: 1fr 1fr 1fr;
+                gap: 1rem;
+            }
+            
+            #memory-cards {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 0.75rem;
+            }
+            
+            /* 游戏状态优化 */
+            .flex.flex-wrap.justify-between.items-center.bg-gray-50.p-4 {
+                padding: 1.25rem;
+                gap: 1rem;
+            }
+            
+            /* 游戏结果优化 */
+            #game-result .max-w-md {
+                width: 100%;
+                max-width: 500px;
+                margin: 0 auto;
+            }
+            
+            #result-icon {
+                font-size: 6rem;
+            }
+            
+            #result-title {
+                font-size: 2.5rem;
+            }
+            
+            #result-message {
+                font-size: 1.1rem;
+            }
+            
+            /* 模态框优化 */
+            .modal-content {
+                margin: 2rem;
+                width: calc(100% - 4rem);
+                max-width: 700px;
+            }
+            
+            /* 成就模态框优化 */
+            #achievements-list {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        
+        /* 大屏设备增强 */
+        @media (min-width: 1025px) {
+            /* 调整字体大小 */
+            :root {
+                --font-size-base: 18px;
+                --font-size-heading: 2rem;
+                --font-size-subheading: 1.5rem;
+            }
+            
+            /* 整体布局优化 */
+            #game-page .bg-white {
+                padding: 2rem;
+                margin: 2rem auto;
+                max-width: 1200px;
+                box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            }
+            
+            /* 游戏标题栏优化 */
+            .flex.justify-between.items-center.mb-8 {
+                margin-bottom: 4rem;
+            }
+            
+            #game-title {
+                font-size: 2rem !important;
+            }
+            
+            #game-description {
+                font-size: 1.2rem;
+            }
+            
+            #exit-game {
+                padding: 0.75rem 1.75rem;
+                font-size: 1.1rem;
+                transition: all 0.3s ease;
+            }
+            
+            #exit-game:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            }
+            
+            /* 增加视觉效果 */
+            .word-card-hover {
+                transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                padding: 1.75rem;
+            }
+            
+            .word-card-hover:hover {
+                transform: translateY(-10px) scale(1.04);
+                box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            }
+            
+            /* 吉祥物优化 */
+            .mascot {
+                width: 100px;
+                height: 100px;
+                font-size: 3.5rem;
+                transition: all 0.3s ease;
+            }
+            
+            .mascot:hover {
+                transform: scale(1.1) rotate(5deg);
+            }
+            
+            .hint-bubble {
+                max-width: 250px;
+                font-size: 1.1rem;
+                right: calc(100px + 2rem);
+                bottom: calc(100px - 10px);
+            }
+            
+            /* 标题优化 */
+            h1 {
+                font-size: 2.75rem !important;
+            }
+            
+            h2 {
+                font-size: 2.25rem !important;
+            }
+            
+            h3 {
+                font-size: 1.75rem !important;
+            }
+            
+            /* 听音辨义游戏优化 */
+            #listening-game .max-w-2xl {
+                width: 100%;
+                max-width: 800px;
+                margin: 0 auto;
+            }
+            
+            #listening-word-display {
+                font-size: 3rem !important;
+                min-height: 70px;
+                letter-spacing: 1px;
+            }
+            
+            #listening-options {
+                grid-template-columns: 1fr 1fr;
+                gap: 1.25rem;
+            }
+            
+            #listening-options .btn-primary {
+                padding: 1.5rem 2rem;
+                font-size: 1.2rem;
+                transition: all 0.3s ease;
+            }
+            
+            #listening-options .btn-primary:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            }
+            
+            /* 单词记忆游戏优化 */
+            #difficulty-selector .max-w-4xl,
+            #memory-preview .max-w-4xl {
+                width: 100%;
+                max-width: 1000px;
+                margin: 0 auto;
+            }
+            
+            #difficulty-selector .grid-cols-1.sm\:grid-cols-2 {
+                grid-template-columns: 1fr 1fr;
+                gap: 1.5rem;
+            }
+            
+            .difficulty-btn {
+                padding: 1.5rem !important;
+                font-size: 1.2rem;
+                transition: all 0.3s ease;
+            }
+            
+            .difficulty-btn:hover {
+                transform: translateY(-4px);
+                box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            }
+            
+            #preview-words {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 1.25rem;
+            }
+            
+            #memory-cards {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 1rem;
+            }
+            
+            /* 游戏状态优化 */
+            .flex.flex-wrap.justify-between.items-center.bg-gray-50.p-4 {
+                padding: 1.5rem 2rem;
+                gap: 1.5rem;
+                border-radius: 1rem;
+                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            }
+            
+            /* 游戏结果优化 */
+            #game-result .max-w-md {
+                width: 100%;
+                max-width: 600px;
+                margin: 0 auto;
+                padding: 2rem;
+                border-radius: 1.5rem;
+                box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            }
+            
+            #result-icon {
+                font-size: 8rem;
+            }
+            
+            #result-title {
+                font-size: 3rem;
+                margin-bottom: 1rem;
+            }
+            
+            #result-message {
+                font-size: 1.2rem;
+                line-height: 1.6;
+            }
+            
+            /* 模态框优化 */
+            .modal-content {
+                margin: 3rem;
+                width: auto;
+                max-width: 800px;
+                max-height: calc(100vh - 6rem);
+                border-radius: 1.5rem;
+                box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            }
+            
+            /* 成就模态框优化 */
+            #achievements-list {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 1.5rem;
+            }
+            
+            /* 底部导航优化 */
+            footer {
+                padding: 1.5rem 3rem;
+                border-top-left-radius: 2rem;
+                border-top-right-radius: 2rem;
+                box-shadow: 0 -10px 15px -3px rgba(0, 0, 0, 0.1);
+            }
+            
+            /* 动画效果增强 */
+            .btn-primary {
+                transition: all 0.3s ease;
+            }
+            
+            .btn-primary:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            }
+            
+            .category-tag {
+                transition: all 0.3s ease;
+            }
+            
+            .category-tag:hover {
+                transform: translateY(-2px) scale(1.05);
+            }
+        }
+        
+        /* 通用按钮交互优化 - 确保所有设备上的按钮正常工作 */
+        .btn-primary, .btn-secondary, #exit-game, .difficulty-btn, .interactive-hint-btn {
+            /* 确保足够的点击区域 - 符合WCAG标准的48px最小触摸目标 */
+            min-height: 44px;
+            min-width: 44px;
+            padding: 0.5rem 1rem;
+            
+            /* 确保按钮文本清晰可辨 */
+            font-weight: 600;
+            letter-spacing: 0.025em;
+            
+            /* 确保按钮形状清晰 */
+            border: 2px solid transparent;
+            border-radius: 0.5rem;
+            
+            /* 确保足够的对比度 */
+            background-color: #3b82f6;
+            color: white;
+            
+            /* 确保焦点状态可见 */
+            outline: none;
+            position: relative;
+        }
+        
+        /* 焦点样式 - 确保键盘可访问性 */
+        .btn-primary:focus, .btn-secondary:focus, #exit-game:focus, .difficulty-btn:focus, .interactive-hint-btn:focus {
+            outline: 3px solid #60a5fa;
+            outline-offset: 2px;
+            border-radius: 0.375rem;
+        }
+        
+        /* 触控设备优化 */
+        @media (hover: none) and (pointer: coarse) {
+            /* 为触摸设备调整交互效果 */
+            .word-card-hover {
+                transition: transform 0.2s ease;
+            }
+            
+            .word-card-hover:active {
+                transform: scale(0.98);
+            }
+            
+            .category-tag:active {
+                transform: scale(0.95);
+            }
+            
+            .mascot:active {
+                transform: scale(0.95) rotate(5deg);
+            }
+            
+            /* 触摸设备上的按钮优化 */
+            .btn-primary, .btn-secondary, #exit-game, .difficulty-btn, .interactive-hint-btn {
+                /* 增大触摸目标 */
+                min-height: 48px;
+                min-width: 48px;
+                padding: 0.75rem 1.5rem;
+                font-size: 1.1rem;
+                
+                /* 更强的触摸反馈 */
+                transition: transform 0.15s ease, background-color 0.15s ease;
+            }
+            
+            /* 触摸反馈 */
+            .btn-primary:active, .btn-secondary:active, #exit-game:active, .difficulty-btn:active, .interactive-hint-btn:active {
+                transform: scale(0.97);
+                opacity: 0.9;
+            }
+            
+            /* 游戏按钮特殊处理 */
+            #listening-options .btn-primary, #difficulty-selector .difficulty-btn {
+                min-height: 56px;
+                padding: 1rem 1.5rem;
+                text-align: center;
+                font-size: 1.1rem;
+                line-height: 1.4;
+            }
+        }
+        
+        /* 鼠标交互优化 */
+        @media (hover: hover) and (pointer: fine) {
+            /* 鼠标悬停效果 */
+            .btn-primary:hover, #exit-game:hover, .difficulty-btn:hover {
+                background-color: #2563eb;
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+            }
+            
+            .btn-secondary:hover {
+                background-color: #f3f4f6;
+                border-color: #e5e7eb;
+            }
+            
+            .interactive-hint-btn:hover {
+                background-color: #10b981;
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+            }
+        }
+        
+        /* 移动设备上的特殊按钮处理 */
+        @media (max-width: 768px) {
+            /* 确保游戏选项按钮在手机上清晰可点击 */
+            #listening-options .btn-primary {
+                width: 100%;
+                text-align: left;
+                padding: 1.25rem 1rem;
+                min-height: 60px;
+                font-size: 1rem;
+            }
+            
+            /* 确保难度选择按钮在手机上清晰可见 */
+            .difficulty-btn {
+                width: 100%;
+                padding: 1.25rem;
+                min-height: 70px;
+                font-size: 1.1rem;
+                text-align: center;
+            }
+            
+            /* 确保结果页按钮在手机上占满宽度 */
+            #game-result .btn-primary, #game-result .btn-secondary {
+                width: 100%;
+                padding: 1rem 1.5rem;
+                min-height: 56px;
+                font-size: 1.1rem;
+            }
+        }
+        
+        /* 文本内容优化 - 确保所有文案在各设备上正常显示且不被截断 */
+        
+        /* 通用文本样式 */
+        #game-title, #game-description, #listening-word-display,
+        #listening-options .btn-primary, .difficulty-btn,
+        #result-title, #result-message, .progress-text,
+        .achievement-badge .text, .modal-header h3 {
+            /* 确保文本不会被截断 */
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            hyphens: auto;
+            
+            /* 确保行高适中，提高可读性 */
+            line-height: 1.4;
+        }
+        
+        /* 防止文本溢出容器 */
+        #game-title, #game-description, h1, h2, h3, h4, h5, h6 {
+            max-width: 100%;
+            overflow: visible;
+        }
+        
+        /* 游戏选项文本特殊处理 */
+        #listening-options .btn-primary, .difficulty-btn {
+            /* 允许内部文本换行 */
+            white-space: normal;
+            
+            /* 确保多行文本居中或左对齐 */
+            text-align: center;
+        }
+        
+        /* 游戏结果文本优化 */
+        #result-message {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+        
+        /* 单词显示区域优化 */
+        #listening-word-display {
+            /* 确保单词在单行显示或适当换行 */
+            white-space: normal;
+            min-height: 2.5em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* 预览单词优化 */
+        #preview-words div {
+            /* 确保预览单词不会溢出 */
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            text-align: center;
+            padding: 0.5rem;
+        }
+        
+        /* 移动设备上的文本特殊优化 */
+        @media (max-width: 768px) {
+            /* 优化游戏标题在小屏幕上的显示 */
+            #game-title {
+                font-size: clamp(1.3rem, 5vw, 1.75rem) !important;
+                margin-bottom: 0.5rem !important;
+                line-height: 1.3;
+            }
+            
+            /* 优化游戏描述在小屏幕上的显示 */
+            #game-description {
+                font-size: clamp(0.9rem, 3vw, 1.1rem);
+                line-height: 1.5;
+                padding-right: 60px;
+            }
+            
+            /* 优化听音辨义选项文本 */
+            #listening-options .btn-primary {
+                font-size: clamp(0.9rem, 3vw, 1.1rem);
+                text-align: left;
+                padding: 1rem;
+            }
+            
+            /* 优化难度选择按钮文本 */
+            .difficulty-btn {
+                font-size: clamp(1rem, 3vw, 1.2rem);
+                padding: 1.25rem 1rem;
+                text-align: center;
+            }
+            
+            /* 优化结果页面文本 */
+            #result-title {
+                font-size: clamp(1.5rem, 6vw, 2.5rem) !important;
+                line-height: 1.2;
+            }
+            
+            #result-message {
+                font-size: clamp(0.9rem, 3vw, 1.1rem);
+                line-height: 1.6;
+                padding: 0 0.75rem;
+            }
+            
+            /* 优化进度文本 */
+            .progress-text {
+                font-size: clamp(0.85rem, 2.5vw, 1rem);
+            }
+        }
+        
+        /* 平板设备上的文本优化 */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            /* 使用clamp函数实现响应式字体大小 */
+            #game-title {
+                font-size: clamp(1.5rem, 4vw, 2rem) !important;
+            }
+            
+            #game-description {
+                font-size: clamp(1rem, 2.5vw, 1.2rem);
+            }
+            
+            #listening-word-display {
+                font-size: clamp(2rem, 5vw, 2.75rem) !important;
+            }
+            
+            #result-title {
+                font-size: clamp(2rem, 5vw, 3rem);
+            }
+        }
+        
+        /* 动画性能优化 */
+        @media (prefers-reduced-motion: reduce) {
+            /* 减少动画效果以支持无障碍访问 */
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
         }
         
         /* 模态框样式 */
@@ -259,56 +2313,159 @@
         }
         
         .modal-close {
-            background: none;
-            border: none;
+            background: white;
+            border: 2px solid #E5E7EB;
             font-size: 1.5rem;
             color: #6b7280;
             cursor: pointer;
             padding: 0;
-            width: 2rem;
-            height: 2rem;
+            width: 2.5rem;
+            height: 2.5rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 0.375rem;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
         }
         
         .modal-close:hover {
-            background-color: #f3f4f6;
+            background-color: #F87171;
+            color: white;
+            border-color: #EF4444;
+            transform: scale(1.1) rotate(90deg);
+            box-shadow: 0 4px 8px rgba(239, 68, 68, 0.3);
         }
         
         .btn-outline {
             background-color: white;
-            color: #3B82F6;
-            border: 1px solid #3B82F6;
-            font-weight: 500;
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
-            transition: all 0.2s;
+            color: #4F46E5;
+            border: 2px solid #818CF8;
+            font-weight: 600;
+            padding: 0.75rem 1.5rem;
+            border-radius: 1.5rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
         }
         
         .btn-outline:hover {
-            background-color: #3B82F6;
+            background-color: #4F46E5;
             color: white;
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 8px 16px rgba(79, 70, 229, 0.3);
+        }
+        
+        .btn-outline:active {
+            transform: translateY(0) scale(0.98);
+            box-shadow: 0 3px 6px rgba(79, 70, 229, 0.2);
         }
     </style>
 </head>
-<body class="bg-gray-50 font-sans min-h-screen">
+<body class="bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 font-sans min-h-screen relative">
+    <!-- 背景装饰元素 -->
+    <div class="absolute inset-0 pointer-events-none overflow-hidden">
+        <div class="absolute top-0 left-0 w-64 h-64 bg-yellow-200 rounded-full opacity-30 blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
+        <div class="absolute top-1/3 right-0 w-96 h-96 bg-blue-200 rounded-full opacity-30 blur-3xl translate-x-1/2"></div>
+        <div class="absolute bottom-0 left-1/4 w-80 h-80 bg-purple-200 rounded-full opacity-30 blur-3xl"></div>
+        <div class="absolute bottom-1/4 right-1/4 w-72 h-72 bg-pink-200 rounded-full opacity-20 blur-3xl"></div>
+    </div>
     <!-- 加载屏幕 -->
-    <div id="loading-screen" class="fixed inset-0 bg-gradient-to-br from-blue-500 to-purple-600 flex flex-col items-center justify-center z-50">
-        <div class="text-center">
-            <div class="relative">
-                <img src="https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/super_tool/dc54d15daea240b483d965dc6d282bb7~tplv-a9rns2rl98-image.image?rcl=2025120515461014A2EB3710DB344E5C02&rk3s=8e244e95&rrcfp=f06b921b&x-expires=1767512789&x-signature=Tegkv08l%2F3%2FuLyW3elZBCHkabS4%3D" alt="小鹿AI" class="w-32 h-32 mb-6 mx-auto animate-bounce-slow">
+    <div id="loading-screen" class="fixed inset-0 bg-gradient-to-br from-blue-400 to-purple-500 flex flex-col items-center justify-center z-50 relative overflow-hidden w-full h-full top-0 left-0 m-0 p-0 min-h-screen min-w-screen" style="position: fixed; inset: 0; z-index: 9999; margin: 0; padding: 0; width: 100vw; height: 100vh;">
+        <!-- 星星背景动画 -->
+        <div class="star-field absolute inset-0 pointer-events-none"></div>
+        <!-- 浮动气泡 -->
+        <div class="bubbles absolute inset-0 pointer-events-none"></div>
+        
+        <div class="text-center px-4 z-10 max-w-md mx-auto">
+            <div class="relative mx-auto">
+                <!-- 活泼的小鹿卡通形象 -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 300 300" class="w-48 h-auto mb-6 mx-auto animate-bounce-slow object-contain" style="max-height: 40vh;">
+                  <!-- 背景圆环 -->
+                  <circle cx="150" cy="150" r="140" fill="none" stroke="#1a1a2e" stroke-width="2"/>
+                  <circle cx="150" cy="150" r="135" fill="none" stroke="#16213e" stroke-width="1"/>
+                  
+                  <!-- 科技感网格背景 -->
+                  <defs>
+                    <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+                      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#0f3460" stroke-width="0.5"/>
+                    </pattern>
+                    <linearGradient id="techGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stop-color="#00f2fe"/>
+                      <stop offset="100%" stop-color="#4facfe"/>
+                    </linearGradient>
+                    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+                      <feGaussianBlur stdDeviation="5" result="blur"/>
+                      <feMerge>
+                        <feMergeNode in="blur"/>
+                        <feMergeNode in="SourceGraphic"/>
+                      </feMerge>
+                    </filter>
+                  </defs>
+                  
+                  <!-- 小鹿主体 - 几何化科技风格 -->
+                  <g filter="url(#glow)">
+                    <!-- 头部 -->
+                    <path d="M 150 100 L 180 120 L 200 140 L 190 170 L 170 180 L 150 170 L 130 180 L 110 170 L 100 140 L 120 120 Z" 
+                          fill="#16213e" stroke="url(#techGradient)" stroke-width="2"/>
+                    
+                    <!-- 眼睛 -->
+                    <circle cx="140" cy="140" r="5" fill="#00f2fe"/>
+                    <circle cx="160" cy="140" r="5" fill="#00f2fe"/>
+                    <circle cx="140" cy="140" r="2" fill="#ffffff"/>
+                    <circle cx="160" cy="140" r="2" fill="#ffffff"/>
+                    
+                    <!-- 鹿角 - 科技风格 -->
+                    <path d="M 150 100 L 140 70 L 130 60" stroke="url(#techGradient)" stroke-width="3" fill="none"/>
+                    <path d="M 130 60 L 120 55 L 110 60" stroke="url(#techGradient)" stroke-width="3" fill="none"/>
+                    <path d="M 130 60 L 125 45 L 130 30" stroke="url(#techGradient)" stroke-width="3" fill="none"/>
+                    <path d="M 150 100 L 160 70 L 170 60" stroke="url(#techGradient)" stroke-width="3" fill="none"/>
+                    <path d="M 170 60 L 180 55 L 190 60" stroke="url(#techGradient)" stroke-width="3" fill="none"/>
+                    <path d="M 170 60 L 175 45 L 170 30" stroke="url(#techGradient)" stroke-width="3" fill="none"/>
+                    
+                    <!-- 科技元素点缀 -->
+                    <circle cx="150" cy="100" r="3" fill="#4facfe"/>
+                    <circle cx="130" cy="60" r="3" fill="#00f2fe"/>
+                    <circle cx="170" cy="60" r="3" fill="#00f2fe"/>
+                    
+                    <!-- 线条装饰 -->
+                    <path d="M 100 140 L 90 160" stroke="#4facfe" stroke-width="1.5" stroke-dasharray="4,2"/>
+                    <path d="M 200 140 L 210 160" stroke="#4facfe" stroke-width="1.5" stroke-dasharray="4,2"/>
+                    
+                    <!-- 未来感数字元素 -->
+                    <text x="150" y="210" font-family="Arial" font-size="12" fill="#00f2fe" text-anchor="middle">AI·DEER</text>
+                    <text x="150" y="225" font-family="Arial" font-size="8" fill="#4facfe" text-anchor="middle">VOCABULARY SYSTEM</text>
+                  </g>
+                  
+                  <!-- 环绕的科技圆环 -->
+                  <circle cx="150" cy="150" r="120" fill="none" stroke="#00f2fe" stroke-width="1" stroke-dasharray="5,3" opacity="0.7"/>
+                  <circle cx="150" cy="150" r="110" fill="none" stroke="#4facfe" stroke-width="0.5" opacity="0.5"/>
+                  
+                  <!-- 科技感光芒 -->
+                  <path d="M 150 30 L 150 10" stroke="#00f2fe" stroke-width="2"/>
+                  <path d="M 270 150 L 290 150" stroke="#00f2fe" stroke-width="2"/>
+                  <path d="M 150 270 L 150 290" stroke="#00f2fe" stroke-width="2"/>
+                  <path d="M 30 150 L 10 150" stroke="#00f2fe" stroke-width="2"/>
+                  <path d="M 220 80 L 240 60" stroke="#4facfe" stroke-width="1.5"/>
+                  <path d="M 220 220 L 240 240" stroke="#4facfe" stroke-width="1.5"/>
+                  <path d="M 80 220 L 60 240" stroke="#4facfe" stroke-width="1.5"/>
+                  <path d="M 80 80 L 60 60" stroke="#4facfe" stroke-width="1.5"/>
+                </svg>
+                <div class="absolute -inset-4 bg-yellow-300 rounded-full opacity-20 blur-lg animate-pulse-slow"></div>
                 <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-pulse"></div>
             </div>
-            <h1 class="text-white text-3xl font-bold mb-2">小鹿AI编程英语词汇大全</h1>
-            <p class="text-white/80 mb-6">完整单词库版</p>
-            <div class="w-64 bg-white/30 rounded-full h-2 mb-2">
-                <div id="loading-progress" class="bg-white h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+            <h1 class="text-white text-[clamp(2rem,5vw,3.5rem)] font-bold mb-3 drop-shadow-lg leading-tight">小鹿AI编程全能英语词汇库</h1>
+            <p class="text-white/90 mb-8 text-lg font-medium">快乐学习英语，轻松掌握词汇！</p>
+            <div class="w-full max-w-xs bg-white/30 rounded-full h-3 mb-3 mx-auto">
+                <div id="loading-progress" class="bg-white h-3 rounded-full transition-all duration-300" style="width: 0%"></div>
             </div>
-            <p id="loading-text" class="text-white/90 text-sm">加载中...</p>
+            <p id="loading-text" class="text-white/90 text-base font-medium">准备魔法学习之旅...</p>
         </div>
     </div>
+    
+    <!-- 小鹿卡通形象展示区已移除 -->
 
     <!-- 通知容器 -->
     <div id="notification-container" class="fixed top-4 right-4 z-50"></div>
@@ -320,10 +2477,82 @@
             <div class="max-w-full w-full mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between items-center h-16">
                     <div class="flex items-center">
-                        <img src="https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/super_tool/dc54d15daea240b483d965dc6d282bb7~tplv-a9rns2rl98-image.image?rcl=2025120515461014A2EB3710DB344E5C02&rk3s=8e244e95&rrcfp=f06b921b&x-expires=1767512789&x-signature=Tegkv08l%2F3%2FuLyW3elZBCHkabS4%3D" alt="小鹿AI" class="w-8 h-8 sm:w-10 sm:h-10 mr-2 sm:mr-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 300 300" class="w-10 h-auto sm:w-12 sm:h-auto mr-2 sm:mr-3 animate-pulse-slow">
+                  <!-- 背景圆环 -->
+                  <circle cx="150" cy="150" r="140" fill="none" stroke="#1a1a2e" stroke-width="2"/>
+                  <circle cx="150" cy="150" r="135" fill="none" stroke="#16213e" stroke-width="1"/>
+                  
+                  <!-- 科技感网格背景 -->
+                  <defs>
+                    <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+                      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#0f3460" stroke-width="0.5"/>
+                    </pattern>
+                    <linearGradient id="techGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stop-color="#00f2fe"/>
+                      <stop offset="100%" stop-color="#4facfe"/>
+                    </linearGradient>
+                    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+                      <feGaussianBlur stdDeviation="5" result="blur"/>
+                      <feMerge>
+                        <feMergeNode in="blur"/>
+                        <feMergeNode in="SourceGraphic"/>
+                      </feMerge>
+                    </filter>
+                  </defs>
+                  
+                  <!-- 小鹿主体 - 几何化科技风格 -->
+                  <g filter="url(#glow)">
+                    <!-- 头部 -->
+                    <path d="M 150 100 L 180 120 L 200 140 L 190 170 L 170 180 L 150 170 L 130 180 L 110 170 L 100 140 L 120 120 Z" 
+                          fill="#16213e" stroke="url(#techGradient)" stroke-width="2"/>
+                    
+                    <!-- 眼睛 -->
+                    <circle cx="140" cy="140" r="5" fill="#00f2fe"/>
+                    <circle cx="160" cy="140" r="5" fill="#00f2fe"/>
+                    <circle cx="140" cy="140" r="2" fill="#ffffff"/>
+                    <circle cx="160" cy="140" r="2" fill="#ffffff"/>
+                    
+                    <!-- 鹿角 - 科技风格 -->
+                    <path d="M 150 100 L 140 70 L 130 60" stroke="url(#techGradient)" stroke-width="3" fill="none"/>
+                    <path d="M 130 60 L 120 55 L 110 60" stroke="url(#techGradient)" stroke-width="3" fill="none"/>
+                    <path d="M 130 60 L 125 45 L 130 30" stroke="url(#techGradient)" stroke-width="3" fill="none"/>
+                    
+                    <path d="M 150 100 L 160 70 L 170 60" stroke="url(#techGradient)" stroke-width="3" fill="none"/>
+                    <path d="M 170 60 L 180 55 L 190 60" stroke="url(#techGradient)" stroke-width="3" fill="none"/>
+                    <path d="M 170 60 L 175 45 L 170 30" stroke="url(#techGradient)" stroke-width="3" fill="none"/>
+                    
+                    <!-- 科技元素点缀 -->
+                    <circle cx="150" cy="100" r="3" fill="#4facfe"/>
+                    <circle cx="130" cy="60" r="3" fill="#00f2fe"/>
+                    <circle cx="170" cy="60" r="3" fill="#00f2fe"/>
+                    
+                    <!-- 线条装饰 -->
+                    <path d="M 100 140 L 90 160" stroke="#4facfe" stroke-width="1.5" stroke-dasharray="4,2"/>
+                    <path d="M 200 140 L 210 160" stroke="#4facfe" stroke-width="1.5" stroke-dasharray="4,2"/>
+                    
+                    <!-- 未来感数字元素 -->
+                    <text x="150" y="210" font-family="Arial" font-size="12" fill="#00f2fe" text-anchor="middle">AI·DEER</text>
+                    <text x="150" y="225" font-family="Arial" font-size="8" fill="#4facfe" text-anchor="middle">VOCABULARY SYSTEM</text>
+                  </g>
+                  
+                  <!-- 环绕的科技圆环 -->
+                  <circle cx="150" cy="150" r="120" fill="none" stroke="#00f2fe" stroke-width="1" stroke-dasharray="5,3" opacity="0.7"/>
+                  <circle cx="150" cy="150" r="110" fill="none" stroke="#4facfe" stroke-width="0.5" opacity="0.5"/>
+                  
+                  <!-- 科技感光芒 -->
+                  <path d="M 150 30 L 150 10" stroke="#00f2fe" stroke-width="2"/>
+                  <path d="M 270 150 L 290 150" stroke="#00f2fe" stroke-width="2"/>
+                  <path d="M 150 270 L 150 290" stroke="#00f2fe" stroke-width="2"/>
+                  <path d="M 30 150 L 10 150" stroke="#00f2fe" stroke-width="2"/>
+                  
+                  <path d="M 220 80 L 240 60" stroke="#4facfe" stroke-width="1.5"/>
+                  <path d="M 220 220 L 240 240" stroke="#4facfe" stroke-width="1.5"/>
+                  <path d="M 80 220 L 60 240" stroke="#4facfe" stroke-width="1.5"/>
+                  <path d="M 80 80 L 60 60" stroke="#4facfe" stroke-width="1.5"/>
+                </svg>
                         <div>
-                            <h1 class="text-xl font-bold text-gray-800">小鹿AI英语词汇大全</h1>
-                            <p class="text-xs text-gray-500">完整单词库版</p>
+                            <h1 class="text-xl font-bold text-gray-800">小鹿AI编程全能英语词汇库</h1>
+              <p class="text-xs text-gray-500">快乐学习英语，轻松掌握词汇！</p>
                         </div>
                     </div>
                     <div class="flex items-center space-x-4">
@@ -333,7 +2562,7 @@
                         </button>
                         <button data-nav="library" class="nav-btn px-4 py-3 font-medium text-sm rounded-lg hover:bg-blue-50 transition-colors duration-200 active:bg-blue-100 min-h-[44px] flex items-center justify-center">
                             <i class="fa fa-book mr-2 text-base"></i>
-                            <span class="hidden sm:inline">单词库</span>
+                            <span class="hidden sm:inline">词汇库</span>
                         </button>
                         <button data-nav="checkin" class="nav-btn px-4 py-3 font-medium text-sm rounded-lg hover:bg-blue-50 transition-colors duration-200 active:bg-blue-100 min-h-[44px] flex items-center justify-center">
                             <i class="fa fa-calendar-check mr-2 text-base"></i>
@@ -365,10 +2594,10 @@
                         <!-- 星星背景 -->
                         <div class="starry-bg absolute inset-0 pointer-events-none"></div>
                         <div class="absolute top-0 right-0 w-full max-w-xs h-full opacity-10 md:w-1/3">
-                            <img src="https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/super_tool/d324b260076b4644904d7f7e1d24bbf8~tplv-a9rns2rl98-image.image?rcl=2025120515461014A2EB3710DB344E5C02&rk3s=8e244e95&rrcfp=f06b921b&x-expires=1767512790&x-signature=3xs8u3BQReNOhhqMHQyqsvYOLe4%3D" alt="English Learning" class="w-full h-full object-cover">
+                            <img src="https://picsum.photos/id/96/800/400" alt="English Learning" class="w-full h-full object-cover">
                         </div>
                         <div class="relative z-10">
-                            <h2 class="text-3xl font-bold mb-4">欢迎使用小鹿AI英语词汇大全！</h2>
+                            <h2 class="text-3xl font-bold mb-4">欢迎使用小鹿AI编程全能英语词汇库！</h2>
                             <p class="text-lg mb-6">今天是 <span id="current-date" class="font-semibold"></span>，包含<span id="total-word-count" class="font-bold">0</span>个单词，让我们开始学习吧！</p>
                             <div class="flex flex-wrap gap-4">
                                 <button id="start-daily-btn" class="btn-primary flex items-center justify-center w-full sm:w-auto px-6 py-4 rounded-xl text-lg font-semibold active:bg-blue-700 min-h-[44px] mb-3 sm:mb-0">
@@ -377,7 +2606,7 @@
                                 </button>
                                 <button id="continue-learning-btn" class="bg-white text-blue-600 hover:bg-gray-50 flex items-center justify-center w-full sm:w-auto px-6 py-4 rounded-xl text-lg font-semibold shadow-md transition-all duration-200 active:bg-gray-100 min-h-[44px]">
                                     <i class="fa fa-book mr-3 text-xl"></i>
-                                    浏览单词库
+                                    浏览词汇库
                                 </button>
                             </div>
                         </div>
@@ -434,10 +2663,10 @@
                 </section>
             </div>
 
-            <!-- 单词库页面 -->
+            <!-- 词汇库页面 -->
             <div id="library-page" class="hidden">
                 <div class="mb-8">
-                    <h2 class="text-2xl font-bold mb-6 text-gray-800">单词库</h2>
+                    <h2 class="text-2xl font-bold mb-6 text-gray-800">词汇库</h2>
                     <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
                         <!-- 搜索栏 -->
                         <div class="flex flex-col md:flex-row md:items-center justify-between mb-6">
@@ -614,6 +2843,68 @@
                     
                     <!-- 单词记忆游戏 -->
                     <div id="memory-game" class="hidden">
+                        <!-- 难度选择界面 -->
+                        <div id="difficulty-selector" class="max-w-4xl mx-auto p-6 bg-white rounded-xl shadow-lg">
+                            <h3 class="text-2xl font-bold text-center text-blue-600 mb-8">选择游戏难度</h3>
+                            <p class="text-center text-gray-600 mb-8">根据你的记忆能力选择合适的难度，难度越高单词越多！</p>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
+                                <button data-difficulty="easy" class="difficulty-btn bg-green-100 hover:bg-green-200 border-2 border-green-500 rounded-xl p-6 transition-all duration-300 transform hover:scale-105">
+                                    <h4 class="text-xl font-bold text-green-700 mb-2">基础难度</h4>
+                                    <p class="text-gray-600">4个单词，8张卡片，1×8排列</p>
+                                    <div class="mt-4 flex justify-center">
+                                        <div class="flex">
+                                            <span class="text-green-500 text-lg">★</span>
+                                        </div>
+                                    </div>
+                                </button>
+                                <button data-difficulty="normal" class="difficulty-btn bg-blue-100 hover:bg-blue-200 border-2 border-blue-500 rounded-xl p-6 transition-all duration-300 transform hover:scale-105">
+                                    <h4 class="text-xl font-bold text-blue-700 mb-2">简单难度</h4>
+                                    <p class="text-gray-600">8个单词，16张卡片，2×8排列</p>
+                                    <div class="mt-4 flex justify-center">
+                                        <div class="flex">
+                                            <span class="text-blue-500 text-lg">★★</span>
+                                        </div>
+                                    </div>
+                                </button>
+                                <button data-difficulty="hard" class="difficulty-btn bg-purple-100 hover:bg-purple-200 border-2 border-purple-500 rounded-xl p-6 transition-all duration-300 transform hover:scale-105">
+                                    <h4 class="text-xl font-bold text-purple-700 mb-2">一般难度</h4>
+                                    <p class="text-gray-600">12个单词，24张卡片，3×8排列</p>
+                                    <div class="mt-4 flex justify-center">
+                                        <div class="flex">
+                                            <span class="text-purple-500 text-lg">★★★</span>
+                                        </div>
+                                    </div>
+                                </button>
+                                <button data-difficulty="expert" class="difficulty-btn bg-orange-100 hover:bg-orange-200 border-2 border-orange-500 rounded-xl p-6 transition-all duration-300 transform hover:scale-105">
+                                    <h4 class="text-xl font-bold text-orange-700 mb-2">困难难度</h4>
+                                    <p class="text-gray-600">16个单词，32张卡片，4×8排列</p>
+                                    <div class="mt-4 flex justify-center">
+                                        <div class="flex">
+                                            <span class="text-orange-500 text-lg">★★★★</span>
+                                        </div>
+                                    </div>
+                                </button>
+                            </div>
+                        </div>
+                        <!-- 预览界面 -->
+                        <div id="memory-preview" class="hidden">
+                            <div class="max-w-4xl mx-auto p-6 bg-white rounded-xl shadow-lg">
+                                <h3 class="text-2xl font-bold text-center text-blue-600 mb-6">准备记忆！</h3>
+                                <div class="text-center mb-8">
+                                    <p class="text-lg text-gray-700 mb-2">请记住以下单词，时间有限！</p>
+                                    <div class="inline-block bg-yellow-100 text-yellow-800 font-bold rounded-full px-6 py-3 text-2xl">
+                                        <span id="preview-timer">60</span> 秒
+                                    </div>
+                                </div>
+                                <div id="preview-words" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mb-8">
+                                    <!-- 预览单词将通过JavaScript动态生成 -->
+                                </div>
+                                <div class="text-center">
+                                    <p id="preview-status" class="text-green-600 font-medium">准备开始预览...</p>
+                                    <button id="preview-finish-btn" class="mt-6 bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-8 rounded-lg shadow-lg transition-all duration-300 transform hover:scale-105">记忆完毕  开始游戏</button>
+                                </div>
+                            </div>
+                        </div>
                         <div class="max-w-4xl mx-auto">
                             <!-- 游戏状态 -->
                             <div class="flex flex-wrap justify-between items-center bg-gray-50 p-4 rounded-xl mb-8">
@@ -621,16 +2912,21 @@
                                     <span class="font-medium text-gray-700 mr-2">得分:</span>
                                     <span id="memory-score" class="text-2xl font-bold text-green-600">0</span>
                                 </div>
-                                <div class="flex items-center">
+                                <div class="flex items-center mb-2 md:mb-0">
                                     <span class="font-medium text-gray-700 mr-2">匹配进度:</span>
                                     <span id="memory-matched" class="text-lg font-semibold">0</span>
                                     <span class="mx-2 text-gray-500">/</span>
                                     <span id="memory-total" class="text-lg">8</span>
                                 </div>
+                                <div>
+                                    <button id="exit-game-btn" class="bg-red-500 hover:bg-red-600 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200">
+                                        <i class="fa fa-sign-out mr-1"></i>退出游戏
+                                    </button>
+                                </div>
                             </div>
                             
                             <!-- 卡片网格 -->
-                            <div id="memory-cards" class="grid grid-cols-4 md:grid-cols-8 gap-4">
+                            <div id="memory-cards" class="grid grid-cols-4 gap-4 sm:grid-cols-4 md:grid-cols-4 gap-4">
                                 <!-- 卡片将通过JavaScript动态生成 -->
                             </div>
                         </div>
@@ -679,7 +2975,7 @@
                 </button>
                 <button data-nav="library" class="mobile-nav-btn flex flex-col items-center text-gray-500 hover:text-blue-600 px-4 py-2 transition-colors duration-200">
                     <i class="fa fa-book text-xl mb-1"></i>
-                    <span class="text-sm font-medium">单词库</span>
+                    <span class="text-sm font-medium">词汇库</span>
                 </button>
                 <button data-nav="checkin" class="mobile-nav-btn flex flex-col items-center text-gray-500 hover:text-blue-600 px-4 py-2 transition-colors duration-200">
                     <i class="fa fa-calendar-check text-xl mb-1"></i>
@@ -704,14 +3000,10 @@
             <div class="modal-body">
                 <div class="space-y-6">
                     <div>
-                        <label class="block text-gray-700 mb-2">选择语音</label>
-                        <select id="voice-select" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                            <option value="default">默认语音</option>
-                            <option value="zh-CN-Wavenet-A">中文女声</option>
-                            <option value="zh-CN-Wavenet-B">中文男声</option>
-                            <option value="en-US-Wavenet-A">英文女声</option>
-                            <option value="en-US-Wavenet-B">英文男声</option>
-                        </select>
+                        <label class="block text-gray-700 mb-2">默认语音</label>
+                        <div class="bg-gray-50 p-4 rounded-lg border border-gray-200 text-gray-600">
+                            使用系统默认语音进行朗读
+                        </div>
                     </div>
                     <div>
                         <label class="block text-gray-700 mb-2">语音速度</label>
@@ -4831,7 +7123,8 @@
             // 游戏页面元素
             gameTitle: document.getElementById('game-title'),
             gameDescription: document.getElementById('game-description'),
-            exitGameBtn: document.getElementById('exit-game'),
+            exitGameBtn: document.getElementById('exit-game-btn'),
+            exitGame: document.getElementById('exit-game'),
             listeningGame: document.getElementById('listening-game'),
             memoryGame: document.getElementById('memory-game'),
             gameResult: document.getElementById('game-result'),
@@ -4985,13 +7278,27 @@
             
             // 获取所有分类
             getAllCategories() {
-                const categories = new Set();
+                const categories = new Set(['all']); // 先添加'all'标签
+                
+                // 添加wordDatabase中的分类
                 wordDatabase.forEach(word => {
                     if (word.categories) {
                         word.categories.forEach(cat => categories.add(cat));
                     }
                 });
-                return ['all', ...Array.from(categories).sort()];
+                
+                // 添加从A到Z的字母标签（不会重复，因为已经用Set去重）
+                const letters = Array.from({length: 26}, (_, i) => String.fromCharCode(65 + i));
+                letters.forEach(letter => categories.add(letter));
+                
+                // 返回排序后的唯一标签
+                return Array.from(categories).sort((a, b) => {
+                    // 确保'all'始终在第一个
+                    if (a === 'all') return -1;
+                    if (b === 'all') return 1;
+                    // 然后按字母顺序排序
+                    return a.localeCompare(b);
+                });
             }
         };
 
@@ -5063,7 +7370,7 @@
                     utils.createStars(starryBg);
                 }
                 
-                utils.showNotification(`欢迎使用小鹿AI英语词汇大全！包含${wordDatabase.length}个单词`, 'info');
+                utils.showNotification(`欢迎使用小鹿AI编程全能英语词汇库--优秀学员专属！包含${wordDatabase.length}个单词`, 'info');
             },
             
             // 生成分类标签
@@ -5073,7 +7380,7 @@
                 
                 categories.forEach(category => {
                     const tag = document.createElement('button');
-                    tag.className = `category-tag px-5 py-2 rounded-full text-sm font-medium transition-all duration-200 ${category === 'all' ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`;
+                    tag.className = `category-tag px-5 py-2 rounded-full text-sm font-medium transition-all duration-300 transform hover:scale-105 ${category === 'all' ? 'bg-blue-500 text-white shadow-md scale-105' : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:shadow-sm'}`;
                     tag.dataset.category = category;
                     tag.innerHTML = `
                         <i class="fa ${category === 'all' ? 'fa-layer-group' : 
@@ -5111,25 +7418,42 @@
                         state.currentCategory = category;
                         this.updateCategoryTags();
                         dom.selectedCategory.textContent = utils.getCategoryName(category);
+                        
+                        // 平滑滚动到选中标签
+                        setTimeout(() => {
+                            const activeTag = dom.categoryTags.querySelector(`.category-tag[data-category="${category}"]`);
+                            if (activeTag) {
+                                activeTag.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                            }
+                        }, 100);
+                        
                         this.searchWords();
                     });
                     
                     utils.addRippleEffect(tag);
                     dom.categoryTags.appendChild(tag);
                 });
+                
+                // 让标签栏可以横向滚动
+                dom.categoryTags.style.display = 'flex';
+                dom.categoryTags.style.flexDirection = 'row';
+                dom.categoryTags.style.overflowX = 'auto';
+                dom.categoryTags.style.whiteSpace = 'nowrap';
+                dom.categoryTags.style.scrollbarWidth = 'thin';
+                dom.categoryTags.style.scrollbarColor = '#cbd5e0 transparent';
+                
+                // 隐藏滚动条但保留功能（适用于WebKit浏览器）
+                dom.categoryTags.style.webkitOverflowScrolling = 'touch';
+                dom.categoryTags.style.maskImage = 'linear-gradient(90deg, transparent, black 10px, black calc(100% - 10px), transparent)';
+                dom.categoryTags.style.webkitMaskImage = 'linear-gradient(90deg, transparent, black 10px, black calc(100% - 10px), transparent)';
             },
             
             // 更新分类标签状态
             updateCategoryTags() {
                 document.querySelectorAll('.category-tag').forEach(tag => {
                     const category = tag.getAttribute('data-category');
-                    if (category === state.currentCategory) {
-                        tag.classList.remove('bg-gray-100', 'text-gray-700');
-                        tag.classList.add('bg-blue-500', 'text-white');
-                    } else {
-                        tag.classList.remove('bg-blue-500', 'text-white');
-                        tag.classList.add('bg-gray-100', 'text-gray-700');
-                    }
+                    // 使用一致的样式和动画效果
+                    tag.className = `category-tag px-5 py-2 rounded-full text-sm font-medium transition-all duration-300 transform hover:scale-105 ${category === state.currentCategory ? 'bg-blue-500 text-white shadow-md scale-105' : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:shadow-sm'}`;
                 });
             },
             
@@ -5319,9 +7643,18 @@
                 
                 // 按分类筛选
                 if (category !== 'all') {
-                    results = results.filter(word => 
-                        word.categories && word.categories.includes(category)
-                    );
+                    // 检查是否为字母标签（A-Z）
+                    if (/^[A-Z]$/.test(category)) {
+                        // 按单词首字母筛选
+                        results = results.filter(word => 
+                            word.word.charAt(0).toUpperCase() === category
+                        );
+                    } else {
+                        // 按常规分类筛选
+                        results = results.filter(word => 
+                            word.categories && word.categories.includes(category)
+                        );
+                    }
                 }
                 
                 // 按搜索词筛选
@@ -5381,15 +7714,15 @@
                 
                 const utterance = new SpeechSynthesisUtterance(word);
                 utterance.lang = 'en-US';
-                utterance.rate = state.userData.voiceSettings.rate;
-                utterance.pitch = state.userData.voiceSettings.pitch;
                 
-                // 设置语音
-                const voices = speechSynthesis.getVoices();
-                if (state.userData.voiceSettings.voice !== 'default') {
-                    const voice = voices.find(v => v.name.includes(state.userData.voiceSettings.voice));
-                    if (voice) utterance.voice = voice;
-                }
+                // 获取用户设置的语音参数
+                const voiceSetting = state.userData.voiceSettings.voice;
+                let rate = state.userData.voiceSettings.rate;
+                let pitch = state.userData.voiceSettings.pitch;
+                
+                // 直接应用用户设置的语速和音调
+                utterance.rate = rate;
+                utterance.pitch = pitch;
                 
                 speechSynthesis.speak(utterance);
             },
@@ -5430,7 +7763,7 @@
                 // 重置每日进度
                 state.userData.dailyProgress = { words: 0, listening: 0, memory: 0 };
                 
-                // 从单词库中随机选择10个单词
+                // 从词汇库中随机选择10个单词
                 state.dailyCheckin.words = [];
                 const availableWords = [...wordDatabase];
                 
@@ -5631,23 +7964,71 @@
                 setTimeout(() => this.loadListeningWord(), 1500);
             },
             
+            // 根据难度获取单词数量和布局信息
+            getDifficultyInfo(difficulty) {
+                const difficultyMap = {
+                    easy: { pairs: 4, rows: 1, name: '基础' }, // 1×8排列
+                    normal: { pairs: 8, rows: 2, name: '简单' }, // 2×8排列
+                    hard: { pairs: 12, rows: 3, name: '一般' }, // 3×8排列
+                    expert: { pairs: 16, rows: 4, name: '困难' } // 4×8排列
+                };
+                return difficultyMap[difficulty] || difficultyMap.normal;
+            },
+            
+            // 显示难度选择界面
+            showDifficultySelector() {
+                // 获取所有难度按钮
+                const difficultyButtons = document.querySelectorAll('.difficulty-btn');
+                
+                // 为每个按钮添加点击事件
+                difficultyButtons.forEach(button => {
+                    button.addEventListener('click', () => {
+                        const difficulty = button.dataset.difficulty;
+                        const difficultyInfo = this.getDifficultyInfo(difficulty);
+                        
+                        // 更新游戏配置
+                        state.currentGame.difficulty = difficulty;
+                        state.currentGame.difficultyName = difficultyInfo.name;
+                        state.currentGame.totalPairs = difficultyInfo.pairs;
+                        
+                        // 根据难度选择单词
+                        const selectedWords = [...state.dailyCheckin.words].sort(() => Math.random() - 0.5).slice(0, difficultyInfo.pairs);
+                        state.currentGame.words = selectedWords;
+                        
+                        // 更新游戏状态显示
+                        dom.memoryTotal.textContent = state.currentGame.totalPairs;
+                        
+                        // 隐藏难度选择界面，显示预览界面
+                        document.getElementById('difficulty-selector').style.display = 'none';
+                        this.showMemoryPreview();
+                    });
+                });
+            },
+            
             // 开始记忆游戏
             startMemoryGame() {
                 state.currentGame = {
                     type: 'memory',
-                    words: [...state.dailyCheckin.words].sort(() => Math.random() - 0.5).slice(0, 4),
                     score: 0,
                     matchedPairs: 0,
-                    totalPairs: 4,
                     flippedCards: [],
-                    locked: false
+                    locked: false,
+                    previewTime: 60, // 预览时间60秒
+                    previewStarted: false,
+                    difficulty: 1, // 使用统一难度
+                    difficultyName: '单词记忆',
+                    totalPairs: 8 // 固定8个单词对，16张卡片
                 };
+                
+                // 随机选择8个单词
+                const shuffledWords = [...wordDatabase].sort(() => Math.random() - 0.5);
+                state.currentGame.words = shuffledWords.slice(0, 8);
                 
                 this.switchPage('game');
                 
                 // 设置游戏UI
-                dom.gameTitle.textContent = '单词记忆';
-                dom.gameDescription.textContent = '翻转卡片，匹配英文单词和中文意思';
+                dom.gameTitle.textContent = '单词记忆挑战';
+                dom.gameDescription.textContent = '记住单词及中文翻译，翻转卡片找出配对！';
                 
                 // 显示记忆游戏界面
                 dom.listeningGame.classList.add('hidden');
@@ -5657,16 +8038,111 @@
                 // 更新游戏状态
                 dom.memoryScore.textContent = '0';
                 dom.memoryMatched.textContent = '0';
-                dom.memoryTotal.textContent = state.currentGame.totalPairs;
+                dom.memoryTotal.textContent = '8'; // 固定显示8对
                 
-                // 生成卡片
-                this.generateMemoryCards();
+                // 隐藏难度选择界面
+                document.getElementById('difficulty-selector').style.display = 'none';
+                
+                // 直接显示记忆预览界面
+                this.showMemoryPreview();
+            },
+            
+            // 显示记忆预览界面
+            showMemoryPreview() {
+                // 获取预览相关元素
+                const memoryPreview = document.getElementById('memory-preview');
+                const previewTimer = document.getElementById('preview-timer');
+                const previewWords = document.getElementById('preview-words');
+                const previewStatus = document.getElementById('preview-status');
+                const finishButton = document.getElementById('preview-finish-btn');
+                
+                // 显示预览界面
+                memoryPreview.classList.remove('hidden');
+                
+                // 设置预览界面标题
+                const previewTitle = memoryPreview.querySelector('h3');
+                if (previewTitle) {
+                    previewTitle.textContent = '单词记忆挑战 - 准备记忆！';
+                }
+                
+                // 清空预览单词容器
+                previewWords.innerHTML = '';
+                
+                // 设置单词预览布局为4列，适合8个单词显示
+                previewWords.className = 'grid grid-cols-4 gap-4';
+                
+                // 立即显示所有8个单词，让用户可以在1分钟内充分记忆
+                state.currentGame.words.forEach((word, index) => {
+                    const wordElement = document.createElement('div');
+                    wordElement.className = 'preview-word bg-white p-4 rounded-lg shadow-md transition-all duration-300 hover:shadow-lg';
+                    wordElement.innerHTML = `
+                        <div class="word font-bold text-xl text-blue-600 mb-2">${word.word}</div>
+                        <div class="meaning text-gray-700">${word.meaning}</div>
+                    `;
+                    previewWords.appendChild(wordElement);
+                });
+                
+                // 更新状态提示
+                previewStatus.textContent = '请在1分钟内记忆所有单词及翻译！随时可点击"记忆完毕 开始游戏"按钮开始挑战！';
+                
+                // 设置固定1分钟预览时间
+                let timeLeft = 60;
+                previewTimer.textContent = timeLeft;
+                
+                const timerInterval = setInterval(() => {
+                    timeLeft--;
+                    previewTimer.textContent = timeLeft;
+                    
+                    // 根据剩余时间添加视觉反馈
+                    previewTimer.classList.remove('text-yellow-500', 'text-red-600');
+                    if (timeLeft <= 30) {
+                        previewTimer.classList.add('text-yellow-500');
+                    }
+                    if (timeLeft <= 10) {
+                        previewTimer.classList.add('text-red-600');
+                    }
+                    
+                    if (timeLeft <= 0) {
+                        clearInterval(timerInterval);
+                        finishButton.removeEventListener('click', handleFinishClick);
+                        
+                        // 隐藏预览界面，开始游戏
+                        previewStatus.textContent = '时间到！游戏开始！';
+                        setTimeout(() => {
+                            memoryPreview.classList.add('hidden');
+                            // 生成游戏卡片
+                            this.generateMemoryCards();
+                        }, 1000);
+                    }
+                }, 1000);
+                
+                // 处理"记忆完毕 开始游戏"按钮点击事件
+                const handleFinishClick = () => {
+                    clearInterval(timerInterval);
+                    finishButton.removeEventListener('click', handleFinishClick);
+                    
+                    previewStatus.textContent = '开始游戏！';
+                    setTimeout(() => {
+                        memoryPreview.classList.add('hidden');
+                        // 生成游戏卡片
+                        this.generateMemoryCards();
+                    }, 500);
+                };
+                
+                finishButton.addEventListener('click', handleFinishClick);
             },
             
             // 生成记忆卡片
             generateMemoryCards() {
                 const cards = [];
                 
+                // 设置容器的网格布局为4×4排列，确保响应式和美观
+                dom.memoryCards.className = 'grid grid-cols-4 gap-4 max-w-3xl mx-auto';
+                
+                // 设置卡片高度，确保4×4布局美观
+                const cardHeight = 'h-36'; // 固定高度，适合4×4布局
+                
+                // 为每个单词创建一对卡片（一个单词卡，一个翻译卡）
                 state.currentGame.words.forEach(word => {
                     cards.push({
                         id: `word-${word.word}`,
@@ -5682,80 +8158,323 @@
                     });
                 });
                 
-                // 洗牌
+                // 洗牌算法，随机排列卡片
                 cards.sort(() => Math.random() - 0.5);
                 
-                // 渲染卡片
+                // 清空并填充卡片容器
                 dom.memoryCards.innerHTML = '';
+                
+                // 创建卡片元素
                 cards.forEach(card => {
                     const cardElement = document.createElement('div');
-                    cardElement.className = 'memory-card h-20 cursor-pointer';
+                    // 添加悬停效果和过渡动画
+                    cardElement.className = `memory-card ${cardHeight} cursor-pointer transition-all duration-300 hover:shadow-lg transform hover:-translate-y-1`;
                     cardElement.dataset.id = card.id;
                     cardElement.dataset.matchId = card.matchId;
                     cardElement.dataset.type = card.type;
+                    cardElement.dataset.matched = 'false'; // 标记卡片是否已匹配
                     
+                    // 卡片内容结构 - 优化样式和排版
                     cardElement.innerHTML = `
-                        <div class="memory-card-front w-full h-full bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-md">
-                            <i class="fa fa-question text-white text-2xl"></i>
+                        <div class="memory-card-front w-full h-full bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg transition-transform duration-500">
+                            <i class="fa fa-question text-white text-3xl"></i>
                         </div>
-                        <div class="memory-card-back w-full h-full bg-white rounded-xl border-2 border-blue-300 flex items-center justify-center p-4 shadow-inner">
-                            <span class="text-center font-bold text-gray-800">${card.content}</span>
+                        <div class="memory-card-back w-full h-full bg-white rounded-xl border-3 border-blue-400 flex items-center justify-center p-4 shadow-inner transition-transform duration-500">
+                            <span class="text-center font-bold text-gray-800 text-lg break-words max-w-full">${card.content}</span>
                         </div>
                     `;
                     
-                    cardElement.addEventListener('click', () => this.flipMemoryCard(cardElement));
+                    // 添加点击事件
+                    cardElement.addEventListener('click', () => {
+                        // 确保只有未匹配的卡片且不在阻止阶段才能点击
+                        if (cardElement.dataset.matched === 'false' && !state.currentGame.locked) {
+                            this.flipMemoryCard(cardElement);
+                        }
+                    });
+                    
                     dom.memoryCards.appendChild(cardElement);
                 });
+                
+                // 重置游戏状态
+                state.currentGame.flips = 0;
+                state.currentGame.matchedPairs = 0;
+                state.currentGame.flippedCards = [];
+                state.currentGame.locked = false;
+                
+                // 更新UI显示 - 确保总对数为8
+                dom.memoryScore.textContent = 0;
+                dom.memoryMatched.textContent = 0;
+                dom.memoryTotal.textContent = '8';
+                
+                // 显示游戏界面
+                dom.memoryGame.classList.remove('hidden');
+            },
+            
+            // 创建粒子特效
+            createParticleEffect(element) {
+                const rect = element.getBoundingClientRect();
+                const container = document.createElement('div');
+                container.className = 'particle-container';
+                container.style.top = rect.top + 'px';
+                container.style.left = rect.left + 'px';
+                container.style.width = rect.width + 'px';
+                container.style.height = rect.height + 'px';
+                document.body.appendChild(container);
+                
+                // 创建15个粒子
+                for (let i = 0; i < 15; i++) {
+                    const particle = document.createElement('div');
+                    particle.className = 'particle';
+                    
+                    // 随机粒子大小和颜色
+                    const size = Math.random() * 8 + 4;
+                    const colors = ['#4ade80', '#60a5fa', '#a78bfa', '#f472b6'];
+                    const color = colors[Math.floor(Math.random() * colors.length)];
+                    
+                    particle.style.width = size + 'px';
+                    particle.style.height = size + 'px';
+                    particle.style.backgroundColor = color;
+                    particle.style.left = '50%';
+                    particle.style.top = '50%';
+                    
+                    container.appendChild(particle);
+                    
+                    // 随机发射角度和距离
+                    const angle = Math.random() * Math.PI * 2;
+                    const distance = Math.random() * 40 + 20;
+                    const translateX = Math.cos(angle) * distance;
+                    const translateY = Math.sin(angle) * distance;
+                    
+                    // 动画
+                    particle.animate([
+                        { transform: 'translate(-50%, -50%) scale(0)', opacity: 1 },
+                        { transform: `translate(calc(-50% + ${translateX}px), calc(-50% + ${translateY}px)) scale(1)`, opacity: 1, offset: 0.5 },
+                        { transform: `translate(calc(-50% + ${translateX}px), calc(-50% + ${translateY}px)) scale(0)`, opacity: 0 }
+                    ], {
+                        duration: 800,
+                        easing: 'cubic-bezier(0.34, 1.56, 0.64, 1)',
+                        delay: i * 30
+                    });
+                }
+                
+                // 清理粒子容器
+                setTimeout(() => {
+                    container.remove();
+                }, 1000);
             },
             
             // 翻转记忆卡片
             flipMemoryCard(card) {
+                // 防止重复点击已翻转、已匹配或锁定状态的卡片
                 if (state.currentGame.locked || 
                     card.classList.contains('flipped') || 
+                    card.dataset.matched === 'true' ||
                     state.currentGame.flippedCards.includes(card)) {
                     return;
                 }
                 
+                // 翻转卡片并添加到已翻转卡片数组
                 card.classList.add('flipped');
                 state.currentGame.flippedCards.push(card);
+                state.currentGame.flips++;
                 
+                // 当翻转了两张卡片时，检查匹配
                 if (state.currentGame.flippedCards.length === 2) {
-                    state.currentGame.locked = true;
+                    state.currentGame.locked = true; // 锁定游戏状态，防止快速连续点击
                     
                     const [card1, card2] = state.currentGame.flippedCards;
                     const isMatch = card1.dataset.matchId === card2.dataset.matchId;
                     
                     if (isMatch) {
                         // 匹配成功
+                        // 创建粒子特效庆祝匹配成功
+                        this.createParticleEffect(card1);
+                        this.createParticleEffect(card2);
+                        
                         setTimeout(() => {
+                            // 标记为已匹配
                             card1.classList.add('matched');
                             card2.classList.add('matched');
-                            card1.style.opacity = '0.5';
-                            card2.style.opacity = '0.5';
+                            card1.dataset.matched = 'true';
+                            card2.dataset.matched = 'true';
                             
+                            // 添加匹配成功的视觉效果
+                            card1.style.opacity = '0.7';
+                            card2.style.opacity = '0.7';
+                            card1.style.transform = 'scale(0.95)';
+                            card2.style.transform = 'scale(0.95)';
+                            
+                            // 更新游戏状态
                             state.currentGame.matchedPairs++;
                             state.currentGame.score += 25;
                             state.userData.dailyProgress.memory += 25;
+                            
+                            // 更新UI显示
                             dom.memoryScore.textContent = state.currentGame.score;
                             dom.memoryMatched.textContent = state.currentGame.matchedPairs;
                             
+                            // 重置已翻转卡片数组，解锁游戏
                             state.currentGame.flippedCards = [];
                             state.currentGame.locked = false;
                             
-                            // 检查游戏是否完成
-                            if (state.currentGame.matchedPairs === state.currentGame.totalPairs) {
-                                setTimeout(() => this.showGameResult(), 500);
+                            // 检查游戏是否完成（8对全部匹配）
+                            if (state.currentGame.matchedPairs === 8) {
+                                // 延迟显示结果，确保所有动画完成
+                                setTimeout(() => {
+                                    // 显示通关庆祝动画
+                                    this.showVictoryCelebration();
+                                    // 然后显示游戏结果
+                                    this.showGameResult();
+                                }, 800);
                             }
                         }, 600);
                     } else {
-                        // 匹配失败，翻回
+                        // 匹配失败，添加错误提示动画
+                        card1.classList.add('mismatch');
+                        card2.classList.add('mismatch');
+                        
                         setTimeout(() => {
-                            card1.classList.remove('flipped');
-                            card2.classList.remove('flipped');
+                            // 翻回卡片，移除错误提示
+                            card1.classList.remove('flipped', 'mismatch');
+                            card2.classList.remove('flipped', 'mismatch');
+                            // 重置已翻转卡片数组，解锁游戏
                             state.currentGame.flippedCards = [];
                             state.currentGame.locked = false;
                         }, 1000);
                     }
+                }
+            },
+            
+            // 通关庆祝动画
+            showVictoryCelebration() {
+                // 创建庆祝容器
+                const celebrationContainer = document.createElement('div');
+                celebrationContainer.className = 'fixed inset-0 z-50 pointer-events-none flex items-center justify-center';
+                celebrationContainer.style.background = 'rgba(0, 0, 0, 0.1)';
+                document.body.appendChild(celebrationContainer);
+                
+                // 显示庆祝文字
+                const celebrationText = document.createElement('div');
+                celebrationText.className = 'text-center text-white text-shadow-lg z-10';
+                celebrationText.innerHTML = `
+                    <h2 class="text-5xl font-bold mb-4 animate-pulse">恭喜通关！</h2>
+                    <p class="text-2xl">记忆大师就是你！</p>
+                `;
+                celebrationContainer.appendChild(celebrationText);
+                
+                // 创建烟花效果
+                for (let i = 0; i < 12; i++) {
+                    setTimeout(() => this.createFirework(celebrationContainer), i * 300);
+                }
+                
+                // 创建彩带效果
+                this.createConfetti(celebrationContainer);
+                
+                // 5秒后移除庆祝效果
+                setTimeout(() => {
+                    celebrationContainer.remove();
+                }, 5000);
+            },
+            
+            // 创建烟花效果
+            createFirework(container) {
+                const firework = document.createElement('div');
+                const size = Math.random() * 100 + 50; // 烟花大小
+                const colors = ['#4ade80', '#60a5fa', '#a78bfa', '#f472b6', '#fbbf24'];
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                
+                // 随机位置
+                const left = Math.random() * 100;
+                const top = Math.random() * 60 + 10;
+                
+                firework.className = 'absolute';
+                firework.style.width = size + 'px';
+                firework.style.height = size + 'px';
+                firework.style.left = left + 'vw';
+                firework.style.top = top + 'vh';
+                firework.style.borderRadius = '50%';
+                firework.style.background = color;
+                firework.style.opacity = '0';
+                firework.style.transform = 'scale(0)';
+                firework.style.transition = 'all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1)';
+                
+                container.appendChild(firework);
+                
+                // 开始动画
+                setTimeout(() => {
+                    firework.style.opacity = '0.8';
+                    firework.style.transform = 'scale(1)';
+                    
+                    // 爆炸后逐渐消失
+                    setTimeout(() => {
+                        firework.style.opacity = '0';
+                        firework.style.transform = 'scale(1.5)';
+                        
+                        setTimeout(() => {
+                            firework.remove();
+                        }, 800);
+                    }, 400);
+                }, 10);
+            },
+            
+            // 创建彩带效果
+            createConfetti(container) {
+                const confettiCount = 150;
+                const confettiColors = ['#4ade80', '#60a5fa', '#a78bfa', '#f472b6', '#fbbf24', '#ef4444', '#10b981'];
+                
+                for (let i = 0; i < confettiCount; i++) {
+                    const confetti = document.createElement('div');
+                    const size = Math.random() * 10 + 5;
+                    const color = confettiColors[Math.floor(Math.random() * confettiColors.length)];
+                    
+                    // 随机初始位置和旋转
+                    const left = Math.random() * 100;
+                    const startTop = Math.random() * -20;
+                    const rotate = Math.random() * 360;
+                    
+                    confetti.className = 'absolute';
+                    confetti.style.width = size + 'px';
+                    confetti.style.height = size + 'px';
+                    confetti.style.left = left + 'vw';
+                    confetti.style.top = startTop + 'vh';
+                    confetti.style.backgroundColor = color;
+                    confetti.style.transform = `rotate(${rotate}deg)`;
+                    confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+                    confetti.style.opacity = Math.random() * 0.7 + 0.3;
+                    confetti.style.position = 'absolute';
+                    
+                    container.appendChild(confetti);
+                    
+                    // 彩带飘落动画
+                    const duration = Math.random() * 3 + 2; // 2-5秒
+                    const delay = Math.random() * 2; // 0-2秒延迟
+                    
+                    setTimeout(() => {
+                        let startTime;
+                        const endTop = 120; // 超出屏幕底部
+                        const leftOffset = (Math.random() - 0.5) * 40; // 左右偏移
+                        const rotation = Math.random() * 720; // 旋转角度
+                        
+                        function animate(currentTime) {
+                            if (!startTime) startTime = currentTime;
+                            const progress = (currentTime - startTime) / (duration * 1000);
+                            
+                            if (progress < 1) {
+                                // 缓动函数让动画更自然
+                                const easedProgress = 1 - Math.pow(1 - progress, 3);
+                                
+                                confetti.style.top = (startTop + (endTop - startTop) * easedProgress) + 'vh';
+                                confetti.style.left = (left + leftOffset * easedProgress) + 'vw';
+                                confetti.style.transform = `rotate(${rotate + rotation * easedProgress}deg)`;
+                                
+                                requestAnimationFrame(animate);
+                            } else {
+                                confetti.remove();
+                            }
+                        }
+                        
+                        requestAnimationFrame(animate);
+                    }, delay * 1000);
                 }
             },
             
@@ -5784,6 +8503,31 @@
                 
                 dom.resultScore.textContent = state.currentGame.score;
                 dom.resultTotal.textContent = total;
+                
+                // 为记忆游戏显示游戏信息
+                if (state.currentGame.type === 'memory') {
+                    // 查找或创建游戏信息元素
+                    let gameInfo = document.getElementById('result-difficulty');
+                    if (!gameInfo) {
+                        gameInfo = document.createElement('div');
+                        gameInfo.id = 'result-difficulty';
+                        gameInfo.className = 'mb-4 p-3 bg-blue-50 rounded-lg text-center';
+                        // 插入到结果标题下方
+                        const resultHeader = dom.gameResult.querySelector('.text-3xl.font-bold');
+                        if (resultHeader) {
+                            resultHeader.parentNode.insertBefore(gameInfo, resultHeader.nextSibling);
+                        }
+                    }
+                    gameInfo.innerHTML = `
+                        <p class="text-lg text-gray-700">
+                            <i class="fa fa-star text-blue-500 mr-2"></i>
+                            单词记忆挑战
+                        </p>
+                        <p class="text-sm text-gray-500">
+                            成功匹配了 ${state.currentGame.matchedPairs} 对单词！
+                        </p>
+                    `;
+                }
                 
                 // 根据得分设置反馈
                 let feedback = '';
@@ -5958,11 +8702,9 @@
             // 显示语音设置
             showVoiceSettings() {
                 const modal = dom.voiceModal;
-                const voiceSelect = modal.querySelector('#voice-select');
                 const voiceRate = modal.querySelector('#voice-rate');
                 const voicePitch = modal.querySelector('#voice-pitch');
                 
-                voiceSelect.value = state.userData.voiceSettings.voice;
                 voiceRate.value = state.userData.voiceSettings.rate;
                 voicePitch.value = state.userData.voiceSettings.pitch;
                 
@@ -5972,12 +8714,11 @@
             // 保存语音设置
             saveVoiceSettings() {
                 const modal = dom.voiceModal;
-                const voiceSelect = modal.querySelector('#voice-select');
                 const voiceRate = modal.querySelector('#voice-rate');
                 const voicePitch = modal.querySelector('#voice-pitch');
                 
                 state.userData.voiceSettings = {
-                    voice: voiceSelect.value,
+                    voice: 'default', // 始终使用默认语音
                     rate: parseFloat(voiceRate.value),
                     pitch: parseFloat(voicePitch.value)
                 };
@@ -6055,6 +8796,10 @@
                 
                 // 游戏控制
                 dom.exitGameBtn.addEventListener('click', () => {
+                    this.switchPage('checkin');
+                });
+                
+                dom.exitGame.addEventListener('click', () => {
                     this.switchPage('checkin');
                 });
                 
@@ -6163,10 +8908,431 @@
             }
         };
 
-        // ==================== 启动应用 ====================
+        // ==================== 科技动画效果 ====================
+        
+        // 初始化科技动画效果
+        function initTechEffects() {
+            // 添加科技背景效果
+            generateStars();
+            generateBubbles();
+            
+            // 添加标题动画
+            animateMainTitle();
+            
+            // 添加滚动动画
+            setupScrollAnimations();
+        }
+        
+        // 生成星空背景
+        function generateStars() {
+            const container = document.createElement('div');
+            container.className = 'star-field fixed inset-0 z-[-1] pointer-events-none';
+            document.body.appendChild(container);
+            
+            const starCount = 150;
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('div');
+                star.className = 'star absolute bg-white rounded-full';
+                
+                // 随机位置
+                const x = Math.random() * 100;
+                const y = Math.random() * 100;
+                
+                // 随机大小
+                const size = Math.random() * 3 + 1;
+                
+                // 随机亮度和闪烁动画
+                const opacity = Math.random() * 0.8 + 0.2;
+                const duration = Math.random() * 3 + 2;
+                
+                star.style.left = `${x}%`;
+                star.style.top = `${y}%`;
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                star.style.opacity = opacity;
+                star.style.animation = `twinkle ${duration}s infinite alternate`;
+                
+                container.appendChild(star);
+            }
+        }
+        
+        // 生成气泡动画
+        function generateBubbles() {
+            const container = document.createElement('div');
+            container.className = 'bubbles fixed inset-0 z-[-1] pointer-events-none';
+            document.body.appendChild(container);
+            
+            function createBubble() {
+                const bubble = document.createElement('div');
+                bubble.className = 'bubble absolute rounded-full bg-blue-500 opacity-20';
+                
+                // 随机位置
+                const left = Math.random() * 100;
+                const bottom = -50;
+                
+                // 随机大小
+                const size = Math.random() * 150 + 50;
+                
+                // 随机动画持续时间和延迟
+                const duration = Math.random() * 10 + 15;
+                
+                bubble.style.left = `${left}%`;
+                bubble.style.bottom = `${bottom}px`;
+                bubble.style.width = `${size}px`;
+                bubble.style.height = `${size}px`;
+                bubble.style.animation = `float-up ${duration}s linear infinite`;
+                bubble.style.animationDelay = `${Math.random() * 5}s`;
+                
+                container.appendChild(bubble);
+                
+                // 动画结束后移除气泡
+                setTimeout(() => {
+                    if (bubble.parentNode) {
+                        bubble.parentNode.removeChild(bubble);
+                    }
+                }, duration * 1000);
+            }
+            
+            // 持续生成气泡
+            for (let i = 0; i < 5; i++) {
+                createBubble();
+            }
+            
+            setInterval(createBubble, 3000);
+        }
+        
+        // 动画主标题
+        function animateMainTitle() {
+            const titles = document.querySelectorAll('h1');
+            titles.forEach(title => {
+                title.classList.add('text-glow', 'animate-pulse-slow');
+                
+                // 添加打字机效果
+                const text = title.textContent;
+                title.textContent = '';
+                let index = 0;
+                
+                function typeWriter() {
+                    if (index < text.length) {
+                        title.textContent += text.charAt(index);
+                        index++;
+                        setTimeout(typeWriter, 50);
+                    }
+                }
+                
+                typeWriter();
+            });
+        }
+        
+        // 设置滚动动画
+        function setupScrollAnimations() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('animate-float-up');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1 });
+            
+            document.querySelectorAll('section, .word-card-hover').forEach(el => {
+                el.classList.add('opacity-0', 'transition-all', 'duration-700');
+                observer.observe(el);
+            });
+        }
+        
+        // 为按钮添加科技效果
+        function enhanceButtons() {
+            const buttons = document.querySelectorAll('button');
+            buttons.forEach(btn => {
+                btn.classList.add('tech-button');
+                
+                // 添加悬停效果
+                btn.addEventListener('mouseenter', () => {
+                    btn.style.transform = 'translateY(-3px)';
+                    btn.style.boxShadow = '0 10px 20px rgba(59, 130, 246, 0.4)';
+                });
+                
+                btn.addEventListener('mouseleave', () => {
+                    btn.style.transform = 'translateY(0)';
+                    btn.style.boxShadow = '';
+                });
+            });
+        }
+        
+        // ==================== 启动应用 ====================        
         window.addEventListener('DOMContentLoaded', () => {
+            // 初始化科技动画效果
+            initTechEffects();
+            
+            // 初始化激励和引导系统
+            initMotivationSystem();
+            
+            // 先显示底部小鹿形象
+            setTimeout(() => {
+                const deerCharacters = document.querySelectorAll('#deer-characters-showcase img');
+                deerCharacters.forEach((deer, index) => {
+                    setTimeout(() => {
+                        deer.style.opacity = '1';
+                    }, index * 500); // 每个小鹿形象间隔500ms显示
+                });
+            }, 1000);
+            
+            // 增强按钮效果
+            setTimeout(() => {
+                enhanceButtons();
+            }, 500);
+            
             app.init();
         });
+        
+        // 激励和引导系统
+        function initMotivationSystem() {
+            // 创建庆祝动画容器
+            createCelebrationContainer();
+            
+            // 创建吉祥物角色
+            createMascot();
+            
+            // 设置学习进度更新
+            setupProgressTracking();
+            
+            // 添加学习完成事件监听
+            setupAchievementListeners();
+        }
+        
+        // 创建庆祝动画容器
+        function createCelebrationContainer() {
+            const container = document.createElement('div');
+            container.className = 'celebration-container';
+            document.body.appendChild(container);
+        }
+        
+        // 创建吉祥物角色
+        function createMascot() {
+            // 检查是否已经存在吉祥物
+            if (document.querySelector('.mascot')) return;
+            
+            const mascot = document.createElement('div');
+            mascot.className = 'mascot';
+            mascot.textContent = '🐰'; // 可爱的兔子吉祥物
+            
+            // 添加提示气泡
+            const hintBubble = document.createElement('div');
+            hintBubble.className = 'hint-bubble';
+            hintBubble.textContent = '你好！让我们一起学习单词吧！💪';
+            mascot.appendChild(hintBubble);
+            
+            // 点击吉祥物时切换提示信息
+            const hints = [
+                '加油！你今天学习了几个单词？',
+                '记得每天练习哦！',
+                '哇！你真棒！',
+                '遇到困难时不要放弃！',
+                '学习新单词真有趣！'
+            ];
+            
+            let currentHint = 0;
+            mascot.addEventListener('click', () => {
+                currentHint = (currentHint + 1) % hints.length;
+                hintBubble.textContent = hints[currentHint];
+                
+                // 添加点击动画
+                mascot.style.transform = 'scale(0.9) rotate(10deg)';
+                setTimeout(() => {
+                    mascot.style.transform = 'scale(1) rotate(0)';
+                }, 200);
+            });
+            
+            document.body.appendChild(mascot);
+        }
+        
+        // 设置学习进度跟踪
+        function setupProgressTracking() {
+            // 查找单词卡片数量作为进度基准
+            const wordCards = document.querySelectorAll('.word-card-hover');
+            if (wordCards.length === 0) return;
+            
+            // 创建进度条（如果不存在）
+            if (!document.querySelector('.progress-container')) {
+                const progressSection = document.createElement('div');
+                progressSection.className = 'progress-section';
+                progressSection.innerHTML = `
+                    <div class="progress-container">
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 0%"></div>
+                        </div>
+                        <div class="progress-text">已学习: 0/${wordCards.length} 个单词</div>
+                    </div>
+                `;
+                
+                // 将进度条添加到页面顶部或合适位置
+                const mainContent = document.querySelector('main');
+                if (mainContent) {
+                    mainContent.insertBefore(progressSection, mainContent.firstChild);
+                }
+            }
+            
+            // 定期更新进度
+            updateLearningProgress();
+            setInterval(updateLearningProgress, 2000); // 每2秒更新一次
+        }
+        
+        // 更新学习进度
+        function updateLearningProgress() {
+            const totalCards = document.querySelectorAll('.word-card-hover').length;
+            const learnedCards = document.querySelectorAll('.word-card-hover .learned-badge').length;
+            
+            const progressBar = document.querySelector('.progress-fill');
+            const progressText = document.querySelector('.progress-text');
+            
+            if (progressBar && progressText) {
+                const percentage = totalCards > 0 ? (learnedCards / totalCards) * 100 : 0;
+                progressBar.style.width = `${percentage}%`;
+                progressText.textContent = `已学习: ${learnedCards}/${totalCards} 个单词`;
+                
+                // 当学习完成率达到特定里程碑时显示庆祝动画
+                if (percentage === 25 || percentage === 50 || percentage === 75 || percentage === 100) {
+                    showCelebration();
+                }
+            }
+        }
+        
+        // 设置成就监听器
+        function setupAchievementListeners() {
+            // 为标记学习按钮添加事件监听
+            document.addEventListener('click', (e) => {
+                if (e.target.closest('.learned-btn')) {
+                    const card = e.target.closest('.word-card-hover');
+                    if (card && !card.querySelector('.learned-badge')) {
+                        // 添加已学习徽章
+                        const badge = document.createElement('div');
+                        badge.className = 'learned-badge';
+                        badge.textContent = '已学习';
+                        card.appendChild(badge);
+                        
+                        // 更新进度
+                        updateLearningProgress();
+                        
+                        // 显示小型庆祝效果
+                        showMiniCelebration(card.getBoundingClientRect());
+                    }
+                }
+            });
+        }
+        
+        // 显示大型庆祝动画
+        function showCelebration() {
+            const container = document.querySelector('.celebration-container');
+            if (!container) return;
+            
+            // 清除现有粒子
+            container.innerHTML = '';
+            
+            // 创建庆祝粒子
+            const emojis = ['🎉', '✨', '🌟', '🎊', '💯', '🏆'];
+            const particleCount = 50;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'celebration-particle';
+                particle.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+                
+                // 设置随机位置和动画属性
+                particle.style.left = `${Math.random() * 100}%`;
+                particle.style.setProperty('--duration', `${Math.random() * 2 + 2}s`);
+                particle.style.setProperty('--rotation', `${Math.random() * 720}deg`);
+                particle.style.fontSize = `${Math.random() * 16 + 16}px`;
+                
+                container.appendChild(particle);
+            }
+            
+            // 显示容器并在几秒后隐藏
+            container.classList.add('active');
+            setTimeout(() => {
+                container.classList.remove('active');
+            }, 3000);
+        }
+        
+        // 显示小型庆祝效果
+        function showMiniCelebration(rect) {
+            const container = document.createElement('div');
+            container.style.position = 'fixed';
+            container.style.left = `${rect.left + rect.width / 2}px`;
+            container.style.top = `${rect.top + rect.height / 2}px`;
+            container.style.transform = 'translate(-50%, -50%)';
+            container.style.pointerEvents = 'none';
+            container.style.zIndex = '9999';
+            container.style.width = '100px';
+            container.style.height = '100px';
+            
+            const emojis = ['👍', '✨', '🌟', '✅'];
+            
+            // 创建小型粒子
+            for (let i = 0; i < 8; i++) {
+                const particle = document.createElement('div');
+                particle.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+                particle.style.position = 'absolute';
+                particle.style.left = '50%';
+                particle.style.top = '50%';
+                particle.style.transform = 'translate(-50%, -50%)';
+                particle.style.fontSize = '20px';
+                particle.style.opacity = '0';
+                
+                container.appendChild(particle);
+                
+                // 设置动画
+                setTimeout(() => {
+                    const angle = (i / 8) * Math.PI * 2;
+                    const distance = 50;
+                    
+                    particle.style.transition = 'all 0.8s ease-out';
+                    particle.style.transform = `translate(calc(-50% + ${Math.cos(angle) * distance}px), calc(-50% + ${Math.sin(angle) * distance}px))`;
+                    particle.style.opacity = '1';
+                    
+                    setTimeout(() => {
+                        particle.style.opacity = '0';
+                    }, 600);
+                }, 10);
+            }
+            
+            document.body.appendChild(container);
+            
+            // 清理
+            setTimeout(() => {
+                document.body.removeChild(container);
+            }, 1500);
+        }
+        
+        // 检查学习目标完成情况
+        function checkGoalCompletion() {
+            const totalCards = document.querySelectorAll('.word-card-hover').length;
+            const learnedCards = document.querySelectorAll('.word-card-hover .learned-badge').length;
+            
+            // 如果完成了所有单词学习，显示特殊庆祝
+            if (totalCards > 0 && learnedCards === totalCards) {
+                // 创建完成徽章
+                const completionCard = document.createElement('div');
+                completionCard.className = 'goal-card';
+                completionCard.innerHTML = `
+                    <div class="completion-badge">🏆</div>
+                    <h4>🎉 恭喜你！</h4>
+                    <p>你已经完成了今天所有的单词学习！太棒了！</p>
+                    <button class="interactive-hint-btn">
+                        📚 继续挑战更多单词
+                    </button>
+                `;
+                
+                // 添加到页面
+                const mainContent = document.querySelector('main');
+                if (mainContent) {
+                    mainContent.appendChild(completionCard);
+                }
+                
+                // 显示大型庆祝
+                showCelebration();
+            }
+        }
     </script>
 </body>
 </html>
