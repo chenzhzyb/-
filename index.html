@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>小鹿AI编程全能英语词汇库-优秀学员专属</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -49,6 +49,23 @@
     </script>
     
     <style>
+        /* 基础响应式样式 */
+        html, body {
+            overflow-x: hidden;
+            width: 100%;
+        }
+        
+        body {
+            font-size: 16px;
+            line-height: 1.6;
+        }
+        
+        h1, h2, h3, h4, h5, h6 {
+            word-wrap: break-word;
+            hyphens: auto;
+            overflow-wrap: break-word;
+        }
+        
         /* 自定义滚动条 */
         ::-webkit-scrollbar {
             width: 8px;
@@ -1123,7 +1140,7 @@
             font-size: 1.1rem;
         }
         
-        /* 吉祥物角色 */
+        /* 吉祥物角色 - 响应式优化 */
         .mascot {
             position: fixed;
             bottom: 2rem;
@@ -1140,6 +1157,7 @@
             cursor: pointer;
             transition: all 0.4s ease;
             z-index: 100;
+            pointer-events: auto;
         }
         
         .mascot:hover {
@@ -1148,7 +1166,7 @@
             animation: bounce 1s infinite;
         }
         
-        /* 提示气泡 */
+        /* 提示气泡 - 响应式优化 */
         .hint-bubble {
             position: absolute;
             bottom: 130%;
@@ -1164,6 +1182,8 @@
             visibility: hidden;
             transition: all 0.3s ease;
             border: 2px solid var(--primary-kid);
+            word-wrap: break-word;
+            z-index: 101;
         }
         
         .mascot:hover .hint-bubble {
