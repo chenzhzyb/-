@@ -8063,7 +8063,8 @@
             },
             currentPage: 'home',
             currentCategory: 'all',
-            selectedGrade: 'all'
+            selectedGrade: 'all',
+            eventsInitialized: false // 标记事件是否已经初始化
         };
 
         // ==================== DOM 元素缓存 ====================
@@ -9253,6 +9254,12 @@
                     p.classList.add('hidden');
                 });
                 
+                // 隐藏成就页面（如果存在）
+                const achievementsPage = document.getElementById('achievements-page');
+                if (achievementsPage) {
+                    achievementsPage.classList.add('hidden');
+                }
+                
                 // 显示目标页面
                 switch(page) {
                     case 'home':
@@ -9260,6 +9267,7 @@
                         break;
                     case 'library':
                         dom.libraryPage.classList.remove('hidden');
+                        this.generateCategoryTags(); // 每次切换到词汇库页面时重新生成分类标签
                         this.searchWords();
                         break;
                     case 'checkin':
@@ -9268,6 +9276,9 @@
                         break;
                     case 'game':
                         dom.gamePage.classList.remove('hidden');
+                        break;
+                    case 'achievements':
+                        this.showAchievements();
                         break;
                 }
                 
@@ -10809,6 +10820,12 @@
             
             // 初始化事件监听
             initEvents() {
+                // 检查是否已经初始化过事件监听
+                if (state.eventsInitialized) {
+                    console.log('事件监听已经初始化，跳过重复初始化...');
+                    return;
+                }
+                
                 console.log('初始化事件监听...');
                 
                 // 为所有按钮添加波纹效果
@@ -10974,13 +10991,6 @@
                     this.showUserInfo();
                 });
                 
-                // 成就
-                document.querySelectorAll('[data-nav="achievements"]').forEach(btn => {
-                    btn.addEventListener('click', () => {
-                        this.showAchievements();
-                    });
-                });
-                
                 // 模态框关闭按钮
                 document.querySelectorAll('.modal-close, .modal .btn-outline').forEach(btn => {
                     btn.addEventListener('click', () => {
@@ -10996,6 +11006,9 @@
                         }
                     });
                 });
+                
+                // 标记事件已经初始化
+                state.eventsInitialized = true;
             },
             
             // 附加单词卡片事件
