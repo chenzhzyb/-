@@ -9063,6 +9063,21 @@
                 speechSynthesis.speak(utterance);
             },
             
+            // 更新导航按钮状态
+            updateNavButtonStatus(activePage) {
+                document.querySelectorAll('[data-nav]').forEach(btn => {
+                    btn.classList.remove('text-blue-600');
+                    btn.classList.add('text-gray-500');
+                });
+                
+                // 为当前激活的页面按钮添加激活样式
+                const activeBtn = document.querySelector(`[data-nav="${activePage}"]`);
+                if (activeBtn) {
+                    activeBtn.classList.remove('text-gray-500');
+                    activeBtn.classList.add('text-blue-600');
+                }
+            },
+            
             // 切换页面
             switchPage(page) {
                 // 隐藏所有页面
@@ -10654,20 +10669,38 @@
                 
                 // 导航按钮
                 document.querySelectorAll('[data-nav]').forEach(btn => {
+                    // 添加点击事件监听器
                     btn.addEventListener('click', (event) => {
                         // 阻止默认行为，防止页面刷新
                         event.preventDefault();
+                        // 阻止事件冒泡，防止父元素的事件处理器影响
+                        event.stopPropagation();
                         
                         const page = btn.getAttribute('data-nav');
                         this.switchPage(page);
                         
                         // 更新导航按钮状态
-                        document.querySelectorAll('[data-nav]').forEach(b => {
-                            b.classList.remove('text-blue-600');
-                            b.classList.add('text-gray-500');
-                        });
-                        btn.classList.remove('text-gray-500');
-                        btn.classList.add('text-blue-600');
+                        this.updateNavButtonStatus(page);
+                    });
+                    
+                    // 添加触摸事件监听器，支持移动端
+                    btn.addEventListener('touchstart', (event) => {
+                        // 阻止默认的触摸行为（如页面滚动）
+                        event.preventDefault();
+                        event.stopPropagation();
+                    });
+                    
+                    btn.addEventListener('touchend', (event) => {
+                        // 阻止默认行为，防止页面刷新
+                        event.preventDefault();
+                        // 阻止事件冒泡
+                        event.stopPropagation();
+                        
+                        const page = btn.getAttribute('data-nav');
+                        this.switchPage(page);
+                        
+                        // 更新导航按钮状态
+                        this.updateNavButtonStatus(page);
                     });
                 });
                 
