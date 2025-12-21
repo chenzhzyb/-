@@ -515,6 +515,122 @@
             transition: all 0.3s ease;
         }
         
+        /* 游戏卡片增强效果 */
+        .game-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .game-card:hover {
+            transform: translateY(-8px) scale(1.03);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        /* 按钮点击波纹效果 */
+        .btn-ripple {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-ripple::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+        
+        .btn-ripple:active::after {
+            width: 300px;
+            height: 300px;
+        }
+        
+        /* 卡片浮动动画 */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        .game-card.float-animation {
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        /* 游戏容器响应式优化 */
+        #game-page .bg-white {
+            padding: 1rem;
+            margin: 0.5rem;
+            border-radius: 1rem;
+        }
+        
+        /* 游戏标题响应式优化 */
+        #game-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        
+        #game-description {
+            font-size: 1rem;
+            color: #6b7280;
+        }
+        
+        /* 响应式游戏卡片网格 */
+        #matching-cards, #memory-cards {
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 1rem;
+        }
+        
+        /* 游戏结果动画 */
+        @keyframes resultAppear {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        
+        #game-result {
+            animation: resultAppear 0.5s ease-out;
+        }
+        
+        /* 游戏按钮响应式优化 */
+        .game-button {
+            min-height: 44px;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 500;
+            border-radius: 0.5rem;
+            transition: all 0.2s ease;
+        }
+        
+        /* 移动端游戏优化 */
+        @media (max-width: 768px) {
+            /* 游戏卡片适配 */
+            #listening-options {
+                grid-template-columns: 1fr !important;
+                gap: 1rem !important;
+            }
+            
+            /* 拼写游戏键盘优化 */
+            #spelling-keyboard {
+                grid-template-columns: repeat(6, 1fr) !important;
+                gap: 0.5rem !important;
+            }
+            
+            /* 游戏结果适配 */
+            #game-result {
+                padding: 1rem;
+            }
+        }
+        
         /* 标签美化 */
         .category-tag {
             transition: all 0.3s ease;
@@ -801,6 +917,16 @@
         .word-card-hover .example {
             word-wrap: break-word;
             overflow-wrap: break-word;
+            white-space: normal;
+            line-height: 1.5;
+        }
+        
+        /* 确保例句和翻译文本正常换行 */
+        .word-card-hover p {
+            white-space: normal !important;
+            word-break: break-word;
+            overflow-wrap: break-word;
+            hyphens: auto;
         }
         
         /* 响应式单词卡片文字大小 */
@@ -2600,6 +2726,248 @@
             transform: translateY(0) scale(0.98);
             box-shadow: 0 3px 6px rgba(79, 70, 229, 0.2);
         }
+        
+        /* 拼写游戏样式 */
+        .spelling-letter {
+            transition: all 0.2s ease;
+        }
+        
+        .spelling-letter.filled {
+            background-color: #ebf8ff;
+            border-color: #3182ce;
+        }
+        
+        .spelling-key {
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+        
+        /* 连连看游戏样式 */
+        .matching-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, white, #f8fafc);
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #1e293b;
+        }
+        
+        /* 卡片悬停效果 */
+        .matching-card:hover {
+            transform: translateY(-5px) scale(1.05);
+            border-color: #3b82f6;
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.2), 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        
+        /* 卡片背景光效 */
+        .matching-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(59, 130, 246, 0.2), transparent);
+            transform: rotate(45deg);
+            transition: all 0.8s ease;
+            opacity: 0;
+            z-index: 0;
+        }
+        
+        .matching-card:hover::before {
+            opacity: 1;
+            transform: rotate(45deg) translateX(20%);
+        }
+        
+        /* 卡片内容层级 */
+        .matching-card span {
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* 选中状态动画 - 更显眼 */
+        .matching-card.selected {
+            background-color: #ebf8ff;
+            border: 4px solid #3b82f6;
+            transform: scale(1.15) translateY(-8px);
+            box-shadow: 0 15px 35px rgba(59, 130, 246, 0.5), 0 0 0 6px rgba(59, 130, 246, 0.2);
+            animation: selectedPulse 0.6s ease-in-out;
+            z-index: 5;
+        }
+        
+        @keyframes selectedPulse {
+            0%, 100% {
+                transform: scale(1.1) translateY(-8px);
+                box-shadow: 0 10px 25px rgba(59, 130, 246, 0.4), 0 0 0 4px rgba(59, 130, 246, 0.15);
+            }
+            50% {
+                transform: scale(1.25) translateY(-12px);
+                box-shadow: 0 18px 40px rgba(59, 130, 246, 0.6), 0 0 0 8px rgba(59, 130, 246, 0.25);
+            }
+        }
+        
+        /* 匹配成功动画 - 更生动 */
+        .matching-card.matched {
+            transform: scale(1.3) rotate(15deg);
+            box-shadow: 0 0 35px rgba(16, 185, 129, 0.8), 0 0 0 8px rgba(16, 185, 129, 0.3);
+            animation: matchedBounce 1s ease-out forwards;
+            background-color: #dcfce7;
+            border-color: #10b981;
+        }
+        
+        @keyframes matchedBounce {
+            0% {
+                transform: scale(1.1) rotate(0deg);
+                opacity: 1;
+                box-shadow: 0 0 0 rgba(16, 185, 129, 0.8);
+            }
+            25% {
+                transform: scale(1.5) rotate(8deg);
+                opacity: 0.9;
+                box-shadow: 0 0 25px rgba(16, 185, 129, 0.9), 0 0 0 6px rgba(16, 185, 129, 0.3);
+            }
+            50% {
+                transform: scale(1.6) rotate(0deg);
+                opacity: 0.7;
+                box-shadow: 0 0 40px rgba(16, 185, 129, 1), 0 0 0 10px rgba(16, 185, 129, 0.4);
+            }
+            75% {
+                transform: scale(1.5) rotate(-8deg);
+                opacity: 0.4;
+                box-shadow: 0 0 25px rgba(16, 185, 129, 0.7), 0 0 0 6px rgba(16, 185, 129, 0.3);
+            }
+            100% {
+                transform: scale(1.4) rotate(0deg);
+                opacity: 0;
+                box-shadow: 0 0 10px rgba(16, 185, 129, 0.4), 0 0 0 2px rgba(16, 185, 129, 0.2);
+            }
+        }
+        
+        /* 不匹配状态动画 - 更明显的摇晃 */
+        .matching-card.mismatch {
+            animation: mismatchShake 0.7s ease-in-out;
+            background-color: #fee2e2;
+            border: 4px solid #ef4444;
+            box-shadow: 0 8px 25px rgba(239, 68, 68, 0.3), 0 0 0 4px rgba(239, 68, 68, 0.15);
+        }
+        
+        @keyframes mismatchShake {
+            0%, 100% {
+                transform: translateX(0) rotate(0deg);
+                box-shadow: 0 8px 25px rgba(239, 68, 68, 0.3);
+            }
+            10% {
+                transform: translateX(-15px) rotate(-5deg);
+                box-shadow: 0 8px 30px rgba(239, 68, 68, 0.4);
+            }
+            20% {
+                transform: translateX(15px) rotate(5deg);
+                box-shadow: 0 8px 30px rgba(239, 68, 68, 0.4);
+            }
+            30% {
+                transform: translateX(-12px) rotate(-4deg);
+                box-shadow: 0 8px 30px rgba(239, 68, 68, 0.4);
+            }
+            40% {
+                transform: translateX(12px) rotate(4deg);
+                box-shadow: 0 8px 30px rgba(239, 68, 68, 0.4);
+            }
+            50% {
+                transform: translateX(-10px) rotate(-3deg);
+                box-shadow: 0 8px 30px rgba(239, 68, 68, 0.4);
+            }
+            60% {
+                transform: translateX(10px) rotate(3deg);
+                box-shadow: 0 8px 30px rgba(239, 68, 68, 0.4);
+            }
+            70% {
+                transform: translateX(-8px) rotate(-2deg);
+                box-shadow: 0 8px 30px rgba(239, 68, 68, 0.4);
+            }
+            80% {
+                transform: translateX(8px) rotate(2deg);
+                box-shadow: 0 8px 30px rgba(239, 68, 68, 0.4);
+            }
+            90% {
+                transform: translateX(-5px) rotate(-1deg);
+                box-shadow: 0 8px 30px rgba(239, 68, 68, 0.4);
+            }
+        }
+        
+        /* 连接线动画 - 更显眼 */
+        .matching-line {
+            position: absolute;
+            height: 6px;
+            background: linear-gradient(90deg, #10b981, #34d399, #10b981);
+            z-index: 10;
+            animation: lineGrow 0.7s ease-out forwards;
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.9), 0 0 0 2px rgba(16, 185, 129, 0.5);
+            border-radius: 3px;
+            pointer-events: none;
+        }
+        
+        @keyframes lineGrow {
+            from {
+                width: 0;
+                opacity: 0;
+                transform: scaleX(0);
+            }
+            50% {
+                opacity: 1;
+                transform: scaleX(1.05);
+            }
+            100% {
+                width: 100%;
+                opacity: 1;
+                transform: scaleX(1);
+            }
+        }
+        
+        /* 连接线消失动画 */
+        .matching-line.fade-out {
+            animation: lineFadeOut 0.5s ease-out forwards;
+        }
+        
+        @keyframes lineFadeOut {
+            from {
+                opacity: 1;
+                transform: scaleX(1);
+            }
+            to {
+                opacity: 0;
+                transform: scaleX(1.1);
+            }
+        }
+        
+        /* 游戏响应式优化 */
+        @media (max-width: 640px) {
+            /* 拼写游戏键盘响应式 */
+            #spelling-keyboard {
+                grid-template-columns: repeat(6, 1fr) !important;
+                gap: 0.5rem !important;
+            }
+            
+            .spelling-key {
+                padding: 0.5rem !important;
+                font-size: 0.9rem !important;
+            }
+            
+            /* 连连看卡片响应式 */
+            #matching-cards {
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 1rem !important;
+            }
+            
+            .matching-card {
+                padding: 2rem !important;
+            }
+        }
     </style>
 </head>
 <body class="bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 font-sans min-h-screen relative">
@@ -2974,19 +3342,35 @@
                                 <h3 class="text-xl font-semibold">今日进度</h3>
                                 <span class="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full" id="checkin-date"></span>
                             </div>
-                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-                                <div class="text-center p-4 bg-blue-50 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 hover:translate-y-[-3px]">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
+                                <div class="text-center p-4 bg-blue-50 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 hover:translate-y-[-3px] hover:scale-[1.02]">
                                     <div class="text-2xl font-bold text-blue-600 mb-1" id="daily-words-learned">0</div>
                                     <div class="text-sm text-gray-600">已学单词</div>
                                 </div>
-                                <div class="text-center p-4 bg-green-50 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 hover:translate-y-[-3px]">
+                                <div class="text-center p-4 bg-green-50 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 hover:translate-y-[-3px] hover:scale-[1.02]">
                                     <div class="text-2xl font-bold text-green-600 mb-1" id="daily-listening-score">0</div>
                                     <div class="text-sm text-gray-600">听力得分</div>
                                 </div>
-                                <div class="text-center p-4 bg-yellow-50 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 hover:translate-y-[-3px]">
+                                <div class="text-center p-4 bg-yellow-50 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 hover:translate-y-[-3px] hover:scale-[1.02]">
                                     <div class="text-2xl font-bold text-yellow-600 mb-1" id="daily-memory-score">0</div>
                                     <div class="text-sm text-gray-600">记忆得分</div>
                                 </div>
+                                <div class="text-center p-4 bg-purple-50 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 hover:translate-y-[-3px] hover:scale-[1.02]">
+                                    <div class="text-2xl font-bold text-purple-600 mb-1" id="daily-spelling-score">0</div>
+                                    <div class="text-sm text-gray-600">拼写得分</div>
+                                </div>
+                                <div class="text-center p-4 bg-orange-50 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 hover:translate-y-[-3px] hover:scale-[1.02]">
+                                    <div class="text-2xl font-bold text-orange-600 mb-1" id="daily-matching-score">0</div>
+                                    <div class="text-sm text-gray-600">连连看得分</div>
+                                </div>
+                            </div>
+                            
+                            <!-- 完成打卡按钮 - 移到更显眼的位置 -->
+                            <div class="mb-6">
+                                <button id="complete-checkin" class="btn-primary w-full py-4 rounded-xl text-xl font-bold disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 transition-all duration-300 transform hover:shadow-2xl bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg" disabled>
+                                    <i class="fa fa-check mr-2"></i>完成今日打卡
+                                </button>
+                                <p class="text-center text-sm text-gray-500 mt-2">学习完10个单词即可打卡</p>
                             </div>
                         </div>
                         
@@ -3025,33 +3409,67 @@
                         <div class="mb-8 animate-float-up">
                             <h3 class="text-xl font-semibold mb-4">趣味练习</h3>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div class="bg-gradient-to-r from-blue-50 to-blue-100 rounded-xl p-6 border border-blue-200 shadow-sm hover:shadow-md transition-all duration-300 hover:translate-y-[-3px]">
+                                <div class="bg-gradient-to-r from-blue-50 to-blue-100 rounded-xl p-6 border border-blue-200 shadow-sm transition-all duration-300 game-card hover:rotate-[2deg] hover:shadow-2xl">
                                     <div class="flex items-center mb-4">
-                                        <div class="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center mr-4 hover:scale-110 transition-transform duration-200">
-                                            <i class="fa fa-headphones text-white text-xl"></i>
+                                        <div class="w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center mr-4 hover:scale-110 transition-transform duration-200 animate-pulse-slow">
+                                            <i class="fa fa-headphones text-white text-2xl"></i>
                                         </div>
                                         <div>
-                                            <h4 class="font-semibold text-lg">听音辨义</h4>
+                                            <h4 class="font-semibold text-xl text-blue-800">听音辨义</h4>
                                             <p class="text-sm text-gray-600">听单词发音，选择正确的中文意思</p>
                                         </div>
                                     </div>
-                                    <button id="start-listening-game" class="btn-primary w-full py-3 rounded-lg hover:scale-105 transition-transform duration-200">
-                                        <i class="fa fa-play mr-2"></i>开始练习
+                                    <button id="start-listening-game" class="btn-primary w-full py-3 rounded-lg hover:scale-105 transition-transform duration-200 btn-ripple relative overflow-hidden group">
+                                        <span class="relative z-10 flex items-center justify-center"><i class="fa fa-play mr-2"></i>开始练习</span>
+                                        <span class="absolute inset-0 bg-gradient-to-r from-blue-600 to-blue-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
                                     </button>
                                 </div>
                                 
-                                <div class="bg-gradient-to-r from-green-50 to-green-100 rounded-xl p-6 border border-green-200 shadow-sm hover:shadow-md transition-all duration-300 hover:translate-y-[-3px]">
+                                <div class="bg-gradient-to-r from-green-50 to-green-100 rounded-xl p-6 border border-green-200 shadow-sm transition-all duration-300 game-card hover:-rotate-[2deg] hover:shadow-2xl">
                                     <div class="flex items-center mb-4">
-                                        <div class="w-12 h-12 bg-green-500 rounded-lg flex items-center justify-center mr-4 hover:scale-110 transition-transform duration-200">
-                                            <i class="fa fa-brain text-white text-xl"></i>
+                                        <div class="w-14 h-14 bg-gradient-to-br from-green-500 to-green-600 rounded-full flex items-center justify-center mr-4 hover:scale-110 transition-transform duration-200 animate-pulse-slow">
+                                            <i class="fa fa-brain text-white text-2xl"></i>
                                         </div>
                                         <div>
-                                            <h4 class="font-semibold text-lg">单词记忆</h4>
+                                            <h4 class="font-semibold text-xl text-green-800">单词记忆</h4>
                                             <p class="text-sm text-gray-600">翻转卡片，匹配英文单词和中文意思</p>
                                         </div>
                                     </div>
-                                    <button id="start-memory-game" class="btn-primary w-full py-3 rounded-lg hover:scale-105 transition-transform duration-200">
-                                        <i class="fa fa-play mr-2"></i>开始练习
+                                    <button id="start-memory-game" class="btn-primary w-full py-3 rounded-lg hover:scale-105 transition-transform duration-200 btn-ripple relative overflow-hidden group">
+                                        <span class="relative z-10 flex items-center justify-center"><i class="fa fa-play mr-2"></i>开始练习</span>
+                                        <span class="absolute inset-0 bg-gradient-to-r from-green-600 to-green-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
+                                    </button>
+                                </div>
+                                
+                                <div class="bg-gradient-to-r from-purple-50 to-purple-100 rounded-xl p-6 border border-purple-200 shadow-sm transition-all duration-300 game-card hover:rotate-[2deg] hover:shadow-2xl">
+                                    <div class="flex items-center mb-4">
+                                        <div class="w-14 h-14 bg-gradient-to-br from-purple-500 to-purple-600 rounded-full flex items-center justify-center mr-4 hover:scale-110 transition-transform duration-200 animate-pulse-slow">
+                                            <i class="fa fa-keyboard text-white text-2xl"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-semibold text-xl text-purple-800">单词拼写</h4>
+                                            <p class="text-sm text-gray-600">根据中文意思，拼写英文单词</p>
+                                        </div>
+                                    </div>
+                                    <button id="start-spelling-game" class="btn-primary w-full py-3 rounded-lg hover:scale-105 transition-transform duration-200 btn-ripple relative overflow-hidden group">
+                                        <span class="relative z-10 flex items-center justify-center"><i class="fa fa-play mr-2"></i>开始练习</span>
+                                        <span class="absolute inset-0 bg-gradient-to-r from-purple-600 to-purple-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
+                                    </button>
+                                </div>
+                                
+                                <div class="bg-gradient-to-r from-yellow-50 to-yellow-100 rounded-xl p-6 border border-yellow-200 shadow-sm transition-all duration-300 game-card hover:-rotate-[2deg] hover:shadow-2xl">
+                                    <div class="flex items-center mb-4">
+                                        <div class="w-14 h-14 bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-full flex items-center justify-center mr-4 hover:scale-110 transition-transform duration-200 animate-pulse-slow">
+                                            <i class="fa fa-link text-white text-2xl"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-semibold text-xl text-yellow-800">单词连连看</h4>
+                                            <p class="text-sm text-gray-600">将英文单词与中文意思配对</p>
+                                        </div>
+                                    </div>
+                                    <button id="start-matching-game" class="btn-primary w-full py-3 rounded-lg hover:scale-105 transition-transform duration-200 btn-ripple relative overflow-hidden group">
+                                        <span class="relative z-10 flex items-center justify-center"><i class="fa fa-play mr-2"></i>开始练习</span>
+                                        <span class="absolute inset-0 bg-gradient-to-r from-yellow-600 to-yellow-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
                                     </button>
                                 </div>
                             </div>
@@ -3061,9 +3479,6 @@
                         <div class="flex flex-col sm:flex-row justify-between items-center pt-6 border-t border-gray-200 gap-4">
                             <button data-nav="home" class="flex items-center px-5 py-2.5 text-gray-600 hover:text-blue-600 transition-colors duration-200 hover:scale-105 transition-transform duration-200">
                                 <i class="fa fa-arrow-left mr-2"></i>返回主页
-                            </button>
-                            <button id="complete-checkin" class="btn-primary flex items-center px-6 py-3 rounded-lg text-lg disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 transition-transform duration-200" disabled>
-                                完成打卡<i class="fa fa-check ml-2"></i>
                             </button>
                         </div>
                     </div>
@@ -3205,6 +3620,72 @@
                             <!-- 卡片网格 -->
                             <div id="memory-cards" class="grid grid-cols-4 gap-4 sm:grid-cols-4 md:grid-cols-4 gap-4">
                                 <!-- 卡片将通过JavaScript动态生成 -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 单词拼写游戏 -->
+                    <div id="spelling-game" class="hidden">
+                        <div class="max-w-2xl mx-auto">
+                            <div class="text-center mb-8">
+                                <h3 class="text-xl font-semibold text-gray-700 mb-4">根据中文意思拼写单词</h3>
+                                <div class="bg-gradient-to-r from-purple-50 to-indigo-50 p-6 rounded-2xl mb-6">
+                                    <p id="spelling-meaning" class="text-2xl font-bold text-purple-700">中文意思</p>
+                                    <p id="spelling-hint" class="text-sm text-gray-500 mt-2">提示：单词长度为 X 个字母</p>
+                                </div>
+                                <div class="mb-6">
+                                    <div id="spelling-word" class="flex justify-center gap-2 mb-4">
+                                        <!-- 拼写格子将通过JavaScript动态生成 -->
+                                    </div>
+                                    <div id="spelling-keyboard" class="grid grid-cols-8 gap-2 max-w-2xl mx-auto">
+                                        <!-- 键盘将通过JavaScript动态生成 -->
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- 游戏状态 -->
+                            <div class="flex flex-wrap justify-between items-center bg-gray-50 p-4 rounded-xl">
+                                <div class="flex items-center mb-2 md:mb-0">
+                                    <span class="font-medium text-gray-700 mr-2">得分:</span>
+                                    <span id="spelling-score" class="text-2xl font-bold text-purple-600">0</span>
+                                    <span class="mx-2 text-gray-500">/</span>
+                                    <span id="spelling-total" class="text-lg">10</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <span class="font-medium text-gray-700 mr-2">进度:</span>
+                                    <span id="spelling-progress" class="text-lg font-semibold">0</span>
+                                    <span class="mx-2 text-gray-500">/</span>
+                                    <span id="spelling-total-progress" class="text-lg">10</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 单词连连看游戏 -->
+                    <div id="matching-game" class="hidden">
+                        <div class="max-w-4xl mx-auto">
+                            <div class="text-center mb-8">
+                                <h3 class="text-xl font-semibold text-gray-700 mb-4">将英文单词与中文意思配对</h3>
+                            </div>
+                            
+                            <div id="matching-cards" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mb-8">
+                                <!-- 连连看卡片将通过JavaScript动态生成 -->
+                            </div>
+                            
+                            <!-- 游戏状态 -->
+                            <div class="flex flex-wrap justify-between items-center bg-gray-50 p-4 rounded-xl">
+                                <div class="flex items-center mb-2 md:mb-0">
+                                    <span class="font-medium text-gray-700 mr-2">得分:</span>
+                                    <span id="matching-score" class="text-2xl font-bold text-green-600">0</span>
+                                    <span class="mx-2 text-gray-500">/</span>
+                                    <span id="matching-total" class="text-lg">10</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <span class="font-medium text-gray-700 mr-2">匹配对数:</span>
+                                    <span id="matching-matched" class="text-lg font-semibold">0</span>
+                                    <span class="mx-2 text-gray-500">/</span>
+                                    <span id="matching-total-pairs" class="text-lg">8</span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -3597,7 +4078,7 @@
 { "word": "abnormal", "phonetic": "/æbˈnɔːml/", "meaning": "反常的", "example": "This weather is abnormal for June.", "translation": "六月这种天气不正常。", "categories": ["形容词"], "difficulty": 3 },
 { "word": "aboard", "phonetic": "/əˈbɔːd/", "meaning": "在船上；上船", "example": "Welcome aboard the flight.", "translation": "欢迎登机。", "categories": ["副词", "介词"], "difficulty": 2 },
 { "word": "abolish", "phonetic": "/əˈbɒlɪʃ/", "meaning": "废除", "example": "They want to abolish the law.", "translation": "他们想废除这项法律。", "categories": ["动词"], "difficulty": 3 },
-{ "word": "abortion", "phonetic": "/əˈbɔːʃn/", "meaning": "流产", "example": "The topic of abortion is sensitive.", "translation": "流产这个话题很敏感。", "categories": ["名词"], "difficulty": 3 },
+
 { "word": "about", "phonetic": "/əˈbaʊt/", "meaning": "关于；大约", "example": "Tell me about your trip.", "translation": "跟我说说你的旅行。", "categories": ["副词", "介词"], "difficulty": 1 },
 { "word": "above", "phonetic": "/əˈbʌv/", "meaning": "在……上方", "example": "The lamp is above the table.", "translation": "灯在桌子上方。", "categories": ["介词"], "difficulty": 1 },
 { "word": "abroad", "phonetic": "/əˈbrɔːd/", "meaning": "在国外", "example": "She studied abroad last year.", "translation": "她去年在国外学习。", "categories": ["副词"], "difficulty": 2 },
@@ -7545,7 +8026,10 @@
             { id: "word-master", title: "单词大师", description: "学习50个单词", icon: "fa-book", color: "text-blue-500", unlocked: false },
             { id: "listening-pro", title: "听力达人", description: "听音辨义游戏得分100", icon: "fa-headphones", color: "text-purple-500", unlocked: false },
             { id: "memory-king", title: "记忆之王", description: "记忆游戏全部匹配正确", icon: "fa-braille", color: "text-yellow-500", unlocked: false },
-            { id: "vocabulary-builder", title: "词汇构建者", description: "学习100个单词", icon: "fa-cubes", color: "text-indigo-500", unlocked: false }
+            { id: "spelling-master", title: "拼写大师", description: "拼写游戏得分100", icon: "fa-keyboard-o", color: "text-pink-500", unlocked: false },
+            { id: "matching-master", title: "连连看大师", description: "连连看游戏全部匹配正确", icon: "fa-link", color: "text-green-500", unlocked: false },
+            { id: "vocabulary-builder", title: "词汇构建者", description: "学习100个单词", icon: "fa-cubes", color: "text-indigo-500", unlocked: false },
+            { id: "game-master", title: "游戏大师", description: "完成所有游戏类型", icon: "fa-gamepad", color: "text-red-500", unlocked: false }
         ];
 
         // ==================== 状态管理 ====================
@@ -7557,7 +8041,7 @@
                 weeklyLearning: Array(7).fill(0),
                 voiceSettings: { voice: 'default', rate: 1, pitch: 1, voiceType: 'default' },
                 achievements: [...achievements],
-                dailyProgress: { words: 0, listening: 0, memory: 0 }
+                dailyProgress: { words: 0, listening: 0, memory: 0, spelling: 0, matching: 0 }
             },
             currentGame: {
                 type: null,
@@ -7567,12 +8051,15 @@
                 matchedPairs: 0,
                 totalPairs: 0,
                 flippedCards: [],
-                locked: false
+                locked: false,
+                selectedCards: []
             },
             dailyCheckin: {
                 words: [],
                 listeningCompleted: false,
-                memoryCompleted: false
+                memoryCompleted: false,
+                spellingCompleted: false,
+                matchingCompleted: false
             },
             currentPage: 'home',
             currentCategory: 'all',
@@ -7614,6 +8101,8 @@
             dailyWordsLearned: document.getElementById('daily-words-learned'),
             dailyListeningScore: document.getElementById('daily-listening-score'),
             dailyMemoryScore: document.getElementById('daily-memory-score'),
+            dailySpellingScore: document.getElementById('daily-spelling-score'),
+            dailyMatchingScore: document.getElementById('daily-matching-score'),
             dailyWordsContainer: document.getElementById('daily-words-container'),
             completeCheckinBtn: document.getElementById('complete-checkin'),
             gradeSelectBtn: document.getElementById('grade-select-btn'),
@@ -7628,6 +8117,8 @@
             exitGame: document.getElementById('exit-game'),
             listeningGame: document.getElementById('listening-game'),
             memoryGame: document.getElementById('memory-game'),
+            spellingGame: document.getElementById('spelling-game'),
+            matchingGame: document.getElementById('matching-game'),
             gameResult: document.getElementById('game-result'),
             listeningWordDisplay: document.getElementById('listening-word-display'),
             playWordAudioBtn: document.getElementById('play-word-audio'),
@@ -7640,6 +8131,20 @@
             memoryMatched: document.getElementById('memory-matched'),
             memoryTotal: document.getElementById('memory-total'),
             memoryCards: document.getElementById('memory-cards'),
+            // 拼写游戏元素
+            spellingScore: document.getElementById('spelling-score'),
+            spellingProgress: document.getElementById('spelling-progress'),
+            spellingMeaning: document.getElementById('spelling-meaning'),
+            spellingHint: document.getElementById('spelling-hint'),
+            spellingWord: document.getElementById('spelling-word'),
+            spellingKeyboard: document.getElementById('spelling-keyboard'),
+            // 连连看游戏元素
+            matchingScore: document.getElementById('matching-score'),
+            matchingMatched: document.getElementById('matching-matched'),
+            matchingTotal: document.getElementById('matching-total'),
+            matchingTotalPairs: document.getElementById('matching-total-pairs'),
+            matchingCards: document.getElementById('matching-cards'),
+            // 游戏结果元素
             resultIcon: document.getElementById('result-icon'),
             resultTitle: document.getElementById('result-title'),
             resultMessage: document.getElementById('result-message'),
@@ -7957,7 +8462,7 @@
                             phonetic: phonetic,
                             meaning: meaning,
                             example: example,
-                            translation: meaning, // API返回的是英文释义，暂时用英文作为翻译
+                            translation: meaning, // 注意：API返回的是英文释义，这里暂时用英文作为翻译
                             categories: categories,
                             difficulty: 2
                         };
@@ -7973,33 +8478,88 @@
             async updateAllWords() {
                 console.log('开始更新所有单词信息...');
                 let updatedCount = 0;
-                let totalWords = wordDatabase.length;
                 
-                for (let i = 0; i < totalWords; i++) {
-                    const word = wordDatabase[i];
-                    console.log(`更新单词 ${i + 1}/${totalWords}: ${word.word}`);
+                // 找出需要更新的单词：缺少例句或翻译，或者内容为"暂无例句"、"暂无翻译"
+                const wordsToUpdate = wordDatabase.filter(word => {
+                    return (!word.example || word.example === '' || word.example === '暂无例句') || 
+                           (!word.translation || word.translation === '' || word.translation === '暂无翻译');
+                });
+                
+                let totalWords = wordsToUpdate.length;
+                console.log(`共发现 ${totalWords} 个需要更新的单词`);
+                
+                // 批次处理参数
+                const batchSize = 10;
+                const delayBetweenBatches = 3000; // 批次之间延迟3秒
+                
+                // 分批次处理单词
+                for (let batchStart = 0; batchStart < totalWords; batchStart += batchSize) {
+                    const batch = wordsToUpdate.slice(batchStart, batchStart + batchSize);
+                    const batchIndex = Math.floor(batchStart / batchSize) + 1;
+                    console.log(`处理批次 ${batchIndex}，包含 ${batch.length} 个单词`);
                     
-                    // 调用API获取单词详细信息
-                    const details = await this.getWordDetails(word.word);
-                    
-                    if (details) {
-                        // 更新单词数据库
-                        if (!word.phonetic || word.phonetic === '') {
-                            word.phonetic = details.phonetic;
-                        }
-                        if (!word.meaning || word.meaning === '') {
-                            word.meaning = details.meaning;
-                            word.translation = details.translation;
-                        }
-                        if (!word.example || word.example === '') {
-                            word.example = details.example;
+                    // 并发请求当前批次的所有单词信息
+                    const promises = batch.map(async (word, index) => {
+                        console.log(`更新单词 ${batchStart + index + 1}/${totalWords}: ${word.word}`);
+                        
+                        // 调用API获取单词详细信息
+                        const details = await this.getWordDetails(word.word);
+                        
+                        if (details) {
+                            let changed = false;
+                            
+                            // 更新音标
+                            if (!word.phonetic || word.phonetic === '') {
+                                word.phonetic = details.phonetic;
+                                changed = true;
+                            }
+                            
+                            // 更新释义和翻译
+                            if (!word.meaning || word.meaning === '') {
+                                word.meaning = details.meaning;
+                                word.translation = details.translation;
+                                changed = true;
+                            }
+                            
+                            // 更新例句（仅当例句为空或为"暂无例句"时）
+                            if (!word.example || word.example === '' || word.example === '暂无例句') {
+                                if (details.example && details.example !== '') {
+                                    word.example = details.example;
+                                    changed = true;
+                                } else if (!word.example) {
+                                    word.example = '暂无例句'; // 确保example字段有值
+                                    changed = true;
+                                }
+                            }
+                            
+                            // 更新翻译（仅当翻译为空或为"暂无翻译"时）
+                            if (!word.translation || word.translation === '' || word.translation === '暂无翻译') {
+                                if (details.translation && details.translation !== '') {
+                                    word.translation = details.translation;
+                                    changed = true;
+                                } else if (!word.translation) {
+                                    word.translation = '暂无翻译'; // 确保translation字段有值
+                                    changed = true;
+                                }
+                            }
+                            
+                            if (changed) {
+                                updatedCount++;
+                            }
                         }
                         
-                        updatedCount++;
-                    }
+                        // 单个请求之间的延迟
+                        await new Promise(resolve => setTimeout(resolve, 300));
+                    });
                     
-                    // 每次请求后延迟300ms，避免API限流
-                    await new Promise(resolve => setTimeout(resolve, 300));
+                    // 等待当前批次所有请求完成
+                    await Promise.allSettled(promises);
+                    
+                    // 批次之间的延迟
+                    if (batchStart + batchSize < totalWords) {
+                        console.log(`批次 ${batchIndex} 完成，等待 ${delayBetweenBatches}ms 后处理下一批次`);
+                        await new Promise(resolve => setTimeout(resolve, delayBetweenBatches));
+                    }
                 }
                 
                 console.log(`单词信息更新完成！共更新了 ${updatedCount} 个单词。`);
@@ -8169,54 +8729,8 @@
             
             // 在后台更新单词信息
             async updateWordsInBackground() {
-                console.log('开始在后台更新单词信息...');
-                let updatedCount = 0;
-                
-                // 批量更新单词信息，每批次10个单词，提高加载速度
-                const batchSize = 10;
-                const batches = [];
-                for (let i = 0; i < wordDatabase.length; i += batchSize) {
-                    batches.push(wordDatabase.slice(i, i + batchSize));
-                }
-                
-                // 遍历每个批次
-                for (let batchIndex = 0; batchIndex < batches.length; batchIndex++) {
-                    const batch = batches[batchIndex];
-                    
-                    // 并发请求当前批次的所有单词信息
-                    const promises = batch.map(async (word) => {
-                        const details = await dictionaryAPI.getWordDetails(word.word);
-                        if (details) {
-                            // 更新单词数据库
-                            if (!word.phonetic || word.phonetic === '') {
-                                word.phonetic = details.phonetic;
-                            }
-                            if (!word.meaning || word.meaning === '') {
-                                word.meaning = details.meaning;
-                                word.translation = details.translation;
-                            }
-                            if (!word.example || word.example === '') {
-                                word.example = details.example;
-                            }
-                            return true;
-                        }
-                        return false;
-                    });
-                    
-                    // 等待当前批次的所有请求完成
-                    const results = await Promise.allSettled(promises);
-                    
-                    // 统计更新成功的单词数量
-                    const batchUpdated = results.filter(r => r.status === 'fulfilled' && r.value).length;
-                    updatedCount += batchUpdated;
-                    
-                    // 批次之间延迟500ms，避免API限流
-                    if (batchIndex < batches.length - 1) {
-                        await new Promise(resolve => setTimeout(resolve, 500));
-                    }
-                }
-                
-                console.log(`单词信息更新完成！共更新了 ${updatedCount} 个单词。`);
+                // 直接调用改进后的updateAllWords方法
+                const updatedCount = await dictionaryAPI.updateAllWords();
                 
                 // 显示更新完成通知
                 utils.showNotification(`单词信息已更新完成，共更新了 ${updatedCount} 个单词。`, 'success');
@@ -8766,7 +9280,7 @@
                 dom.checkinDate.textContent = utils.formatDate(new Date());
                 
                 // 重置每日进度
-                state.userData.dailyProgress = { words: 0, listening: 0, memory: 0 };
+                state.userData.dailyProgress = { words: 0, listening: 0, memory: 0, spelling: 0, matching: 0 };
                 
                 // 从词汇库中随机选择10个单词，支持年级筛选
                 state.dailyCheckin.words = [];
@@ -8790,6 +9304,8 @@
                 // 重置游戏状态
                 state.dailyCheckin.listeningCompleted = false;
                 state.dailyCheckin.memoryCompleted = false;
+                state.dailyCheckin.spellingCompleted = false;
+                state.dailyCheckin.matchingCompleted = false;
                 dom.completeCheckinBtn.disabled = true;
                 
                 // 更新进度显示
@@ -8849,9 +9365,11 @@
                 dom.dailyWordsLearned.textContent = state.userData.dailyProgress.words;
                 dom.dailyListeningScore.textContent = state.userData.dailyProgress.listening;
                 dom.dailyMemoryScore.textContent = state.userData.dailyProgress.memory;
+                dom.dailySpellingScore.textContent = state.userData.dailyProgress.spelling;
+                dom.dailyMatchingScore.textContent = state.userData.dailyProgress.matching;
                 
-                // 检查是否可以完成打卡
-                if (state.dailyCheckin.listeningCompleted && state.dailyCheckin.memoryCompleted) {
+                // 检查是否可以完成打卡：学习完10个单词
+                if (state.userData.dailyProgress.words >= 10) {
                     dom.completeCheckinBtn.disabled = false;
                 }
             },
@@ -9115,6 +9633,8 @@
                 // 显示记忆游戏界面
                 dom.listeningGame.classList.add('hidden');
                 dom.memoryGame.classList.remove('hidden');
+                dom.spellingGame.classList.add('hidden');
+                dom.matchingGame.classList.add('hidden');
                 dom.gameResult.classList.add('hidden');
                 
                 // 更新游戏状态
@@ -9127,6 +9647,283 @@
                 
                 // 直接显示记忆预览界面
                 this.showMemoryPreview();
+            },
+            
+            // 开始单词拼写游戏
+            startSpellingGame() {
+                state.currentGame = {
+                    type: 'spelling',
+                    score: 0,
+                    currentWordIndex: 0,
+                    totalWords: 10
+                };
+                
+                // 根据选择的年级筛选单词
+                let filteredWords = [...wordDatabase];
+                if (state.selectedGrade !== 'all') {
+                    filteredWords = filteredWords.filter(word => 
+                        word.categories && word.categories.includes(state.selectedGrade)
+                    );
+                }
+                
+                // 随机选择10个单词
+                const shuffledWords = filteredWords.sort(() => Math.random() - 0.5);
+                const selectedWords = shuffledWords.slice(0, 10);
+                state.currentGame.words = selectedWords;
+                
+                this.switchPage('game');
+                
+                // 设置游戏UI
+                dom.gameTitle.textContent = '单词拼写';
+                dom.gameDescription.textContent = '根据中文意思，拼写英文单词';
+                
+                // 显示拼写游戏界面
+                dom.listeningGame.classList.add('hidden');
+                dom.memoryGame.classList.add('hidden');
+                dom.spellingGame.classList.remove('hidden');
+                dom.matchingGame.classList.add('hidden');
+                dom.gameResult.classList.add('hidden');
+                
+                // 初始化拼写游戏
+                this.initSpellingGame();
+            },
+            
+            // 初始化拼写游戏
+            initSpellingGame() {
+                const game = state.currentGame;
+                const currentWord = game.words[game.currentWordIndex];
+                
+                // 更新游戏状态
+                document.getElementById('spelling-score').textContent = game.score;
+                document.getElementById('spelling-progress').textContent = `${game.currentWordIndex + 1}/${game.totalWords}`;
+                
+                // 显示中文意思和提示
+                document.getElementById('spelling-meaning').textContent = currentWord.meaning;
+                document.getElementById('spelling-hint').textContent = `提示：单词长度为 ${currentWord.word.length} 个字母`;
+                
+                // 生成拼写格子
+                const spellingWord = document.getElementById('spelling-word');
+                spellingWord.innerHTML = '';
+                for (let i = 0; i < currentWord.word.length; i++) {
+                    const letterBox = document.createElement('div');
+                    letterBox.className = 'spelling-letter w-10 h-12 bg-white border-2 border-gray-300 rounded-lg flex items-center justify-center text-xl font-bold';
+                    letterBox.dataset.index = i;
+                    spellingWord.appendChild(letterBox);
+                }
+                
+                // 生成虚拟键盘
+                this.generateSpellingKeyboard(currentWord.word);
+            },
+            
+            // 生成虚拟键盘
+            generateSpellingKeyboard(correctWord) {
+                const spellingKeyboard = document.getElementById('spelling-keyboard');
+                spellingKeyboard.innerHTML = '';
+                const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+                
+                // 随机打乱字母顺序
+                const shuffledLetters = [...letters].sort(() => Math.random() - 0.5);
+                
+                shuffledLetters.forEach(letter => {
+                    const key = document.createElement('button');
+                    key.className = 'spelling-key bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-all duration-200';
+                    key.textContent = letter;
+                    key.addEventListener('click', () => this.handleSpellingKeyPress(letter));
+                    spellingKeyboard.appendChild(key);
+                });
+            },
+            
+            // 处理键盘按键
+            handleSpellingKeyPress(letter) {
+                const game = state.currentGame;
+                const currentWord = game.words[game.currentWordIndex];
+                const letterBoxes = document.querySelectorAll('.spelling-letter');
+                
+                // 找到第一个空的格子
+                const emptyBox = Array.from(letterBoxes).find(box => box.textContent === '');
+                if (emptyBox) {
+                    emptyBox.textContent = letter;
+                    emptyBox.classList.add('filled');
+                    
+                    // 检查是否完成拼写
+                    const isComplete = Array.from(letterBoxes).every(box => box.textContent !== '');
+                    if (isComplete) {
+                        // 检查拼写是否正确
+                        const userSpelling = Array.from(letterBoxes).map(box => box.textContent).join('');
+                        if (userSpelling.toLowerCase() === currentWord.word.toLowerCase()) {
+                            // 拼写正确
+                            game.score += 10;
+                            utils.showNotification('拼写正确！', 'success');
+                        } else {
+                            // 拼写错误
+                            utils.showNotification(`正确拼写：${currentWord.word}`, 'error');
+                        }
+                        
+                        // 进入下一个单词
+                        game.currentWordIndex++;
+                        
+                        // 检查游戏是否结束
+                        if (game.currentWordIndex < game.totalWords) {
+                            setTimeout(() => this.initSpellingGame(), 1500);
+                        } else {
+                            // 游戏结束
+                            this.showGameResult();
+                        }
+                    }
+                }
+            },
+            
+            // 开始单词连连看游戏
+            startMatchingGame() {
+                state.currentGame = {
+                    type: 'matching',
+                    score: 0,
+                    matchedPairs: 0,
+                    totalPairs: 8,
+                    selectedCards: []
+                };
+                
+                // 根据选择的年级筛选单词
+                let filteredWords = [...wordDatabase];
+                if (state.selectedGrade !== 'all') {
+                    filteredWords = filteredWords.filter(word => 
+                        word.categories && word.categories.includes(state.selectedGrade)
+                    );
+                }
+                
+                // 随机选择8个单词
+                const shuffledWords = filteredWords.sort(() => Math.random() - 0.5);
+                const selectedWords = shuffledWords.slice(0, 8);
+                state.currentGame.words = selectedWords;
+                
+                this.switchPage('game');
+                
+                // 设置游戏UI
+                dom.gameTitle.textContent = '单词连连看';
+                dom.gameDescription.textContent = '将英文单词与中文意思配对';
+                
+                // 显示连连看游戏界面
+                dom.listeningGame.classList.add('hidden');
+                dom.memoryGame.classList.add('hidden');
+                dom.spellingGame.classList.add('hidden');
+                dom.matchingGame.classList.remove('hidden');
+                dom.gameResult.classList.add('hidden');
+                
+                // 初始化连连看游戏
+                this.initMatchingGame();
+            },
+            
+            // 初始化连连看游戏
+            initMatchingGame() {
+                const game = state.currentGame;
+                const words = game.words;
+                
+                // 生成卡片数据
+                const cards = [];
+                words.forEach(word => {
+                    // 添加英文单词卡片
+                    cards.push({
+                        id: `word-${word.word}`,
+                        content: word.word,
+                        type: 'word',
+                        matchId: word.word
+                    });
+                    // 添加中文意思卡片
+                    cards.push({
+                        id: `meaning-${word.word}`,
+                        content: word.meaning,
+                        type: 'meaning',
+                        matchId: word.word
+                    });
+                });
+                
+                // 随机打乱卡片顺序
+                const shuffledCards = cards.sort(() => Math.random() - 0.5);
+                state.currentGame.cards = shuffledCards;
+                
+                // 渲染卡片
+                this.renderMatchingCards();
+            },
+            
+            // 渲染连连看卡片
+            renderMatchingCards() {
+                const cards = state.currentGame.cards;
+                const matchingCards = document.getElementById('matching-cards');
+                matchingCards.innerHTML = '';
+                
+                cards.forEach(card => {
+                    const cardElement = document.createElement('div');
+                    cardElement.className = 'matching-card p-4 bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer';
+                    cardElement.dataset.id = card.id;
+                    cardElement.dataset.type = card.type;
+                    cardElement.dataset.matchId = card.matchId;
+                    cardElement.innerHTML = `<div class="text-center text-lg font-medium">${card.content}</div>`;
+                    
+                    // 添加点击事件
+                    cardElement.addEventListener('click', () => this.handleMatchingCardClick(cardElement));
+                    
+                    matchingCards.appendChild(cardElement);
+                });
+            },
+            
+            // 处理连连看卡片点击
+            handleMatchingCardClick(cardElement) {
+                const game = state.currentGame;
+                
+                // 如果点击的是已经匹配的卡片，不处理
+                if (cardElement.classList.contains('matched')) return;
+                
+                // 如果点击的是已经选中的卡片，取消选中
+                if (game.selectedCards.includes(cardElement)) {
+                    cardElement.classList.remove('selected');
+                    game.selectedCards = game.selectedCards.filter(card => card !== cardElement);
+                    return;
+                }
+                
+                // 如果已经选中了两张卡片，不处理
+                if (game.selectedCards.length >= 2) return;
+                
+                // 选中卡片
+                cardElement.classList.add('selected');
+                game.selectedCards.push(cardElement);
+                
+                // 如果选中了两张卡片，检查是否匹配
+                if (game.selectedCards.length === 2) {
+                    const [card1, card2] = game.selectedCards;
+                    
+                    // 检查是否匹配
+                    if (card1.dataset.matchId === card2.dataset.matchId) {
+                        // 匹配成功
+                        game.matchedPairs++;
+                        game.score += 10;
+                        
+                        // 添加匹配样式
+                        card1.classList.add('matched', 'bg-green-50');
+                        card2.classList.add('matched', 'bg-green-50');
+                        card1.classList.remove('selected');
+                        card2.classList.remove('selected');
+                        
+                        utils.showNotification('匹配成功！', 'success');
+                        
+                        // 清空选中卡片
+                        game.selectedCards = [];
+                        
+                        // 检查游戏是否结束
+                        if (game.matchedPairs === game.totalPairs) {
+                            setTimeout(() => this.showGameResult(), 1000);
+                        }
+                    } else {
+                        // 匹配失败
+                        utils.showNotification('匹配失败！', 'error');
+                        
+                        // 延迟取消选中
+                        setTimeout(() => {
+                            card1.classList.remove('selected');
+                            card2.classList.remove('selected');
+                            game.selectedCards = [];
+                        }, 1000);
+                    }
+                }
             },
             
             // 显示记忆预览界面
@@ -9583,31 +10380,60 @@
             
             // 显示游戏结果
             showGameResult() {
-                // 标记游戏完成
-                if (state.currentGame.type === 'listening') {
-                    state.dailyCheckin.listeningCompleted = true;
-                } else {
-                    state.dailyCheckin.memoryCompleted = true;
-                }
-                
-                // 更新每日进度
-                this.updateDailyProgress();
-                
                 // 显示结果界面
                 dom.listeningGame.classList.add('hidden');
                 dom.memoryGame.classList.add('hidden');
+                dom.spellingGame.classList.add('hidden');
+                dom.matchingGame.classList.add('hidden');
                 dom.gameResult.classList.remove('hidden');
                 
                 // 计算结果
                 let total;
-                if (state.currentGame.type === 'listening') {
-                    // 确保单词列表存在且有效
-                    const wordCount = state.currentGame.words ? state.currentGame.words.length : 0;
-                    total = wordCount * 10;
-                } else {
-                    // 确保总对数存在且有效
-                    total = (state.currentGame.totalPairs || 0) * 25;
+                let gameMessage;
+                
+                // 标记游戏完成并更新每日进度
+                switch (state.currentGame.type) {
+                    case 'listening':
+                        // 标记游戏完成
+                        state.dailyCheckin.listeningCompleted = true;
+                        // 确保单词列表存在且有效
+                        const wordCount = state.currentGame.words ? state.currentGame.words.length : 0;
+                        total = wordCount * 10;
+                        gameMessage = `你在听音辨义游戏中获得 ${state.currentGame.score} 分`;
+                        break;
+                    case 'memory':
+                        // 标记游戏完成
+                        state.dailyCheckin.memoryCompleted = true;
+                        // 确保总对数存在且有效
+                        total = (state.currentGame.totalPairs || 0) * 25;
+                        gameMessage = `你在记忆游戏中匹配了 ${state.currentGame.matchedPairs} 对单词`;
+                        break;
+                    case 'spelling':
+                        // 标记游戏完成
+                        state.dailyCheckin.spellingCompleted = true;
+                        // 更新拼写游戏进度
+                        state.userData.dailyProgress.spelling += state.currentGame.score;
+                        // 确保单词列表存在且有效
+                        const spellingWordCount = state.currentGame.words ? state.currentGame.words.length : 0;
+                        total = spellingWordCount * 10;
+                        gameMessage = `你在拼写游戏中获得 ${state.currentGame.score} 分`;
+                        break;
+                    case 'matching':
+                        // 标记游戏完成
+                        state.dailyCheckin.matchingCompleted = true;
+                        // 更新连连看游戏进度
+                        state.userData.dailyProgress.matching += state.currentGame.score;
+                        // 确保总对数存在且有效
+                        total = (state.currentGame.totalPairs || 0) * 10;
+                        gameMessage = `你在连连看游戏中匹配了 ${state.currentGame.matchedPairs} 对单词`;
+                        break;
+                    default:
+                        total = 1;
+                        gameMessage = `你获得了 ${state.currentGame.score} 分`;
                 }
+                
+                // 更新每日进度
+                this.updateDailyProgress();
                 
                 // 确保总分不为0，避免除以0错误
                 total = Math.max(total, 1);
@@ -9616,29 +10442,68 @@
                 dom.resultScore.textContent = state.currentGame.score;
                 dom.resultTotal.textContent = total;
                 
-                // 为记忆游戏显示游戏信息
-                if (state.currentGame.type === 'memory') {
-                    // 查找或创建游戏信息元素
-                    let gameInfo = document.getElementById('result-difficulty');
-                    if (!gameInfo) {
-                        gameInfo = document.createElement('div');
-                        gameInfo.id = 'result-difficulty';
-                        gameInfo.className = 'mb-4 p-3 bg-blue-50 rounded-lg text-center';
-                        // 插入到结果标题下方
-                        const resultHeader = dom.gameResult.querySelector('.text-3xl.font-bold');
-                        if (resultHeader) {
-                            resultHeader.parentNode.insertBefore(gameInfo, resultHeader.nextSibling);
-                        }
+                // 为不同游戏类型显示游戏信息
+                // 查找或创建游戏信息元素
+                let gameInfo = document.getElementById('result-difficulty');
+                if (!gameInfo) {
+                    gameInfo = document.createElement('div');
+                    gameInfo.id = 'result-difficulty';
+                    gameInfo.className = 'mb-4 p-3 bg-blue-50 rounded-lg text-center';
+                    // 插入到结果标题下方
+                    const resultHeader = dom.gameResult.querySelector('.text-3xl.font-bold');
+                    if (resultHeader) {
+                        resultHeader.parentNode.insertBefore(gameInfo, resultHeader.nextSibling);
                     }
-                    gameInfo.innerHTML = `
-                        <p class="text-lg text-gray-700">
-                            <i class="fa fa-star text-blue-500 mr-2"></i>
-                            单词记忆挑战
-                        </p>
-                        <p class="text-sm text-gray-500">
-                            成功匹配了 ${state.currentGame.matchedPairs} 对单词！
-                        </p>
-                    `;
+                }
+                
+                // 根据游戏类型设置游戏信息
+                switch (state.currentGame.type) {
+                    case 'memory':
+                        gameInfo.innerHTML = `
+                            <p class="text-lg text-gray-700">
+                                <i class="fa fa-star text-blue-500 mr-2"></i>
+                                单词记忆挑战
+                            </p>
+                            <p class="text-sm text-gray-500">
+                                成功匹配了 ${state.currentGame.matchedPairs} 对单词！
+                            </p>
+                        `;
+                        break;
+                    case 'spelling':
+                        gameInfo.innerHTML = `
+                            <p class="text-lg text-gray-700">
+                                <i class="fa fa-keyboard text-purple-500 mr-2"></i>
+                                单词拼写挑战
+                            </p>
+                            <p class="text-sm text-gray-500">
+                                共完成 ${state.currentGame.totalWords} 个单词拼写！
+                            </p>
+                        `;
+                        break;
+                    case 'matching':
+                        gameInfo.innerHTML = `
+                            <p class="text-lg text-gray-700">
+                                <i class="fa fa-link text-green-500 mr-2"></i>
+                                单词连连看
+                            </p>
+                            <p class="text-sm text-gray-500">
+                                成功匹配了 ${state.currentGame.matchedPairs} 对单词！
+                            </p>
+                        `;
+                        break;
+                    case 'listening':
+                        gameInfo.innerHTML = `
+                            <p class="text-lg text-gray-700">
+                                <i class="fa fa-headphones text-blue-500 mr-2"></i>
+                                听音辨义
+                            </p>
+                            <p class="text-sm text-gray-500">
+                                共完成 ${state.currentGame.words ? state.currentGame.words.length : 0} 个单词挑战！
+                            </p>
+                        `;
+                        break;
+                    default:
+                        gameInfo.innerHTML = '';
                 }
                 
                 // 根据得分设置反馈
@@ -9662,16 +10527,23 @@
                 }
                 
                 dom.resultFeedback.textContent = feedback;
-                dom.resultMessage.textContent = state.currentGame.type === 'listening' ?
-                    `你在听音辨义游戏中获得 ${state.currentGame.score} 分` :
-                    `你在记忆游戏中匹配了 ${state.currentGame.matchedPairs} 对单词`;
+                dom.resultMessage.textContent = gameMessage;
                 
                 // 检查成就
                 if (percentage === 100) {
-                    if (state.currentGame.type === 'listening') {
-                        this.unlockAchievement('listening-pro');
-                    } else {
-                        this.unlockAchievement('memory-king');
+                    switch (state.currentGame.type) {
+                        case 'listening':
+                            this.unlockAchievement('listening-pro');
+                            break;
+                        case 'memory':
+                            this.unlockAchievement('memory-king');
+                            break;
+                        case 'spelling':
+                            this.unlockAchievement('spelling-master');
+                            break;
+                        case 'matching':
+                            this.unlockAchievement('matching-master');
+                            break;
                     }
                 }
             },
@@ -9684,24 +10556,99 @@
                     state.userData.checkinDays.push(today);
                     this.updateStreak();
                     
-                    // 更新周学习数据
+                    // 更新周学习数据，包括所有游戏得分
                     const dayOfWeek = new Date().getDay();
                     state.userData.weeklyLearning[dayOfWeek] = 
-                        state.userData.dailyProgress.listening + state.userData.dailyProgress.memory;
+                        state.userData.dailyProgress.listening + 
+                        state.userData.dailyProgress.memory +
+                        state.userData.dailyProgress.spelling +
+                        state.userData.dailyProgress.matching;
                     
                     // 解锁成就
                     if (state.userData.checkinDays.length === 1) {
                         this.unlockAchievement('first-checkin');
                     }
                     
+                    // 一周坚持成就
+                    if (state.userData.currentStreak >= 7) {
+                        this.unlockAchievement('week-streak');
+                    }
+                    
                     utils.saveData();
                     this.updateStats();
                     this.checkTodayCheckin();
+                    
+                    // 显示完成打卡特效
+                    this.showCheckinCelebration();
                     
                     utils.showNotification('恭喜完成今日打卡！', 'success');
                 }
                 
                 this.switchPage('home');
+            },
+
+            // 显示完成打卡特效
+            showCheckinCelebration() {
+                // 创建庆祝动画元素
+                const celebration = document.createElement('div');
+                celebration.className = 'fixed inset-0 z-50 flex items-center justify-center pointer-events-none';
+                celebration.innerHTML = `
+                    <div class="text-center">
+                        <div class="text-6xl font-bold text-blue-600 mb-4 animate-bounce">
+                            <i class="fa fa-trophy"></i>
+                        </div>
+                        <h2 class="text-4xl font-bold text-gray-800 mb-2 animate-pulse">恭喜完成今日打卡！</h2>
+                        <p class="text-2xl text-gray-600 mb-8">继续保持，加油！</p>
+                        <div class="text-5xl mb-8">
+                            <span class="animate-pulse">🎉</span>
+                            <span class="animate-bounce" style="animation-delay: 0.2s">🎊</span>
+                            <span class="animate-pulse" style="animation-delay: 0.4s">🎁</span>
+                            <span class="animate-bounce" style="animation-delay: 0.6s">🌟</span>
+                            <span class="animate-pulse" style="animation-delay: 0.8s">✨</span>
+                        </div>
+                    </div>
+                `;
+                
+                // 添加到页面
+                document.body.appendChild(celebration);
+                
+                // 1秒后移除
+                setTimeout(() => {
+                    celebration.remove();
+                }, 2000);
+                
+                // 创建粒子效果
+                this.createParticles(50);
+            },
+
+            // 创建粒子效果
+            createParticles(count) {
+                const particles = document.createElement('div');
+                particles.className = 'fixed inset-0 z-50 pointer-events-none';
+                
+                for (let i = 0; i < count; i++) {
+                    const particle = document.createElement('div');
+                    const size = Math.random() * 10 + 5;
+                    const color = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'][Math.floor(Math.random() * 5)];
+                    
+                    particle.className = 'absolute rounded-full';
+                    particle.style.width = `${size}px`;
+                    particle.style.height = `${size}px`;
+                    particle.style.backgroundColor = color;
+                    particle.style.left = `${Math.random() * 100}%`;
+                    particle.style.bottom = '-50px';
+                    particle.style.animation = `float-up ${Math.random() * 3 + 2}s ease-out forwards`;
+                    particle.style.animationDelay = `${Math.random() * 0.5}s`;
+                    
+                    particles.appendChild(particle);
+                }
+                
+                document.body.appendChild(particles);
+                
+                // 3秒后移除
+                setTimeout(() => {
+                    particles.remove();
+                }, 3000);
             },
             
             // 更新连续打卡天数
@@ -9746,6 +10693,14 @@
                 // 词汇构建者
                 if (state.userData.learnedWords.length >= 100) {
                     this.unlockAchievement('vocabulary-builder');
+                }
+                
+                // 游戏大师 - 完成所有游戏类型
+                if (state.dailyCheckin.listeningCompleted && 
+                    state.dailyCheckin.memoryCompleted && 
+                    state.dailyCheckin.spellingCompleted && 
+                    state.dailyCheckin.matchingCompleted) {
+                    this.unlockAchievement('game-master');
                 }
                 
                 // 一周坚持
@@ -9913,6 +10868,14 @@
                     this.startMemoryGame();
                 });
                 
+                document.getElementById('start-spelling-game').addEventListener('click', () => {
+                    this.startSpellingGame();
+                });
+                
+                document.getElementById('start-matching-game').addEventListener('click', () => {
+                    this.startMatchingGame();
+                });
+                
                 // 查看学习记录
                 dom.viewLearnedWordsBtn.addEventListener('click', () => {
                     this.showLearnedWordsModal();
@@ -9945,10 +10908,22 @@
                 });
                 
                 dom.playAgainBtn.addEventListener('click', () => {
-                    if (state.currentGame.type === 'listening') {
-                        this.startListeningGame();
-                    } else {
-                        this.startMemoryGame();
+                    switch (state.currentGame.type) {
+                        case 'listening':
+                            this.startListeningGame();
+                            break;
+                        case 'memory':
+                            this.startMemoryGame();
+                            break;
+                        case 'spelling':
+                            this.startSpellingGame();
+                            break;
+                        case 'matching':
+                            this.startMatchingGame();
+                            break;
+                        default:
+                            // 默认回到听音辨义游戏
+                            this.startListeningGame();
                     }
                 });
                 
