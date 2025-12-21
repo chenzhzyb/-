@@ -1745,16 +1745,18 @@
                 width: 80px;
                 height: 80px;
                 font-size: 2.5rem;
-                bottom: 1rem;
-                right: 1rem;
+                bottom: 6rem; /* 调整底部距离，避免挡住成就按钮 */
+                left: 1rem; /* 移到左侧，避免挡住导航按钮 */
+                right: auto; /* 清除右侧定位 */
             }
             
             .hint-bubble {
                 max-width: 180px;
                 font-size: 0.85rem;
                 padding: 0.75rem;
-                right: calc(80px + 1.5rem);
+                left: calc(80px + 1.5rem);
                 bottom: calc(80px - 20px);
+                right: auto;
             }
             
             /* 进度条优化 */
@@ -3062,7 +3064,7 @@
                 <div class="absolute -inset-4 bg-yellow-300 rounded-full opacity-20 blur-lg animate-pulse-slow"></div>
                 <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-pulse"></div>
             </div>
-            <h1 class="text-white text-[clamp(2rem,5vw,3.5rem)] font-bold mb-3 drop-shadow-lg leading-tight">小鹿AI编程全能英语词汇库</h1>
+            <h1 class="text-white text-[clamp(1.5rem,4vw,2.8rem)] font-bold mb-3 drop-shadow-lg leading-tight">小鹿AI编程全能英语词汇库</h1>
             <p class="text-white/90 mb-8 text-lg font-medium">快乐学习英语，轻松掌握词汇！</p>
             <div class="w-full max-w-xs bg-white/30 rounded-full h-5 mb-3 mx-auto relative overflow-hidden">
                 <div id="loading-progress" class="bg-white h-5 rounded-full transition-all duration-300" style="width: 0%">
@@ -3697,7 +3699,7 @@
                                 <i class="fa fa-trophy text-yellow-500"></i>
                             </div>
                             <h3 id="result-title" class="text-3xl font-bold mb-4">恭喜你！</h3>
-                            <p id="result-message" class="text-gray-600 text-lg mb-6">游戏完成</p>
+                            <p id="result-message" class="text-gray-800 text-lg mb-6">游戏完成</p>
                             
                             <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 mb-8">
                                 <div class="text-center">
@@ -9083,15 +9085,17 @@
                             
                             ${(word.example || word.translation) ? `
                             <div class="mb-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl p-4 shadow-sm">
-                                <div class="flex items-start gap-3">
-                                    <div class="flex-1">
-                                        <p class="text-sm text-gray-700 italic leading-relaxed">${word.example || '暂无例句'}</p>
-                                        <p class="text-sm text-gray-600 mt-2">${word.translation || '暂无翻译'}</p>
+                                <div class="flex flex-col gap-3">
+                                    <div class="w-full">
+                                        <p class="text-sm text-gray-700 italic leading-relaxed break-words">${word.example || '暂无例句'}</p>
+                                        <p class="text-sm text-gray-600 mt-2 break-words">${word.translation || '暂无翻译'}</p>
                                     </div>
                                     ${word.example ? `
-                                    <button class="follow-read-btn p-3 bg-blue-100 text-blue-600 rounded-full hover:bg-blue-200 hover:scale-110 transition-all duration-300 shadow-sm" title="跟读例句" onclick="app.followReadExample('${word.example}')">
-                                        <i class="fas fa-volume-up"></i>
-                                    </button>
+                                    <div class="flex justify-end">
+                                        <button class="follow-read-btn p-3 bg-blue-100 text-blue-600 rounded-full hover:bg-blue-200 hover:scale-110 transition-all duration-300 shadow-sm" title="跟读例句" onclick="app.followReadExample('${word.example}')">
+                                            <i class="fas fa-volume-up"></i>
+                                        </button>
+                                    </div>
                                     ` : ''}
                                 </div>
                             </div>
@@ -9264,6 +9268,18 @@
                 switch(page) {
                     case 'home':
                         dom.homePage.classList.remove('hidden');
+                        // 设置当前日期
+                        const now = new Date();
+                        dom.currentDate.textContent = utils.formatDate(now);
+                        // 更新学习统计
+                        this.updateStats();
+                        // 初始化图表
+                        this.initChart();
+                        // 检查今日打卡
+                        this.checkTodayCheckin();
+                        // 更新总单词数
+                        dom.totalWordCount.textContent = wordDatabase.length;
+                        dom.totalWords.textContent = wordDatabase.length;
                         break;
                     case 'library':
                         dom.libraryPage.classList.remove('hidden');
@@ -9296,13 +9312,8 @@
                 // 从词汇库中随机选择10个单词，支持年级筛选
                 state.dailyCheckin.words = [];
                 
-                // 根据选择的年级筛选单词
+                // 直接使用完整的词库，不进行年级筛选（词库中没有年级分类）
                 let filteredWords = [...wordDatabase];
-                if (state.selectedGrade !== 'all') {
-                    filteredWords = filteredWords.filter(word => 
-                        word.categories && word.categories.includes(state.selectedGrade)
-                    );
-                }
                 
                 const availableWords = [...filteredWords];
                 
@@ -9352,14 +9363,18 @@
                                     </button>
                                 </div>
                             </div>
-                            <div class="bg-gray-50 rounded p-2 flex items-start">
-                                <div class="flex-1">
-                                    <p class="text-sm text-gray-600 italic">${word.example || '暂无例句'}</p>
-                                    <p class="text-xs text-gray-500 mt-1">${word.translation || '暂无翻译'}</p>
+                            <div class="bg-gray-50 rounded p-3 flex flex-col gap-2">
+                                <div class="w-full">
+                                    <p class="text-sm text-gray-600 italic break-words">${word.example || '暂无例句'}</p>
+                                    <p class="text-xs text-gray-500 mt-1 break-words">${word.translation || '暂无翻译'}</p>
                                 </div>
-                                <button class="follow-read-btn ml-3 p-2 bg-blue-100 text-blue-600 rounded-full hover:bg-blue-200 transition-all duration-200" title="跟读例句" onclick="app.followReadExample('${word.example || ''}')">
-                                    <i class="fas fa-volume-up"></i>
-                                </button>
+                                ${word.example ? `
+                                <div class="flex justify-end">
+                                    <button class="follow-read-btn p-2 bg-blue-100 text-blue-600 rounded-full hover:bg-blue-200 transition-all duration-200" title="跟读例句" onclick="app.followReadExample('${word.example}')">
+                                        <i class="fas fa-volume-up"></i>
+                                    </button>
+                                </div>
+                                ` : ''}
                             </div>
                         </div>
                     `;
@@ -9623,13 +9638,8 @@
                     totalPairs: 8 // 固定8个单词对，16张卡片
                 };
                 
-                // 根据选择的年级筛选单词
+                // 直接使用完整的词库，不进行年级筛选（词库中没有年级分类）
                 let filteredWords = [...wordDatabase];
-                if (state.selectedGrade !== 'all') {
-                    filteredWords = filteredWords.filter(word => 
-                        word.categories && word.categories.includes(state.selectedGrade)
-                    );
-                }
                 
                 // 随机选择8个单词
                 const shuffledWords = filteredWords.sort(() => Math.random() - 0.5);
@@ -9669,13 +9679,8 @@
                     totalWords: 10
                 };
                 
-                // 根据选择的年级筛选单词
+                // 直接使用完整的词库，不进行年级筛选（词库中没有年级分类）
                 let filteredWords = [...wordDatabase];
-                if (state.selectedGrade !== 'all') {
-                    filteredWords = filteredWords.filter(word => 
-                        word.categories && word.categories.includes(state.selectedGrade)
-                    );
-                }
                 
                 // 随机选择10个单词
                 const shuffledWords = filteredWords.sort(() => Math.random() - 0.5);
@@ -9794,13 +9799,8 @@
                     selectedCards: []
                 };
                 
-                // 根据选择的年级筛选单词
+                // 直接使用完整的词库，不进行年级筛选（词库中没有年级分类）
                 let filteredWords = [...wordDatabase];
-                if (state.selectedGrade !== 'all') {
-                    filteredWords = filteredWords.filter(word => 
-                        word.categories && word.categories.includes(state.selectedGrade)
-                    );
-                }
                 
                 // 随机选择8个单词
                 const shuffledWords = filteredWords.sort(() => Math.random() - 0.5);
@@ -9864,11 +9864,11 @@
                 
                 cards.forEach(card => {
                     const cardElement = document.createElement('div');
-                    cardElement.className = 'matching-card p-4 bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer';
+                    cardElement.className = 'matching-card p-3 sm:p-4 bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer text-sm sm:text-base';
                     cardElement.dataset.id = card.id;
                     cardElement.dataset.type = card.type;
                     cardElement.dataset.matchId = card.matchId;
-                    cardElement.innerHTML = `<div class="text-center text-lg font-medium">${card.content}</div>`;
+                    cardElement.innerHTML = `<div class="text-center font-medium break-words">${card.content}</div>`;
                     
                     // 添加点击事件
                     cardElement.addEventListener('click', () => this.handleMatchingCardClick(cardElement));
