@@ -9013,6 +9013,16 @@
             },
             
             // 更新统计
+            updateWeeklyLearning() {
+                // 实时更新周学习数据，包括所有游戏得分
+                const dayOfWeek = new Date().getDay();
+                state.userData.weeklyLearning[dayOfWeek] = 
+                    state.userData.dailyProgress.listening + 
+                    state.userData.dailyProgress.memory +
+                    state.userData.dailyProgress.spelling +
+                    state.userData.dailyProgress.matching;
+            },
+            
             updateStats() {
                 // 已学习单词
                 const learnedCount = state.userData.learnedWords.length;
@@ -9022,6 +9032,9 @@
                 
                 // 连续打卡
                 dom.streakCount.textContent = state.userData.currentStreak;
+                
+                // 实时更新周学习数据
+                this.updateWeeklyLearning();
                 
                 // 周学习总分
                 const weeklyTotal = state.userData.weeklyLearning.reduce((a, b) => a + b, 0);
@@ -10407,6 +10420,8 @@
                     case 'listening':
                         // 标记游戏完成
                         state.dailyCheckin.listeningCompleted = true;
+                        // 更新听力游戏进度
+                        state.userData.dailyProgress.listening += state.currentGame.score;
                         // 确保单词列表存在且有效
                         const wordCount = state.currentGame.words ? state.currentGame.words.length : 0;
                         total = wordCount * 10;
@@ -10415,6 +10430,8 @@
                     case 'memory':
                         // 标记游戏完成
                         state.dailyCheckin.memoryCompleted = true;
+                        // 更新记忆游戏进度
+                        state.userData.dailyProgress.memory += state.currentGame.score;
                         // 确保总对数存在且有效
                         total = (state.currentGame.totalPairs || 0) * 25;
                         gameMessage = `你在记忆游戏中匹配了 ${state.currentGame.matchedPairs} 对单词`;
@@ -10837,7 +10854,10 @@
                 
                 // 导航按钮
                 document.querySelectorAll('[data-nav]').forEach(btn => {
-                    btn.addEventListener('click', () => {
+                    btn.addEventListener('click', (event) => {
+                        // 阻止默认行为，防止页面刷新
+                        event.preventDefault();
+                        
                         const page = btn.getAttribute('data-nav');
                         this.switchPage(page);
                         
@@ -11212,9 +11232,6 @@
             // 初始化科技动画效果
             initTechEffects();
             
-            // 初始化激励和引导系统
-            initMotivationSystem();
-            
             // 先显示底部小鹿形象
             setTimeout(() => {
                 const deerCharacters = document.querySelectorAll('#deer-characters-showcase img');
@@ -11232,67 +11249,6 @@
             
             app.init();
         });
-        
-        // 激励和引导系统
-        function initMotivationSystem() {
-            // 创建庆祝动画容器
-            createCelebrationContainer();
-            
-            // 创建吉祥物角色
-            createMascot();
-            
-            // 设置学习进度更新
-            setupProgressTracking();
-            
-            // 添加学习完成事件监听
-            setupAchievementListeners();
-        }
-        
-        // 创建庆祝动画容器
-        function createCelebrationContainer() {
-            const container = document.createElement('div');
-            container.className = 'celebration-container';
-            document.body.appendChild(container);
-        }
-        
-        // 创建吉祥物角色
-        function createMascot() {
-            // 检查是否已经存在吉祥物
-            if (document.querySelector('.mascot')) return;
-            
-            const mascot = document.createElement('div');
-            mascot.className = 'mascot';
-            mascot.textContent = '🐰'; // 可爱的兔子吉祥物
-            
-            // 添加提示气泡
-            const hintBubble = document.createElement('div');
-            hintBubble.className = 'hint-bubble';
-            hintBubble.textContent = '你好！让我们一起学习单词吧！💪';
-            mascot.appendChild(hintBubble);
-            
-            // 点击吉祥物时切换提示信息
-            const hints = [
-                '加油！你今天学习了几个单词？',
-                '记得每天练习哦！',
-                '哇！你真棒！',
-                '遇到困难时不要放弃！',
-                '学习新单词真有趣！'
-            ];
-            
-            let currentHint = 0;
-            mascot.addEventListener('click', () => {
-                currentHint = (currentHint + 1) % hints.length;
-                hintBubble.textContent = hints[currentHint];
-                
-                // 添加点击动画
-                mascot.style.transform = 'scale(0.9) rotate(10deg)';
-                setTimeout(() => {
-                    mascot.style.transform = 'scale(1) rotate(0)';
-                }, 200);
-            });
-            
-            document.body.appendChild(mascot);
-        }
         
         // 设置学习进度跟踪
         function setupProgressTracking() {
