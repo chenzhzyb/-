@@ -8412,208 +8412,13 @@
         // 执行单词处理逻辑
         ensureAllWordsInDatabase();
         
-        // ==================== 核心功能 ====================
+        // ==================== 核心功能 ====================        // 词典API功能        const dictionaryAPI = {
+            // 保留空对象结构，用于将来扩展
         // 词典API功能
         const dictionaryAPI = {
-            // 获取单个单词的详细信息
-            async getWordDetails(word) {
-                try {
-                    const response = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`);
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    const data = await response.json();
-                    
-                    // 解析API返回的数据
-                    if (Array.isArray(data) && data.length > 0) {
-                        const wordData = data[0];
-                        
-                        // 提取音标
-                        const phonetic = wordData.phonetic || 
-                                      (wordData.phonetics && wordData.phonetics.length > 0 ? wordData.phonetics[0].text : '') ||
-                                      '';
-                        
-                        // 提取词性和释义
-                        let meaning = '';
-                        let partOfSpeech = '';
-                        const categories = [];
-                        
-                        if (wordData.meanings && wordData.meanings.length > 0) {
-                            const firstMeaning = wordData.meanings[0];
-                            partOfSpeech = firstMeaning.partOfSpeech || '';
-                            
-                            // 提取词性分类
-                            if (partOfSpeech) {
-                                categories.push(partOfSpeech);
-                            }
-                            
-                            // 提取释义
-                            if (firstMeaning.definitions && firstMeaning.definitions.length > 0) {
-                                meaning = firstMeaning.definitions[0].definition || '';
-                            }
-                        }
-                        
-                        // 提取例句
-                        const example = wordData.meanings && wordData.meanings.length > 0 && 
-                                      wordData.meanings[0].definitions && wordData.meanings[0].definitions.length > 0 && 
-                                      wordData.meanings[0].definitions[0].example ?
-                                      wordData.meanings[0].definitions[0].example : '';
-                        
-                        // 返回处理后的数据
-                        return {
-                            word: word,
-                            phonetic: phonetic,
-                            meaning: meaning,
-                            example: example,
-                            translation: meaning, // 注意：API返回的是英文释义，这里暂时用英文作为翻译
-                            categories: categories,
-                            difficulty: 2
-                        };
-                    }
-                    return null;
-                } catch (error) {
-                    console.error(`获取单词 ${word} 信息失败:`, error);
-                    return null;
-                }
-            },
-            
-            // 更新所有单词的详细信息
-            async updateAllWords() {
-                console.log('开始更新所有单词信息...');
-                let updatedCount = 0;
-                
-                // 找出需要更新的单词：缺少例句或翻译，或者内容为"暂无例句"、"暂无翻译"
-                const wordsToUpdate = wordDatabase.filter(word => {
-                    return (!word.example || word.example === '' || word.example === '暂无例句') || 
-                           (!word.translation || word.translation === '' || word.translation === '暂无翻译');
-                });
-                
-                let totalWords = wordsToUpdate.length;
-                console.log(`共发现 ${totalWords} 个需要更新的单词`);
-                
-                // 批次处理参数
-                const batchSize = 10;
-                const delayBetweenBatches = 3000; // 批次之间延迟3秒
-                
-                // 分批次处理单词
-                for (let batchStart = 0; batchStart < totalWords; batchStart += batchSize) {
-                    const batch = wordsToUpdate.slice(batchStart, batchStart + batchSize);
-                    const batchIndex = Math.floor(batchStart / batchSize) + 1;
-                    console.log(`处理批次 ${batchIndex}，包含 ${batch.length} 个单词`);
-                    
-                    // 并发请求当前批次的所有单词信息
-                    const promises = batch.map(async (word, index) => {
-                        console.log(`更新单词 ${batchStart + index + 1}/${totalWords}: ${word.word}`);
-                        
-                        // 调用API获取单词详细信息
-                        const details = await this.getWordDetails(word.word);
-                        
-                        if (details) {
-                            let changed = false;
-                            
-                            // 更新音标
-                            if (!word.phonetic || word.phonetic === '') {
-                                word.phonetic = details.phonetic;
-                                changed = true;
-                            }
-                            
-                            // 更新释义和翻译
-                            if (!word.meaning || word.meaning === '') {
-                                word.meaning = details.meaning;
-                                word.translation = details.translation;
-                                changed = true;
-                            }
-                            
-                            // 更新例句（仅当例句为空或为"暂无例句"时）
-                            if (!word.example || word.example === '' || word.example === '暂无例句') {
-                                if (details.example && details.example !== '') {
-                                    word.example = details.example;
-                                    changed = true;
-                                } else if (!word.example) {
-                                    word.example = '暂无例句'; // 确保example字段有值
-                                    changed = true;
-                                }
-                            }
-                            
-                            // 更新翻译（仅当翻译为空或为"暂无翻译"时）
-                            if (!word.translation || word.translation === '' || word.translation === '暂无翻译') {
-                                if (details.translation && details.translation !== '') {
-                                    word.translation = details.translation;
-                                    changed = true;
-                                } else if (!word.translation) {
-                                    word.translation = '暂无翻译'; // 确保translation字段有值
-                                    changed = true;
-                                }
-                            }
-                            
-                            if (changed) {
-                                updatedCount++;
-                            }
-                        }
-                        
-                        // 单个请求之间的延迟
-                        await new Promise(resolve => setTimeout(resolve, 300));
-                    });
-                    
-                    // 等待当前批次所有请求完成
-                    await Promise.allSettled(promises);
-                    
-                    // 批次之间的延迟
-                    if (batchStart + batchSize < totalWords) {
-                        console.log(`批次 ${batchIndex} 完成，等待 ${delayBetweenBatches}ms 后处理下一批次`);
-                        await new Promise(resolve => setTimeout(resolve, delayBetweenBatches));
-                    }
-                }
-                
-                console.log(`单词信息更新完成！共更新了 ${updatedCount} 个单词。`);
-                return updatedCount;
-            },
-            
-            // 检查并完善单词标签分类
-            async checkAndFixWordCategories() {
-                console.log('开始检查并完善单词标签分类...');
-                let fixedCount = 0;
-                let totalWords = wordDatabase.length;
-                
-                for (let i = 0; i < totalWords; i++) {
-                    const word = wordDatabase[i];
-                    console.log(`检查单词 ${i + 1}/${totalWords}: ${word.word}`);
-                    
-                    // 确保categories数组存在
-                    if (!word.categories) {
-                        word.categories = [];
-                    }
-                    
-                    // 调用API获取单词详细信息，包含词性
-                    const details = await this.getWordDetails(word.word);
-                    
-                    if (details && details.categories.length > 0) {
-                        const apiCategories = details.categories;
-                        
-                        // 检查并添加词性分类
-                        for (const cat of apiCategories) {
-                            if (!word.categories.includes(cat)) {
-                                word.categories.push(cat);
-                                fixedCount++;
-                            }
-                        }
-                        
-                        // 移除错误的标签（这里可以根据需要添加更复杂的逻辑）
-                        const validCategories = [...new Set([...word.categories, ...apiCategories])];
-                        if (validCategories.length !== word.categories.length) {
-                            word.categories = validCategories;
-                            fixedCount++;
-                        }
-                    }
-                    
-                    // 每次请求后延迟300ms，避免API限流
-                    await new Promise(resolve => setTimeout(resolve, 300));
-                }
-                
-                console.log(`单词标签分类检查完成！共修复了 ${fixedCount} 个单词的标签。`);
-                return fixedCount;
-            }
+            // 保留空对象结构，用于将来扩展
         };
+// End of Selection
         
         const app = {
             // 更新加载进度
@@ -8688,12 +8493,13 @@
                 this.updateLoadingProgress(60, '准备应用界面...');
                 
                 // 后台运行：检查并完善单词标签分类（异步运行，不阻塞主线程）
-                setTimeout(async () => {
-                    console.log('启动后台任务：检查单词标签分类');
-                    await dictionaryAPI.checkAndFixWordCategories();
-                    utils.showNotification('单词标签分类检查完成！', 'success');
-                    console.log('后台任务完成：单词标签分类检查');
-                }, 1000);
+                // 注释掉这个功能，因为不需要
+                // setTimeout(async () => {
+                //     console.log('启动后台任务：检查单词标签分类');
+                //     await dictionaryAPI.checkAndFixWordCategories();
+                //     utils.showNotification('单词标签分类检查完成！', 'success');
+                //     console.log('后台任务完成：单词标签分类检查');
+                // }, 1000);
                 
                 // 模拟加载过程，确保用户看到完整的加载动画
                 const self = this;
@@ -8722,21 +8528,9 @@
                             dom.loadingScreen.style.display = 'none';
                             dom.app.classList.remove('hidden');
                             self.initUI();
-                            
-                            // 在后台更新单词信息，不影响用户使用
-                            self.updateWordsInBackground();
                         }, 300);
                     }, 500);
                 }, 400);
-            },
-            
-            // 在后台更新单词信息
-            async updateWordsInBackground() {
-                // 直接调用改进后的updateAllWords方法
-                const updatedCount = await dictionaryAPI.updateAllWords();
-                
-                // 显示更新完成通知
-                utils.showNotification(`单词信息已更新完成，共更新了 ${updatedCount} 个单词。`, 'success');
             },
             
             // 跟读例句功能
@@ -8950,6 +8744,11 @@
             initChart() {
                 const ctx = dom.weeklyChart.getContext('2d');
                 const labels = ['周一', '周二', '周三', '周四', '周五', '周六', '周日'];
+                
+                // 如果图表已经存在，销毁它
+                if (this.chart) {
+                    this.chart.destroy();
+                }
                 
                 this.chart = new Chart(ctx, {
                     type: 'bar',
@@ -9293,6 +9092,7 @@
                         // 更新总单词数
                         dom.totalWordCount.textContent = wordDatabase.length;
                         dom.totalWords.textContent = wordDatabase.length;
+                        console.log('首页已切换显示，已更新统计数据和图表');
                         break;
                     case 'library':
                         dom.libraryPage.classList.remove('hidden');
