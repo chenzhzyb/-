@@ -8638,15 +8638,7 @@
                             this.updateCategoryTags();
                             
                             // 隐藏所有下拉菜单
-                            document.querySelectorAll('.category-dropdown').forEach(menu => {
-                                menu.classList.add('invisible', 'opacity-0', 'scale-95', 'pointer-events-none');
-                                menu.classList.remove('visible', 'scale-100', 'opacity-100');
-                            });
-                            
-                            // 重置所有箭头方向
-                            document.querySelectorAll('.dropdown-arrow').forEach(arrow => {
-                                arrow.classList.remove('open');
-                            });
+                            this.hideAllDropdowns();
                             
                             this.searchWords();
                         });
@@ -8655,20 +8647,16 @@
                     });
                     
                     // 添加下拉交互
-                    groupButton.addEventListener('click', () => {
+                    groupButton.addEventListener('click', (e) => {
+                        // 阻止默认行为和事件冒泡
+                        e.preventDefault();
+                        e.stopPropagation();
+                        
                         // 切换当前下拉菜单显示状态
                         const isHidden = dropdownMenu.classList.contains('invisible');
                         
                         // 隐藏所有下拉菜单
-                        document.querySelectorAll('.category-dropdown').forEach(menu => {
-                            menu.classList.add('invisible', 'opacity-0', 'scale-95', 'pointer-events-none');
-                            menu.classList.remove('visible', 'opacity-100', 'scale-100');
-                        });
-                        
-                        // 重置所有箭头方向
-                        document.querySelectorAll('.dropdown-arrow').forEach(arrow => {
-                            arrow.classList.remove('open');
-                        });
+                        this.hideAllDropdowns();
                         
                         // 切换当前下拉菜单
                         if (isHidden) {
@@ -8684,17 +8672,7 @@
                         }
                     });
                     
-                    // 点击页面其他地方关闭下拉菜单
-                    document.addEventListener('click', (e) => {
-                        if (!dropdownContainer.contains(e.target)) {
-                            dropdownMenu.classList.add('invisible', 'opacity-0', 'scale-95', 'pointer-events-none');
-                            dropdownMenu.classList.remove('visible', 'scale-100', 'opacity-100');
-                            
-                            // 重置箭头方向
-                            const arrow = groupButton.querySelector('.dropdown-arrow');
-                            arrow.classList.remove('open');
-                        }
-                    });
+
                     
                     dropdownContainer.appendChild(groupButton);
                     dropdownContainer.appendChild(dropdownMenu);
@@ -9061,6 +9039,20 @@
                 }
                 
                 speechSynthesis.speak(utterance);
+            },
+            
+            // 隐藏所有下拉菜单
+            hideAllDropdowns() {
+                // 隐藏所有下拉菜单
+                document.querySelectorAll('.category-dropdown').forEach(menu => {
+                    menu.classList.add('invisible', 'opacity-0', 'scale-95', 'pointer-events-none');
+                    menu.classList.remove('visible', 'scale-100', 'opacity-100');
+                });
+                
+                // 重置所有箭头方向
+                document.querySelectorAll('.dropdown-arrow').forEach(arrow => {
+                    arrow.classList.remove('open');
+                });
             },
             
             // 更新导航按钮状态
@@ -10717,6 +10709,15 @@
                     this.updateCategoryTags();
                     dom.selectedCategory.textContent = '全部单词';
                     this.searchWords();
+                });
+                
+                // 全局点击事件：点击页面其他地方关闭下拉菜单
+                document.addEventListener('click', (e) => {
+                    // 检查点击目标是否在分类标签容器外
+                    const categoryTags = dom.categoryTags;
+                    if (categoryTags && !categoryTags.contains(e.target)) {
+                        this.hideAllDropdowns();
+                    }
                 });
                 
                 // 开始今日打卡
