@@ -789,7 +789,14 @@
         }
         
         /* 防止单词卡片内容溢出 */
-        .word-card-hover h3,
+        .word-card-hover h3 {
+            word-wrap: normal;
+            overflow-wrap: normal;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
         .word-card-hover .meaning,
         .word-card-hover .example {
             word-wrap: break-word;
@@ -2783,9 +2790,9 @@
                   <path d="M 80 220 L 60 240" stroke="#4facfe" stroke-width="1.5"/>
                   <path d="M 80 80 L 60 60" stroke="#4facfe" stroke-width="1.5"/>
                 </svg>
-                        <div>
-                            <h1 class="text-xl font-bold text-gray-800 sm:text-2xl">小鹿AI编程全能英语词汇库</h1>
-                            <p class="text-xs text-gray-500 sm:text-sm">快乐学习英语，轻松掌握词汇！</p>
+                        <div class="flex flex-col items-start justify-center overflow-hidden max-w-full w-full">
+                            <h1 class="text-lg sm:text-xl font-bold text-gray-800 truncate max-w-full w-full">小鹿AI编程全能英语词汇库</h1>
+                            <p class="text-xs text-gray-500 sm:text-sm truncate max-w-full w-full">快乐学习英语，轻松掌握词汇！</p>
                         </div>
                     </div>
                     <div class="flex items-center space-x-4">
@@ -9216,11 +9223,11 @@
             generateMemoryCards() {
                 const cards = [];
                 
-                // 设置容器的网格布局为4×4排列，确保响应式和美观
-                dom.memoryCards.className = 'grid grid-cols-4 gap-4 max-w-3xl mx-auto';
+                // 设置容器的响应式网格布局
+                dom.memoryCards.className = 'grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 max-w-3xl mx-auto';
                 
-                // 设置卡片高度，确保4×4布局美观
-                const cardHeight = 'h-36'; // 固定高度，适合4×4布局
+                // 根据屏幕宽度设置卡片高度
+                const cardHeight = window.innerWidth < 640 ? 'h-20' : 'h-28';
                 
                 // 为每个单词创建一对卡片（一个单词卡，一个翻译卡）
                 state.currentGame.words.forEach(word => {
@@ -9244,11 +9251,14 @@
                 // 清空并填充卡片容器
                 dom.memoryCards.innerHTML = '';
                 
+                // 创建文档片段，减少DOM操作次数
+                const fragment = document.createDocumentFragment();
+                
                 // 创建卡片元素
                 cards.forEach(card => {
                     const cardElement = document.createElement('div');
-                    // 添加悬停效果和过渡动画
-                    cardElement.className = `memory-card ${cardHeight} cursor-pointer transition-all duration-300 hover:shadow-lg transform hover:-translate-y-1`;
+                    // 简化初始样式，减少布局抖动
+                    cardElement.className = `memory-card ${cardHeight} cursor-pointer`;
                     cardElement.dataset.id = card.id;
                     cardElement.dataset.matchId = card.matchId;
                     cardElement.dataset.type = card.type;
@@ -9256,11 +9266,11 @@
                     
                     // 卡片内容结构 - 优化样式和排版
                     cardElement.innerHTML = `
-                        <div class="memory-card-front w-full h-full bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg transition-transform duration-500">
-                            <i class="fa fa-question text-white text-3xl"></i>
+                        <div class="memory-card-front w-full h-full bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-md transition-transform duration-500">
+                            <i class="fa fa-question text-white text-2xl"></i>
                         </div>
-                        <div class="memory-card-back w-full h-full bg-white rounded-xl border-3 border-blue-400 flex items-center justify-center p-4 shadow-inner transition-transform duration-500">
-                            <span class="text-center font-bold text-gray-800 text-lg break-words max-w-full">${card.content}</span>
+                        <div class="memory-card-back w-full h-full bg-white rounded-xl border-3 border-blue-400 flex items-center justify-center p-2 sm:p-4 shadow-inner transition-transform duration-500">
+                            <span class="text-center font-bold text-gray-800 text-sm sm:text-lg break-words max-w-full truncate">${card.content}</span>
                         </div>
                     `;
                     
@@ -9272,8 +9282,11 @@
                         }
                     });
                     
-                    dom.memoryCards.appendChild(cardElement);
+                    fragment.appendChild(cardElement);
                 });
+                
+                // 一次性添加所有卡片到DOM
+                dom.memoryCards.appendChild(fragment);
                 
                 // 重置游戏状态
                 state.currentGame.flips = 0;
@@ -9288,6 +9301,16 @@
                 
                 // 显示游戏界面
                 dom.memoryGame.classList.remove('hidden');
+                
+                // 延迟添加动画效果，避免初始加载卡顿
+                setTimeout(() => {
+                    const allCards = dom.memoryCards.querySelectorAll('.memory-card');
+                    allCards.forEach((card, index) => {
+                        setTimeout(() => {
+                            card.classList.add('transition-all', 'duration-300', 'hover:shadow-lg', 'transform', 'hover:-translate-y-1');
+                        }, index * 30); // 错开添加动画，提升视觉效果
+                    });
+                }, 100);
             },
             
             // 创建粒子特效
