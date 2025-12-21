@@ -7,12 +7,10 @@
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- 响应式样式 -->
-    <link rel="stylesheet" href="responsive.css">
-    
+
     <script>
         tailwind.config = {
             theme: {
@@ -522,17 +520,88 @@
             transition: all 0.3s ease;
             border-radius: 20px;
             font-weight: 600;
-            background: linear-gradient(135deg, #3b82f6, #60a5fa);
-            color: white;
-            padding: 0.25rem 1rem;
             font-size: 0.875rem;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             cursor: pointer;
+            padding: 0.5rem 1.25rem;
+            height: 42px;
+            min-height: 42px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            outline: none;
         }
         
         .category-tag:hover {
             transform: scale(1.05);
             box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+        }
+        
+        /* 分类组按钮样式 */
+        .category-group-btn {
+            cursor: pointer;
+            border: none;
+            outline: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.875rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin: 0;
+            padding: 0.5rem 1.25rem;
+            height: 42px;
+            min-height: 42px;
+        }
+        
+        .category-group-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
+        }
+        
+        /* 下拉菜单样式 */
+        .category-dropdown {
+            border-radius: 0.375rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            background-color: white;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            max-height: 240px;
+            overflow-y: auto;
+            z-index: 99999; /* 设置超高z-index确保在所有元素之上 */
+            position: absolute; /* 确保z-index生效 */
+        }
+        
+        /* 下拉菜单项样式 */
+        .category-dropdown a {
+            display: block;
+            text-decoration: none;
+            transition: background-color 0.2s;
+            white-space: nowrap;
+            padding: 0.5rem 1rem;
+            color: #374151;
+        }
+        
+        /* 下拉菜单项悬停效果 */
+        .category-dropdown a:hover {
+            background-color: #f3f4f6;
+        }
+        
+        /* 下拉菜单项选中效果 */
+        .category-dropdown a.bg-blue-100 {
+            background-color: #dbeafe;
+            color: #1d4ed8;
+        }
+        
+        /* 下拉箭头动画 */
+        .dropdown-arrow {
+            transition: transform 0.3s ease;
+        }
+        
+        .dropdown-arrow.open {
+            transform: rotate(180deg);
         }
         
         /* 标题样式优化 */
@@ -658,6 +727,116 @@
             --text-primary: #1F2937;
             --text-secondary: #4B5563;
             --bg-light: #F9FAFB;
+        }
+        
+        /* 全局响应式优化 */
+        * {
+            box-sizing: border-box;
+            word-break: break-word;
+            hyphens: auto;
+            overflow-wrap: break-word;
+        }
+        
+        /* 确保所有文字内容不超出容器 */
+        h1, h2, h3, h4, h5, h6, p, span, div, button, input, textarea, select {
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            max-width: 100%;
+        }
+        
+        /* 按钮文字不换行 */
+        button, .btn {
+            white-space: nowrap;
+        }
+        
+        /* 响应式字体大小 */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8rem !important;
+            }
+            h2 {
+                font-size: 1.5rem !important;
+            }
+            h3 {
+                font-size: 1.3rem !important;
+            }
+            h4 {
+                font-size: 1.1rem !important;
+            }
+            body {
+                font-size: 16px;
+            }
+            p {
+                font-size: 1rem !important;
+            }
+        }
+        
+        /* 防止图片超出容器 */
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+        
+        /* 确保主要容器元素不超出屏幕宽度 */
+        .modal-content, #app, nav, section, main {
+            max-width: 100%;
+        }
+        
+        /* 单词卡片响应式优化 */
+        .word-card-hover {
+            width: 100%;
+            max-width: 100%;
+        }
+        
+        /* 防止单词卡片内容溢出 */
+        .word-card-hover h3,
+        .word-card-hover .meaning,
+        .word-card-hover .example {
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+        
+        /* 响应式单词卡片文字大小 */
+        @media (max-width: 768px) {
+            .word-card-hover h3 {
+                font-size: 1.5rem !important;
+            }
+            .word-card-hover .meaning {
+                font-size: 1.1rem !important;
+            }
+            .word-card-hover .example {
+                font-size: 1rem !important;
+            }
+            
+            /* 每日打卡页面响应式优化 */
+            #checkin-page .flex.flex-col.sm\:flex-row.justify-between.items-start.sm\:items-center.mb-4.gap-3 {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            
+            /* 年级选择按钮 */
+            #grade-select-btn {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            /* 年级选择下拉菜单 */
+            #grade-select-dropdown {
+                width: 100% !important;
+                left: 0;
+                right: 0;
+            }
+            
+            /* 每日单词列表 */
+            #daily-words-container {
+                grid-template-columns: 1fr !important;
+            }
+            
+            /* 趣味练习网格 */
+            #checkin-page .grid.grid-cols-1.md\:grid-cols-2.gap-6 {
+                grid-template-columns: 1fr !important;
+            }
         }
         
         /* 友好的字体大小和行高 */
@@ -975,6 +1154,38 @@
             border-radius: 16px;
             border: 2px solid rgba(245, 158, 11, 0.3);
             margin-bottom: 2rem;
+            width: 100%;
+            max-width: 100%;
+        }
+        
+        /* 词汇库页面响应式优化 */
+        @media (max-width: 768px) {
+            /* 标题和分类标签垂直排列 */
+            #library-page .flex.flex-wrap.items-center.gap-4.mb-6 {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            
+            /* 单词列表调整 */
+            #word-list {
+                grid-template-columns: 1fr !important;
+                gap: 1rem;
+            }
+        }
+        
+        @media (min-width: 769px) and (max-width: 1024px) {
+            /* 平板设备单词列表调整 */
+            #word-list {
+                grid-template-columns: repeat(2, 1fr) !important;
+            }
+        }
+        
+        @media (min-width: 1025px) and (max-width: 1440px) {
+            /* 中等屏幕单词列表调整 */
+            #word-list {
+                grid-template-columns: repeat(3, 1fr) !important;
+            }
         }
         
         /* 已学习标记 */
@@ -2478,8 +2689,10 @@
             </div>
             <h1 class="text-white text-[clamp(2rem,5vw,3.5rem)] font-bold mb-3 drop-shadow-lg leading-tight">小鹿AI编程全能英语词汇库</h1>
             <p class="text-white/90 mb-8 text-lg font-medium">快乐学习英语，轻松掌握词汇！</p>
-            <div class="w-full max-w-xs bg-white/30 rounded-full h-3 mb-3 mx-auto">
-                <div id="loading-progress" class="bg-white h-3 rounded-full transition-all duration-300" style="width: 0%"></div>
+            <div class="w-full max-w-xs bg-white/30 rounded-full h-5 mb-3 mx-auto relative overflow-hidden">
+                <div id="loading-progress" class="bg-white h-5 rounded-full transition-all duration-300" style="width: 0%">
+                    <div id="loading-percentage" class="absolute top-0 left-0 w-full h-full flex items-center justify-center text-black text-xs font-bold"></div>
+                </div>
             </div>
             <p id="loading-text" class="text-white/90 text-base font-medium">准备魔法学习之旅...</p>
         </div>
@@ -2571,8 +2784,8 @@
                   <path d="M 80 80 L 60 60" stroke="#4facfe" stroke-width="1.5"/>
                 </svg>
                         <div>
-                            <h1 class="text-xl font-bold text-gray-800">小鹿AI编程全能英语词汇库</h1>
-              <p class="text-xs text-gray-500">快乐学习英语，轻松掌握词汇！</p>
+                            <h1 class="text-xl font-bold text-gray-800 sm:text-2xl">小鹿AI编程全能英语词汇库</h1>
+                            <p class="text-xs text-gray-500 sm:text-sm">快乐学习英语，轻松掌握词汇！</p>
                         </div>
                     </div>
                     <div class="flex items-center space-x-4">
@@ -2607,26 +2820,28 @@
         <!-- 主内容区 -->
         <main class="mb-8">
             <!-- 首页 -->
-            <div id="home-page">
+            <div id="home-page" class="animate-float-up">
                 <!-- 欢迎区域 -->
-                <section id="welcome-section" class="mb-10">
-                    <div class="bg-gradient-to-r from-blue-500 via-purple-500 to-blue-600 rounded-2xl p-8 text-white relative overflow-hidden">
+                <section id="welcome-section" class="mb-8 md:mb-12">
+                    <div class="bg-gradient-to-r from-blue-500 via-purple-500 to-blue-600 rounded-2xl p-6 md:p-8 text-white relative overflow-hidden shadow-xl transition-all duration-500 hover:shadow-2xl">
                         <!-- 星星背景 -->
-                        <div class="starry-bg absolute inset-0 pointer-events-none"></div>
-                        <div class="absolute top-0 right-0 w-full max-w-xs h-full opacity-10 md:w-1/3">
-                            <img src="https://picsum.photos/id/96/800/400" alt="English Learning" class="w-full h-full object-cover">
+                        <div class="star-field absolute inset-0 pointer-events-none opacity-30"></div>
+                        <div class="absolute top-0 right-0 w-full max-w-xs h-32 md:h-full opacity-20 md:w-1/3 animate-float-slow">
+                            <img src="https://picsum.photos/id/96/800/400" alt="English Learning" class="w-full h-full object-cover rounded-tr-2xl md:rounded-tr-2xl md:rounded-bl-0 rounded-bl-2xl">
                         </div>
                         <div class="relative z-10">
-                            <h2 class="text-3xl font-bold mb-4">欢迎使用小鹿AI编程全能英语词汇库！</h2>
-                            <p class="text-lg mb-6">今天是 <span id="current-date" class="font-semibold"></span>，包含<span id="total-word-count" class="font-bold">0</span>个单词，让我们开始学习吧！</p>
-                            <div class="flex flex-wrap gap-4">
-                                <button id="start-daily-btn" class="btn-primary flex items-center justify-center w-full sm:w-auto px-6 py-4 rounded-xl text-lg font-semibold active:bg-blue-700 min-h-[44px] mb-3 sm:mb-0">
-                                    <i class="fa fa-calendar-check mr-3 text-xl"></i>
-                                    开始今日打卡
+                            <h2 class="text-[clamp(1.5rem,4vw,2.5rem)] font-bold mb-3 md:mb-4 drop-shadow-lg">欢迎使用小鹿AI编程全能英语词汇库！</h2>
+                            <p class="text-base md:text-lg mb-4 md:mb-6 drop-shadow-sm">今天是 <span id="current-date" class="font-semibold"></span>，包含<span id="total-word-count" class="font-bold">0</span>个单词，让我们开始学习吧！</p>
+                            <div class="flex flex-col sm:flex-row gap-3 md:gap-4">
+                                <button id="start-daily-btn" class="btn-primary flex items-center justify-center w-full sm:w-auto px-4 py-3 md:px-6 md:py-4 rounded-xl text-base md:text-lg font-semibold active:bg-blue-700 min-h-[44px] mb-0 hover:scale-105 transition-transform duration-200">
+                                    <i class="fa fa-calendar-check mr-2 md:mr-3 text-lg md:text-xl"></i>
+                                    <span class="hidden sm:inline">开始今日打卡</span>
+                                    <span class="sm:hidden">今日打卡</span>
                                 </button>
-                                <button id="continue-learning-btn" class="bg-white text-blue-600 hover:bg-gray-50 flex items-center justify-center w-full sm:w-auto px-6 py-4 rounded-xl text-lg font-semibold shadow-md transition-all duration-200 active:bg-gray-100 min-h-[44px]">
-                                    <i class="fa fa-book mr-3 text-xl"></i>
-                                    浏览词汇库
+                                <button id="continue-learning-btn" class="bg-white text-blue-600 hover:bg-gray-50 flex items-center justify-center w-full sm:w-auto px-4 py-3 md:px-6 md:py-4 rounded-xl text-base md:text-lg font-semibold shadow-md transition-all duration-200 active:bg-gray-100 min-h-[44px] hover:scale-105 transition-transform duration-200">
+                                    <i class="fa fa-book mr-2 md:mr-3 text-lg md:text-xl"></i>
+                                    <span class="hidden sm:inline">浏览词汇库</span>
+                                    <span class="sm:hidden">词汇库</span>
                                 </button>
                             </div>
                         </div>
@@ -2634,50 +2849,56 @@
                 </section>
 
                 <!-- 学习统计 -->
-                <section id="stats-section" class="mb-10">
-                    <h2 class="text-2xl font-bold mb-6 text-gray-800">学习统计</h2>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-                        <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-100 transition-all duration-300 hover:shadow-xl">
-                            <div class="flex items-center justify-between mb-4">
-                                <div class="p-3 bg-blue-50 rounded-lg">
-                                    <i class="fa fa-book text-blue-500 text-xl"></i>
+                <section id="stats-section" class="mb-8 md:mb-12">
+                    <h2 class="text-xl md:text-2xl font-bold mb-4 md:mb-6 text-gray-800 cute-element">学习统计</h2>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+                        <!-- 已学习单词 -->
+                        <div class="bg-white rounded-xl shadow-lg p-4 md:p-6 border border-gray-100 transition-all duration-300 hover:shadow-xl hover:translate-y-[-5px]">
+                            <div class="flex items-center justify-between mb-3 md:mb-4">
+                                <div class="w-10 h-10 md:w-12 md:h-12 bg-blue-50 rounded-lg flex items-center justify-center">
+                                    <i class="fa fa-book text-blue-500 text-lg md:text-xl"></i>
                                 </div>
-                                <span class="text-3xl font-bold text-blue-600" id="learned-words-count">0</span>
+                                <span class="text-2xl md:text-3xl font-bold text-blue-600" id="learned-words-count">0</span>
                             </div>
-                            <h3 class="text-lg font-semibold text-gray-800 mb-2">已学习单词</h3>
-                            <div class="progress-bar bg-gray-200 rounded-full h-3 mb-2">
-                                <div class="progress-value bg-blue-500 h-3 rounded-full transition-all duration-500" id="learned-words-progress" style="width: 0%"></div>
+                            <h3 class="text-base md:text-lg font-semibold text-gray-800 mb-2">已学习单词</h3>
+                            <div class="progress-bar bg-gray-200 rounded-full h-2 md:h-3 mb-2">
+                                <div class="progress-value bg-blue-500 h-2 md:h-3 rounded-full transition-all duration-500" id="learned-words-progress" style="width: 0%"></div>
                             </div>
-                            <p class="text-sm text-gray-500 mb-3">总单词数: <span class="font-medium" id="total-words">0</span></p>
-                            <button id="view-learned-words" class="btn-primary w-full py-2 text-sm">
+                            <p class="text-xs md:text-sm text-gray-500 mb-3">总单词数: <span class="font-medium" id="total-words">0</span></p>
+                            <button id="view-learned-words" class="btn-primary w-full py-2 text-sm hover:scale-105 transition-transform duration-200">
                                 <i class="fa fa-list-ul mr-2"></i>查看学习记录
                             </button>
                         </div>
                         
-                        <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-100 transition-all duration-300 hover:shadow-xl">
-                            <div class="flex items-center justify-between mb-4">
-                                <div class="p-3 bg-green-50 rounded-lg">
-                                    <i class="fa fa-fire text-green-500 text-xl"></i>
+                        <!-- 连续打卡天数 -->
+                        <div class="bg-white rounded-xl shadow-lg p-4 md:p-6 border border-gray-100 transition-all duration-300 hover:shadow-xl hover:translate-y-[-5px]">
+                            <div class="flex items-center justify-between mb-3 md:mb-4">
+                                <div class="w-10 h-10 md:w-12 md:h-12 bg-green-50 rounded-lg flex items-center justify-center">
+                                    <i class="fa fa-fire text-green-500 text-lg md:text-xl"></i>
                                 </div>
-                                <span class="text-3xl font-bold text-green-600" id="streak-count">0</span>
+                                <span class="text-2xl md:text-3xl font-bold text-green-600" id="streak-count">0</span>
                             </div>
-                            <h3 class="text-lg font-semibold text-gray-800 mb-2">连续打卡天数</h3>
+                            <h3 class="text-base md:text-lg font-semibold text-gray-800 mb-2">连续打卡天数</h3>
                             <div class="flex items-center justify-between mt-1">
-                                <span class="text-sm text-gray-600">今日已打卡</span>
-                                <span id="today-checkin" class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium">
+                                <span class="text-xs md:text-sm text-gray-600">今日已打卡</span>
+                                <span id="today-checkin" class="inline-flex items-center px-3 py-1 rounded-full text-xs md:text-sm font-medium bg-gray-100 text-gray-800">
                                     否
                                 </span>
                             </div>
+                            <div class="mt-4 h-1 bg-gray-100 rounded-full overflow-hidden">
+                                <div class="h-full bg-gradient-to-r from-green-400 to-green-600" id="streak-progress" style="width: 0%"></div>
+                            </div>
                         </div>
                         
-                        <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-100 transition-all duration-300 hover:shadow-xl">
-                            <div class="flex items-center justify-between mb-4">
-                                <div class="p-3 bg-yellow-50 rounded-lg">
-                                    <i class="fa fa-chart-line text-yellow-500 text-xl"></i>
+                        <!-- 本周学习情况 -->
+                        <div class="bg-white rounded-xl shadow-lg p-4 md:p-6 border border-gray-100 transition-all duration-300 hover:shadow-xl hover:translate-y-[-5px]">
+                            <div class="flex items-center justify-between mb-3 md:mb-4">
+                                <div class="w-10 h-10 md:w-12 md:h-12 bg-yellow-50 rounded-lg flex items-center justify-center">
+                                    <i class="fa fa-chart-line text-yellow-500 text-lg md:text-xl"></i>
                                 </div>
-                                <span class="text-3xl font-bold text-yellow-600" id="weekly-score">0</span>
+                                <span class="text-2xl md:text-3xl font-bold text-yellow-600" id="weekly-score">0</span>
                             </div>
-                            <h3 class="text-lg font-semibold text-gray-800 mb-2">本周学习情况</h3>
+                            <h3 class="text-base md:text-lg font-semibold text-gray-800 mb-2">本周学习情况</h3>
                             <div style="height: 100px; width: 100%;">
                                 <canvas id="weekly-chart"></canvas>
                             </div>
@@ -2687,44 +2908,47 @@
             </div>
 
             <!-- 词汇库页面 -->
-            <div id="library-page" class="hidden">
+            <div id="library-page" class="hidden animate-float-up overflow-visible">
                 <div class="mb-8">
-                    <h2 class="text-2xl font-bold mb-6 text-gray-800">词汇库</h2>
-                    <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+                    <!-- 标题和分类标签在同一行 -->
+                    <div class="flex flex-wrap items-center gap-4 mb-6">
+                        <h2 class="text-2xl font-bold text-gray-800 cute-element">词汇库</h2>
+                        <!-- 单词分类标签 - 放在标题旁边 -->
+                        <div id="category-tags" class="flex flex-wrap items-center gap-3 z-50 relative overflow-visible p-3 bg-white/80 backdrop-blur-sm rounded-xl shadow-md border border-gray-100 transition-all duration-300 hover:shadow-lg">
+                            <!-- 分类标签将通过JavaScript动态生成 -->
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 transition-all duration-300 hover:shadow-xl">
                         <!-- 搜索栏 -->
-                        <div class="flex flex-col md:flex-row md:items-center justify-between mb-6">
-                            <div class="relative w-full md:w-96 mb-4 md:mb-0">
+                        <div class="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
+                            <div class="relative w-full md:w-96">
                                 <input type="text" id="search-input" placeholder="搜索单词或中文意思..." 
-                                       class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-lg shadow-sm transition-all duration-300 hover:shadow-md">
+                                       class="w-full pl-12 pr-12 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-lg shadow-sm transition-all duration-300 hover:shadow-md">
                                 <i class="fa fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-lg"></i>
-                                <button id="clear-search" class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 hidden">
+                                <button id="clear-search" class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 hidden hover:scale-110 transition-transform duration-200">
                                     <i class="fa fa-times"></i>
                                 </button>
                             </div>
-                            <div class="flex items-center">
-                                <span class="text-gray-600 mr-3">已选分类:</span>
-                                <span id="selected-category" class="font-medium text-blue-600">全部单词</span>
+                            <div class="flex items-center bg-gradient-to-r from-blue-50 to-indigo-50 px-5 py-3 rounded-2xl shadow-sm border border-blue-100 transition-all duration-300 hover:shadow-md">
+                                <span class="text-gray-600 font-medium mr-3">已选分类:</span>
+                                <span id="selected-category" class="font-bold text-blue-700 bg-white px-3 py-1 rounded-full shadow-sm">全部单词</span>
                             </div>
                         </div>
                         
-                        <!-- 单词分类标签 -->
-                        <div id="category-tags" class="flex flex-wrap gap-3 mb-8">
-                            <!-- 分类标签将通过JavaScript动态生成 -->
-                        </div>
-                        
                         <!-- 单词列表 -->
-                        <div id="word-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div id="word-list" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 md:gap-6">
                             <!-- 单词卡片将通过JavaScript动态生成 -->
                         </div>
                         
                         <!-- 空状态 -->
-                        <div id="empty-state" class="text-center py-16 hidden">
+                        <div id="empty-state" class="text-center py-16 hidden animate-float-up">
                             <div class="inline-block p-6 bg-blue-50 rounded-full mb-6">
                                 <i class="fa fa-search text-blue-500 text-4xl"></i>
                             </div>
                             <h3 class="text-xl font-semibold text-gray-800 mb-2">未找到匹配的单词</h3>
                             <p class="text-gray-600 mb-8">尝试其他搜索词或选择其他分类</p>
-                            <button id="reset-search" class="btn-primary px-6 py-3">
+                            <button id="reset-search" class="btn-primary px-6 py-3 hover:scale-105 transition-transform duration-200">
                                 <i class="fa fa-redo mr-2"></i>重置搜索
                             </button>
                         </div>
@@ -2733,26 +2957,26 @@
             </div>
 
             <!-- 每日打卡页面 -->
-            <div id="checkin-page" class="hidden">
+            <div id="checkin-page" class="hidden animate-float-up">
                 <div class="mb-8">
-                    <h2 class="text-2xl font-bold mb-6 text-gray-800">每日打卡</h2>
-                    <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+                    <h2 class="text-2xl font-bold mb-6 text-gray-800 cute-element">每日打卡</h2>
+                    <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 transition-all duration-300 hover:shadow-xl">
                         <!-- 今日进度 -->
-                        <div class="mb-8">
+                        <div class="mb-8 animate-float-up">
                             <div class="flex items-center justify-between mb-4">
                                 <h3 class="text-xl font-semibold">今日进度</h3>
-                                <span class="text-sm text-gray-500" id="checkin-date"></span>
+                                <span class="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full" id="checkin-date"></span>
                             </div>
-                            <div class="grid grid-cols-3 gap-4 mb-6">
-                                <div class="text-center p-4 bg-blue-50 rounded-xl">
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+                                <div class="text-center p-4 bg-blue-50 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 hover:translate-y-[-3px]">
                                     <div class="text-2xl font-bold text-blue-600 mb-1" id="daily-words-learned">0</div>
                                     <div class="text-sm text-gray-600">已学单词</div>
                                 </div>
-                                <div class="text-center p-4 bg-green-50 rounded-xl">
+                                <div class="text-center p-4 bg-green-50 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 hover:translate-y-[-3px]">
                                     <div class="text-2xl font-bold text-green-600 mb-1" id="daily-listening-score">0</div>
                                     <div class="text-sm text-gray-600">听力得分</div>
                                 </div>
-                                <div class="text-center p-4 bg-yellow-50 rounded-xl">
+                                <div class="text-center p-4 bg-yellow-50 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 hover:translate-y-[-3px]">
                                     <div class="text-2xl font-bold text-yellow-600 mb-1" id="daily-memory-score">0</div>
                                     <div class="text-sm text-gray-600">记忆得分</div>
                                 </div>
@@ -2760,20 +2984,43 @@
                         </div>
                         
                         <!-- 今日单词 -->
-                        <div class="mb-8">
-                            <h3 class="text-xl font-semibold mb-4">今日单词</h3>
-                            <div id="daily-words-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+                        <div class="mb-8 animate-float-up">
+                            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-3">
+                                <h3 class="text-xl font-semibold">今日单词</h3>
+                                <div class="relative w-full sm:w-auto">
+                                    <button id="grade-select-btn" class="btn-primary px-4 py-2 rounded-lg hover:bg-blue-600 transition-all duration-200 flex items-center w-full sm:w-auto justify-center">
+                                        <span id="current-grade">全部年级</span>
+                                        <i class="fa fa-chevron-down ml-2 text-sm"></i>
+                                    </button>
+                                    <div id="grade-select-dropdown" class="absolute right-0 mt-2 w-full sm:w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50 hidden transition-all duration-300 animate-float-up">
+                                        <button class="grade-option w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 transition-colors" data-grade="all">全部年级</button>
+                                        <button class="grade-option w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 transition-colors" data-grade="一年级">一年级</button>
+                                        <button class="grade-option w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 transition-colors" data-grade="二年级">二年级</button>
+                                        <button class="grade-option w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 transition-colors" data-grade="三年级">三年级</button>
+                                        <button class="grade-option w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 transition-colors" data-grade="四年级">四年级</button>
+                                        <button class="grade-option w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 transition-colors" data-grade="五年级">五年级</button>
+                                        <button class="grade-option w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 transition-colors" data-grade="六年级">六年级</button>
+                                        <button class="grade-option w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 transition-colors" data-grade="初一">初一</button>
+                                        <button class="grade-option w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 transition-colors" data-grade="初二">初二</button>
+                                        <button class="grade-option w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 transition-colors" data-grade="初三">初三</button>
+                                        <button class="grade-option w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 transition-colors" data-grade="高一">高一</button>
+                                        <button class="grade-option w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 transition-colors" data-grade="高二">高二</button>
+                                        <button class="grade-option w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 transition-colors" data-grade="高三">高三</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="daily-words-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
                                 <!-- 今日单词卡片将通过JavaScript动态生成 -->
                             </div>
                         </div>
                         
                         <!-- 趣味练习 -->
-                        <div class="mb-8">
+                        <div class="mb-8 animate-float-up">
                             <h3 class="text-xl font-semibold mb-4">趣味练习</h3>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div class="bg-gradient-to-r from-blue-50 to-blue-100 rounded-xl p-6 border border-blue-200">
+                                <div class="bg-gradient-to-r from-blue-50 to-blue-100 rounded-xl p-6 border border-blue-200 shadow-sm hover:shadow-md transition-all duration-300 hover:translate-y-[-3px]">
                                     <div class="flex items-center mb-4">
-                                        <div class="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center mr-4">
+                                        <div class="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center mr-4 hover:scale-110 transition-transform duration-200">
                                             <i class="fa fa-headphones text-white text-xl"></i>
                                         </div>
                                         <div>
@@ -2781,14 +3028,14 @@
                                             <p class="text-sm text-gray-600">听单词发音，选择正确的中文意思</p>
                                         </div>
                                     </div>
-                                    <button id="start-listening-game" class="btn-primary w-full py-3 rounded-lg">
+                                    <button id="start-listening-game" class="btn-primary w-full py-3 rounded-lg hover:scale-105 transition-transform duration-200">
                                         <i class="fa fa-play mr-2"></i>开始练习
                                     </button>
                                 </div>
                                 
-                                <div class="bg-gradient-to-r from-green-50 to-green-100 rounded-xl p-6 border border-green-200">
+                                <div class="bg-gradient-to-r from-green-50 to-green-100 rounded-xl p-6 border border-green-200 shadow-sm hover:shadow-md transition-all duration-300 hover:translate-y-[-3px]">
                                     <div class="flex items-center mb-4">
-                                        <div class="w-12 h-12 bg-green-500 rounded-lg flex items-center justify-center mr-4">
+                                        <div class="w-12 h-12 bg-green-500 rounded-lg flex items-center justify-center mr-4 hover:scale-110 transition-transform duration-200">
                                             <i class="fa fa-brain text-white text-xl"></i>
                                         </div>
                                         <div>
@@ -2796,7 +3043,7 @@
                                             <p class="text-sm text-gray-600">翻转卡片，匹配英文单词和中文意思</p>
                                         </div>
                                     </div>
-                                    <button id="start-memory-game" class="btn-primary w-full py-3 rounded-lg">
+                                    <button id="start-memory-game" class="btn-primary w-full py-3 rounded-lg hover:scale-105 transition-transform duration-200">
                                         <i class="fa fa-play mr-2"></i>开始练习
                                     </button>
                                 </div>
@@ -2804,11 +3051,11 @@
                         </div>
                         
                         <!-- 操作按钮 -->
-                        <div class="flex justify-between pt-6 border-t border-gray-200">
-                            <button data-nav="home" class="flex items-center px-5 py-2.5 text-gray-600 hover:text-blue-600 transition-colors duration-200">
+                        <div class="flex flex-col sm:flex-row justify-between items-center pt-6 border-t border-gray-200 gap-4">
+                            <button data-nav="home" class="flex items-center px-5 py-2.5 text-gray-600 hover:text-blue-600 transition-colors duration-200 hover:scale-105 transition-transform duration-200">
                                 <i class="fa fa-arrow-left mr-2"></i>返回主页
                             </button>
-                            <button id="complete-checkin" class="btn-primary flex items-center px-6 py-3 rounded-lg text-lg disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                            <button id="complete-checkin" class="btn-primary flex items-center px-6 py-3 rounded-lg text-lg disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 transition-transform duration-200" disabled>
                                 完成打卡<i class="fa fa-check ml-2"></i>
                             </button>
                         </div>
@@ -3023,10 +3270,15 @@
             <div class="modal-body">
                 <div class="space-y-6">
                     <div>
-                        <label class="block text-gray-700 mb-2">默认语音</label>
-                        <div class="bg-gray-50 p-4 rounded-lg border border-gray-200 text-gray-600">
-                            使用系统默认语音进行朗读
-                        </div>
+                        <label class="block text-gray-700 mb-2">选择语音效果</label>
+                        <select id="voice-select" class="w-full p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <option value="default">系统默认语音</option>
+                            <option value="cute">可爱童声</option>
+                            <option value="funny">有趣搞怪</option>
+                            <option value="friendly">友好亲切</option>
+                            <option value="excited">兴奋活泼</option>
+                        </select>
+                        <p class="text-sm text-gray-500 mt-1">选择适合孩子的语音效果</p>
                     </div>
                     <div>
                         <label class="block text-gray-700 mb-2">语音速度</label>
@@ -3100,14 +3352,14 @@
     </div>
 
     <!-- 成就模态框 -->
-    <div id="achievements-modal" class="modal hidden">
-        <div class="modal-content max-w-2xl">
-            <div class="modal-header">
-                <h3 class="text-xl font-bold text-gray-800">我的成就</h3>
-                <button class="modal-close">&times;</button>
+    <div id="achievements-modal" class="modal hidden animate-float-up">
+        <div class="modal-content max-w-2xl bg-white rounded-2xl shadow-xl border border-gray-100">
+            <div class="modal-header bg-gradient-to-r from-blue-50 to-blue-100 rounded-t-2xl px-6 py-4">
+                <h3 class="text-xl font-bold text-gray-800 cute-element">我的成就</h3>
+                <button class="modal-close text-gray-500 hover:text-gray-700 hover:scale-110 transition-all duration-200">&times;</button>
             </div>
-            <div class="modal-body">
-                <div id="achievements-list" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="modal-body px-6 py-5">
+                <div id="achievements-list" class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                     <!-- 成就将通过JavaScript动态生成 -->
                 </div>
             </div>
@@ -3149,6 +3401,187 @@
 
     <script>
         // ==================== 数据层 ====================
+        // 单词到标签的映射
+        const wordTagsMap = {};
+        
+        // 按年级和类别处理单词列表
+        const userWordList = {
+          "一年级": {
+            "数字": ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"],
+            "颜色": ["red", "yellow", "blue", "green", "black", "white", "orange", "pink", "brown", "purple"],
+            "学校文具": ["pen", "pencil", "pencil-case", "ruler", "eraser", "crayon", "book", "bag", "sharpener"],
+            "身体部位": ["head", "face", "nose", "mouth", "eye", "ear", "arm", "hand", "finger", "leg", "foot", "body"],
+            "动物": ["cat", "dog", "monkey", "panda", "rabbit", "duck", "pig", "bird", "bear", "elephant", "mouse", "squirrel"],
+            "食物": ["cake", "bread", "hot dog", "hamburger", "chicken", "French fries", "Coke", "juice", "milk", "water", "tea", "coffee"],
+            "玩具/物品": ["doll", "ball", "kite", "balloon", "car", "plane", "boat"],
+            "家庭称呼": ["father", "dad", "mother", "mom", "grandfather", "grandpa", "grandmother", "grandma", "sister", "brother"],
+            "基础动词": ["see", "listen", "hear", "smell", "taste", "like", "help", "stand up"],
+            "其他": ["toy", "flower", "sorry", "thank you", "hi", "hello", "goodbye", "good morning", "good afternoon"]
+          },
+          "二年级": {
+            "学校设施": ["classroom", "library", "playground", "toilet", "teacher's office"],
+            "课程/活动": ["Chinese", "math", "English", "music", "PE", "art", "computer", "do homework", "read books", "watch TV"],
+            "四季天气": ["spring", "summer", "autumn", "winter", "warm", "hot", "cool", "cold", "sunny", "cloudy", "rainy", "snowy"],
+            "家居房间": ["living room", "bedroom", "kitchen", "bathroom", "study"],
+            "交通工具": ["bus", "car", "bike", "plane", "train", "ship", "subway"],
+            "职业": ["teacher", "doctor", "nurse", "driver", "farmer", "policeman", "cook"],
+            "植物": ["tree", "flower", "grass", "leaf"],
+            "节日": ["New Year", "Spring Festival", "Christmas", "present", "card"],
+            "动词短语": ["get up", "go to school", "go home", "go to bed", "wash face", "brush teeth"]
+          },
+          "三年级": {
+            "形容词": ["big", "small", "long", "short", "tall", "fat", "thin", "new", "old", "happy", "sad", "good", "nice"],
+            "水果": ["apple", "banana", "pear", "orange", "peach", "watermelon", "strawberry", "grape"],
+            "蔬菜": ["eggplant", "green beans", "tofu", "potato", "tomato", "cucumber", "cabbage", "carrot"],
+            "衣服": ["T-shirt", "shirt", "skirt", "dress", "jacket", "sweater", "coat", "pants", "trousers", "jeans", "shorts", "shoes", "socks"],
+            "时间/星期": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday", "week", "today", "tomorrow", "yesterday"],
+            "数字拓展": ["eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen", "twenty"],
+            "日常动作": ["go", "come", "play", "do", "have", "drink", "eat", "read", "write", "draw", "sing", "dance", "jump", "run", "swim", "ride", "fly", "buy", "use", "open", "close"],
+            "疑问词": ["what", "who", "where", "when", "why", "how", "how many", "how much"],
+            "其他": ["price", "dollar", "yuan", "left", "right", "straight", "traffic light"]
+          },
+          "四年级": {
+            "房间物品": ["bed", "table", "desk", "chair", "sofa", "shelf", "fridge", "phone", "picture", "photo", "clock", "lamp", "mirror", "curtain", "trash bin"],
+            "自然/地理": ["river", "lake", "mountain", "hill", "forest", "path", "road", "bridge", "building", "hospital", "cinema", "bookstore", "supermarket", "post office", "bank"],
+            "动词过去式": ["played", "watched", "washed", "cleaned", "visited", "went", "did", "had", "read"],
+            "情绪": ["tired", "excited", "angry", "bored", "worried"],
+            "方位介词": ["in", "on", "under", "behind", "in front of", "next to", "between", "over", "near"],
+            "频率副词": ["always", "usually", "often", "sometimes", "seldom", "never"],
+            "其他": ["because", "but", "so", "if", "then", "first", "next", "finally", "left", "right", "straight"]
+          },
+          "五年级": {
+            "国家/语言": ["China", "Chinese", "USA", "American", "UK", "English", "Canada", "Canadian", "Australia", "Australian", "Japan", "Japanese"],
+            "城市设施": ["museum", "library", "zoo", "park", "gym", "theatre", "restaurant", "hotel", "factory", "company", "university"],
+            "动植物拓展": ["rose", "sunflower", "bamboo", "tiger", "lion", "elephant", "kangaroo", "giraffe", "zebra", "penguin", "whale", "shark"],
+            "环保/社会": ["protect", "environment", "air", "water", "earth", "save", "reuse", "recycle", "waste", "plastic", "paper", "can", "battery"],
+            "职业拓展": ["scientist", "artist", "writer", "singer", "actor", "actress", "TV reporter", "engineer", "accountant", "salesperson", "cleaner"],
+            "其他": ["goal", "win", "lose", "team", "match", "race", "rule", "fair", "cheat", "should", "shouldn't"]
+          },
+          "六年级": {
+            "学科/研究": ["subject", "science", "physics", "chemistry", "biology", "history", "geography", "politics", "art", "PE", "experiment", "observe", "survey", "interview", "report"],
+            "文明礼仪": ["polite", "impolite", "queue", "litter", "spit", "noise", "respect", "tradition", "culture", "custom", "festival", "ancestor", "generation"],
+            "心理/情绪": ["proud", "shy", "brave", "calm", "nervous", "lonely", "pleasant", "terrible", "fantastic"],
+            "名胜古迹": ["Great Wall", "Palace Museum", "Terra-cotta Warriors", "Summer Palace", "West Lake", "Yellow Mountain", "Eiffel Tower", "Big Ben", "Statue of Liberty", "Sydney Opera House"],
+            "社会问题": ["homeless", "disabled", "poor", "hungry", "thirsty", "charity", "donate", "volunteer", "organization", "project"],
+            "其他": ["population", "area", "capital", "currency", "government", "president", "queen", "king", "parliament", "citizen"]
+          },
+          "初一": {
+            "系表": ["am", "is", "are", "was", "were", "become", "seem", "feel", "look", "sound", "smell", "taste"],
+            "代词": ["I", "you", "he", "she", "it", "we", "they", "my", "your", "his", "her", "its", "our", "their", "mine", "yours", "hers", "ours", "theirs", "myself", "yourself", "himself", "herself", "itself", "ourselves", "yourselves", "themselves"],
+            "疑问": ["what", "who", "whose", "which", "where", "when", "why", "how", "how old", "how many", "how much", "how long", "how far", "how often"],
+            "时间": ["second", "minute", "hour", "day", "week", "month", "year", "yesterday", "today", "tomorrow", "morning", "afternoon", "evening", "night", "last", "next"],
+            "数字/序数": ["eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen", "twenty", "twenty-one", "ninety-nine", "hundred", "first", "second", "twentieth"],
+            "家庭/称呼": ["parent", "grandparent", "uncle", "aunt", "cousin", "son", "daughter", "baby"],
+            "学校物品": ["eraser", "dictionary", "schoolbag", "textbook", "notebook", "ruler", "compasses", "map", "card", "photo", "picture", "blackboard", "chalk", "screen", "computer", "keyboard", "mouse"],
+            "学科": ["Chinese", "Math", "English", "History", "Geography", "Biology", "Music", "Art", "PE", "IT"],
+            "日常动词": ["get up", "have breakfast", "go to school", "have classes", "have lunch", "go home", "do homework", "go to bed", "take a shower", "brush teeth", "wash face", "comb hair"],
+            "运动/俱乐部": ["basketball", "football", "soccer", "volleyball", "baseball", "tennis", "table tennis", "badminton", "swimming", "running", "jumping", "join", "club", "team", "chess"],
+            "食物三餐": ["breakfast", "lunch", "dinner", "supper", "rice", "noodles", "dumplings", "bread", "porridge", "milk", "egg", "meat", "beef", "pork", "chicken", "fish", "vegetable", "cabbage", "carrot", "potato", "tomato", "cucumber", "onion", "fruit", "apple", "banana", "orange", "pear", "strawberry", "grape", "watermelon"],
+            "频率副词": ["always", "usually", "often", "sometimes", "seldom", "never", "once", "twice", "three times"],
+            "介词短语": ["at home", "at school", "on the desk", "under the bed", "in front of", "behind", "next to", "between", "across from"],
+            "情态": ["can", "may", "must", "have to", "need", "should"],
+            "其他": ["because", "so", "but", "or", "and", "then", "first", "next", "finally", "left", "right", "straight", "excuse me", "sorry", "thank you", "you're welcome", "that's OK"]
+          },
+          "初二": {
+            "形容词/副词比较级/最高级": ["tall", "taller", "tallest", "nice", "nicer", "nicest", "big", "bigger", "biggest", "happy", "happier", "happiest", "good", "well", "better", "best", "bad", "badly", "worse", "worst", "many", "much", "more", "most", "little", "less", "least", "than", "as", "as…as"],
+            "健康/疾病": ["healthy", "unhealthy", "fit", "strong", "weak", "fever", "cold", "cough", "headache", "toothache", "stomachache", "sore throat", "medicine", "pill", "doctor", "nurse", "patient", "hospital", "clinic"],
+            "情态拓展": ["could", "would", "should", "shall", "will", "may", "might", "mustn’t", "don’t have to"],
+            "动词不定式": ["want to do", "hope to do", "plan to do", "decide to do", "learn to do", "forget to do", "remember to do", "it’s + adj. + to do"],
+            "邀请/约会": ["invitation", "invite", "accept", "refuse", "message", "reply", "promise", "agree", "disagree"],
+            "交通/旅游": ["train", "plane", "ship", "subway", "bus", "taxi", "bike", "bicycle", "motorcycle", "station", "airport", "harbor", "platform", "ticket", "passport", "map", "guide", "journey", "trip", "travel", "passenger", "driver", "traffic", "traffic lights", "crossing", "zebra crossing", "speed", "accident"],
+            "地点方位": ["east", "west", "south", "north", "northeast", "northwest", "southeast", "southwest", "map", "compass", "direction", "position"],
+            "自然/天气拓展": ["temperature", "degree", "centigrade", "forecast", "cloud", "cloudy", "rain", "rainy", "snow", "snowy", "wind", "windy", "fog", "foggy", "storm", "lightning", "thunder", "flood", "drought"],
+            "环保/动词": ["protect", "environment", "pollute", "pollution", "waste", "litter", "recycle", "reuse", "save", "energy", "plastic", "can", "battery"],
+            "其他": ["program", "channel", "website", "Internet", "e-mail", "download", "upload", "chat", "online", "dictionary", "encyclopedia", "magazine", "newspaper", "novel", "diary", "composition"]
+          },
+          "初三": {
+            "被动语态": ["invent", "invented", "discover", "discovered", "produce", "produced", "use", "used", "build", "built", "design", "designed"],
+            "科技/发明": ["printer", "radio", "telephone", "television", "computer", "laptop", "camera", "video", "CD", "VCD", "DVD", "MP3", "MP4", "smartphone", "e-book", "Internet", "website", "e-mail", "robot", "satellite", "rocket", "spaceship", "astronaut"],
+            "材料/性质": ["metal", "wood", "plastic", "glass", "paper", "cotton", "wool", "silk", "leather", "hard", "soft", "smooth", "rough", "heavy", "light", "thick", "thin", "sharp", "blunt"],
+            "历史/社会": ["dynasty", "emperor", "king", "queen", "prince", "princess", "palace", "temple", "wall", "tower", "bridge", "museum", "memorial", "war", "peace", "army", "soldier", "weapon", "gun", "sword"],
+            "文化/礼仪": ["custom", "tradition", "festival", "holiday", "celebrate", "greeting", "manner", "polite", "impolite", "respect", "guest", "host", "speech", "toast"],
+            "情感/性格": ["proud", "modest", "honest", "dishonest", "brave", "coward", "kind", "unkind", "friendly", "unfriendly", "polite", "rude", "generous", "mean", "humorous", "serious", "silent", "talkative", "hard-working", "lazy", "clever", "smart", "foolish", "wise"],
+            "语法功能词": ["by", "with", "without", "during", "while", "until", "as soon as", "so that", "in order to", "although", "though", "even if", "unless"],
+            "其他": ["population", "area", "capital", "currency", "government", "president", "minister", "citizen", "law", "rule", "right", "duty", "vote", "election"]
+          },
+          "高一": {
+            "话题": ["teenager", "adolescent", "adult", "senior", "junior", "identity", "gender", "male", "female"],
+            "校园活动": ["lecture", "seminar", "presentation", "project", "assignment", "schedule", "deadline", "credit", "campus", "canteen", "dormitory", "laboratory", "lab", "gym", "stadium", "library", "playground"],
+            "性格/心理": ["optimistic", "pessimistic", "confident", "shy", "independent", "dependent", "creative", "curious", "responsible", "reliable", "patient", "impatient", "determined", "ambitious", "easy-going", "warm-hearted"],
+            "语言技能": ["pronounce", "pronunciation", "accent", "intonation", "vocabulary", "grammar", "spelling", "composition", "summary", "outline", "draft", "paragraph", "topic", "theme", "title"],
+            "旅行/交通": ["route", "itinerary", "reservation", "book", "check-in", "check-out", "passenger", "flight", "boarding", "gate", "departure", "arrival", "luggage", "baggage", "suitcase", "passport", "visa", "customs", "currency", "exchange"],
+            "自然/地理": ["continent", "ocean", "sea", "lake", "river", "mountain", "valley", "desert", "plain", "plateau", "island", "peninsula", "bay", "strait", "volcano", "earthquake", "tsunami", "climate", "temperature", "altitude"],
+            "科技/媒体": ["digital", "virtual", "artificial", "intelligence", "AI", "data", "database", "software", "hardware", "program", "code", "hack", "update", "upgrade", "backup", "virus", "file", "folder", "link", "website", "browser", "search engine", "password", "account", "privacy", "cyber"],
+            "语法拓展": ["present perfect", "past perfect", "future perfect", "passive", "relative clause", "noun clause", "inversion", "ellipsis", "emphasis"]
+          },
+          "高二": {
+            "社会/经济": ["society", "community", "neighbourhood", "organization", "institution", "association", "union", "committee", "government", "parliament", "congress", "policy", "law", "regulation", "rule", "justice", "democracy", "election", "vote", "campaign", "politics", "political", "party", "president", "prime minister", "mayor", "governor", "senator", "representative", "citizen", "rights", "obligation", "freedom", "equality", "responsibility"],
+            "经济/职业": ["economy", "economic", "finance", "financial", "money", "currency", "cash", "coin", "bill", "banknote", "bank", "account", "credit card", "debit card", "loan", "mortgage", "interest", "debt", "tax", "salary", "wage", "income", "expense", "budget", "profit", "loss", "investment", "investor", "share", "stock", "market", "demand", "supply", "price", "cost", "charge", "fee", "receipt", "invoice", "insurance", "advertisement", "brand", "customer", "consumer", "company", "corporation", "firm", "partnership", "cooperation", "competition", "monopoly", "export", "import", "trade", "tariff"],
+            "医学/健康": ["medicine", "medical", "clinic", "hospital", "ward", "emergency", "operation", "surgery", "transplant", "treatment", "therapy", "cure", "recover", "diagnosis", "symptom", "virus", "bacteria", "infection", "epidemic", "pandemic", "vaccine", "dose", "prescription", "pill", "tablet", "capsule", "drug", "addiction", "mental", "physical", "healthcare", "insurance"],
+            "法律/犯罪": ["lawyer", "attorney", "judge", "court", "trial", "sentence", "punishment", "prison", "jail", "crime", "criminal", "theft", "robbery", "burglary", "shoplifting", "fraud", "bribery", "corruption", "murder", "kidnap", "smuggle", "drug trafficking", "fine", "death penalty", "innocent", "guilty", "witness", "evidence", "proof", "investigation", "arrest", "charge", "defence", "innocence"],
+            "科技前沿": ["clone", "gene", "genetic", "DNA", "biotechnology", "nanotechnology", "robotics", "automation", "artificial intelligence", "machine learning", "algorithm", "big data", "cloud computing", "quantum", "solar", "nuclear", "radiation", "laser", "fiber", "satellite", "spacecraft", "astronaut", "Mars", "mission"],
+            "文学/修辞": ["literature", "literary", "author", "writer", "novelist", "poet", "poetry", "prose", "essay", "fiction", "non-fiction", "biography", "autobiography", "plot", "character", "theme", "setting", "climax", "conflict", "symbol", "irony", "metaphor", "simile", "personification", "rhyme", "rhythm", "stanza", "chapter", "preface", "review", "critic"]
+          },
+          "高三": {
+            "哲学/伦理": ["philosophy", "philosopher", "ethics", "moral", "morality", "value", "virtue", "conscience", "duty", "responsibility", "justice", "fairness", "honesty", "integrity", "kindness", "compassion", "empathy", "altruism", "egoism", "utilitarianism", "relativism", "absolutism", "principle", "standard", "belief", "faith", "religion", "religious", "Buddhism", "Christianity", "Islam", "atheism", "divine", "sacred", "evil", "good", "right", "wrong", "dilemma"],
+            "全球化/跨文化": ["globalization", "global", "international", "universal", "multicultural", "diversity", "minority", "majority", "integration", "assimilation", "discrimination", "prejudice", "stereotype", "tolerance", "harmony", "conflict", "cooperation", "exchange", "communication", "diplomacy", "treaty", "alliance", "border", "immigration", "emigration", "migrant", "refugee", "passport", "visa", "citizenship", "identity", "native", "foreign", "alien", "exotic"],
+            "抽象/学术": ["abstract", "concrete", "concept", "notion", "definition", "interpretation", "perspective", "angle", "viewpoint", "outlook", "worldview", "ideology", "doctrine", "theory", "hypothesis", "assumption", "premise", "evidence", "statistics", "data", "index", "trend", "tendency", "phenomenon", "principle", "law", "rule", "criterion", "norm", "convention", "tradition", "custom", "institution", "system", "structure", "framework", "model", "pattern", "function", "role", "status", "identity", "image", "symbol", "sign"],
+            "高级动词短语": ["account for", "amount to", "appeal to", "bring about", "call for", "carry out", "come up with", "consist of", "contribute to", "count on", "deal with", "depend on", "end up", "figure out", "get across", "get rid of", "give rise to", "go through", "hold on", "keep up with", "lead to", "live up to", "look forward to", "make sense", "make up for", "object to", "participate in", "put forward", "put up with", "result in", "run out of", "set about", "stand for", "take advantage of", "take in", "take on", "turn out"],
+            "写作连接": ["furthermore", "moreover", "likewise", "similarly", "in addition", "what's more", "besides", "meanwhile", "nevertheless", "nonetheless", "whereas", "in contrast", "on the contrary", "instead", "alternatively", "consequently", "hence", "thus", "accordingly", "as a result", "in conclusion", "to sum up", "in brief", "in summary", "on the whole"]
+          }
+        };
+        
+        // 年级单词映射 - 各年级核心单词
+        // 构建gradeWordsMap，确保包含所有用户提供的单词
+        const gradeWordsMap = {};
+        
+        // 遍历userWordList，将所有单词按年级分类
+        for (const [grade, categories] of Object.entries(userWordList)) {
+          gradeWordsMap[grade] = [];
+          for (const [category, words] of Object.entries(categories)) {
+            gradeWordsMap[grade] = [...new Set([...gradeWordsMap[grade], ...words])];
+          }
+        }
+        
+        // 构建单词到标签的映射
+        for (const [grade, categories] of Object.entries(userWordList)) {
+          for (const [category, words] of Object.entries(categories)) {
+            for (const word of words) {
+              if (!wordTagsMap[word]) {
+                wordTagsMap[word] = {
+                  grade: grade,
+                  categories: []
+                };
+              }
+              if (!wordTagsMap[word].categories.includes(category)) {
+                wordTagsMap[word].categories.push(category);
+              }
+            }
+          }
+        }
+        
+        // 添加数词和序数词标签
+        const cardinalNumbers = ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen", "twenty", "twenty-one", "ninety-nine", "hundred"];
+        const ordinalNumbers = ["first", "second", "third", "fourth", "fifth", "sixth", "seventh", "eighth", "ninth", "tenth", "twentieth"];
+        
+        for (const number of cardinalNumbers) {
+          if (!wordTagsMap[number]) {
+            wordTagsMap[number] = { grade: "一年级", categories: [] };
+          }
+          if (!wordTagsMap[number].categories.includes("数词")) {
+            wordTagsMap[number].categories.push("数词");
+          }
+        }
+        
+        for (const number of ordinalNumbers) {
+          if (!wordTagsMap[number]) {
+            wordTagsMap[number] = { grade: "三年级", categories: [] };
+          }
+          if (!wordTagsMap[number].categories.includes("序数词")) {
+            wordTagsMap[number].categories.push("序数词");
+          }
+        }
+        
         // 单词数据库 - 包含所有提供的单词
         const wordDatabase = [
 { "word": "abandon", "phonetic": "/əˈbændən/", "meaning": "放弃", "example": "Never abandon your dreams.", "translation": "永远不要放弃你的梦想。", "categories": ["动词"], "difficulty": 2 },
@@ -6117,7 +6550,7 @@
 { "word": "seaside", "phonetic": "/ˈsiːsaɪd/", "meaning": "海滨", "example": "We spent holidays at the seaside.", "translation": "我们在海滨度假。", "categories": ["S"], "difficulty": 1 },
 { "word": "season", "phonetic": "/ˈsiːzn/", "meaning": "季节", "example": "Spring is my favorite season.", "translation": "春天是我最喜欢的季节。", "categories": ["S"], "difficulty": 1 },
 { "word": "seat", "phonetic": "/siːt/", "meaning": "座位", "example": "Take a seat, please.", "translation": "请坐。", "categories": ["S"], "difficulty": 1 },
-{ "word": "second", "phonetic": "/ˈsekənd/", "meaning": "第二；秒", "example": "Wait a second, please.", "translation": "请稍等一秒。", "categories": ["S"], "difficulty": 1 },
+{ "word": "second", "phonetic": "/ˈsekənd/", "meaning": "第二；秒", "example": "Wait a second, please.", "translation": "请稍等一秒。", "categories": ["序数词", "数词"], "difficulty": 1 },
 { "word": "secondary", "phonetic": "/ˈsekəndri/", "meaning": "次要的；中学的", "example": "Secondary school starts at twelve.", "translation": "中学十二岁入学。", "categories": ["S"], "difficulty": 1 },
 { "word": "secret", "phonetic": "/ˈsiːkrət/", "meaning": "秘密", "example": "Can you keep a secret?", "translation": "你能保守秘密吗？", "categories": ["S"], "difficulty": 1 },
 { "word": "secretary", "phonetic": "/ˈsekrətri/", "meaning": "秘书", "example": "The secretary booked the flight.", "translation": "秘书预订了航班。", "categories": ["S"], "difficulty": 1 },
@@ -6163,9 +6596,9 @@
 { "word": "setting", "phonetic": "/ˈsetɪŋ/", "meaning": "环境；设置", "example": "The story has a rural setting.", "translation": "这个故事背景是乡村。", "categories": ["S"], "difficulty": 1 },
 { "word": "settle", "phonetic": "/ˈsetl/", "meaning": "定居；解决", "example": "They settled in Canada.", "translation": "他们在加拿大定居了。", "categories": ["S"], "difficulty": 1 },
 { "word": "settlement", "phonetic": "/ˈsetlmənt/", "meaning": "解决；定居点", "example": "Reach a peace settlement.", "translation": "达成和平解决。", "categories": ["S"], "difficulty": 1 },
-{ "word": "seven", "phonetic": "/ˈsevn/", "meaning": "七", "example": "There are seven days in a week.", "translation": "一周有七天。", "categories": ["S"], "difficulty": 1 },
-{ "word": "seventeen", "phonetic": "/ˌsevnˈtiːn/", "meaning": "十七", "example": "She is seventeen years old.", "translation": "她十七岁。", "categories": ["S"], "difficulty": 1 },
-{ "word": "seventy", "phonetic": "/ˈsevnti/", "meaning": "七十", "example": "My grandpa is seventy.", "translation": "我爷爷七十岁了。", "categories": ["S"], "difficulty": 1 },
+{ "word": "seven", "phonetic": "/ˈsevn/", "meaning": "七", "example": "There are seven days in a week.", "translation": "一周有七天。", "categories": ["数词"], "difficulty": 1 },
+{ "word": "seventeen", "phonetic": "/ˌsevnˈtiːn/", "meaning": "十七", "example": "She is seventeen years old.", "translation": "她十七岁。", "categories": ["数词"], "difficulty": 1 },
+{ "word": "seventy", "phonetic": "/ˈsevnti/", "meaning": "七十", "example": "My grandpa is seventy.", "translation": "我爷爷七十岁了。", "categories": ["数词", "S"], "difficulty": 1 },
 { "word": "several", "phonetic": "/ˈsevrəl/", "meaning": "几个", "example": "I have several books to read.", "translation": "我有几本书要读。", "categories": ["S"], "difficulty": 1 },
 { "word": "severe", "phonetic": "/sɪˈvɪə/", "meaning": "严重的；严厉的", "example": "The storm caused severe damage.", "translation": "暴风雨造成了严重破坏。", "categories": ["S"], "difficulty": 1 },
 { "word": "sew", "phonetic": "/səʊ/", "meaning": "缝纫", "example": "She can sew her own dress.", "translation": "她会给自己缝裙子。", "categories": ["S"], "difficulty": 1 },
@@ -6244,9 +6677,9 @@
 { "word": "site", "phonetic": "/saɪt/", "meaning": "地点；网站", "example": "This is the site of the new school.", "translation": "这是新学校的地点。", "categories": ["S"], "difficulty": 1 },
 { "word": "situated", "phonetic": "/ˈsɪtʃueɪtɪd/", "meaning": "位于", "example": "The hotel is situated on a hill.", "translation": "这家酒店位于山上。", "categories": ["S"], "difficulty": 1 },
 { "word": "situation", "phonetic": "/ˌsɪtʃuˈeɪʃn/", "meaning": "情况", "example": "The situation is under control.", "translation": "局势已得到控制。", "categories": ["S"], "difficulty": 1 },
-{ "word": "six", "phonetic": "/sɪks/", "meaning": "六", "example": "There are six eggs left.", "translation": "还剩六个鸡蛋。", "categories": ["S"], "difficulty": 1 },
-{ "word": "sixteen", "phonetic": "/ˌsɪksˈtiːn/", "meaning": "十六", "example": "He is sixteen this year.", "translation": "他今年十六岁。", "categories": ["S"], "difficulty": 1 },
-{ "word": "sixty", "phonetic": "/ˈsɪksti/", "meaning": "六十", "example": "My uncle is sixty now.", "translation": "我叔叔现在六十岁。", "categories": ["S"], "difficulty": 1 },
+{ "word": "six", "phonetic": "/sɪks/", "meaning": "六", "example": "There are six eggs left.", "translation": "还剩六个鸡蛋。", "categories": ["数词"], "difficulty": 1 },
+{ "word": "sixteen", "phonetic": "/ˌsɪksˈtiːn/", "meaning": "十六", "example": "He is sixteen this year.", "translation": "他今年十六岁。", "categories": ["数词"], "difficulty": 1 },
+{ "word": "sixty", "phonetic": "/ˈsɪksti/", "meaning": "六十", "example": "My uncle is sixty now.", "translation": "我叔叔现在六十岁。", "categories": ["数词", "S"], "difficulty": 1 },
 { "word": "size", "phonetic": "/saɪz/", "meaning": "尺寸", "example": "What size do you wear?", "translation": "你穿多大码？", "categories": ["S"], "difficulty": 1 },
 { "word": "skate", "phonetic": "/skeɪt/", "meaning": "滑冰", "example": "We skate on the frozen lake.", "translation": "我们在结冰的湖面上滑冰。", "categories": ["S"], "difficulty": 1 },
 { "word": "ski", "phonetic": "/skiː/", "meaning": "滑雪", "example": "Ski down the mountain carefully.", "translation": "小心地从山上滑下来。", "categories": ["S"], "difficulty": 1 },
@@ -6598,7 +7031,7 @@
 { "word": "temporary", "phonetic": "/ˈtempərəri/", "meaning": "临时的", "example": "This is only temporary.", "translation": "这只是暂时的。", "categories": ["T"], "difficulty": 1 },
 { "word": "tempt", "phonetic": "/tempt/", "meaning": "诱惑", "example": "The cake tempts me.", "translation": "蛋糕诱惑着我。", "categories": ["T"], "difficulty": 1 },
 { "word": "temptation", "phonetic": "/tempˈteɪʃn/", "meaning": "诱惑", "example": "Resist temptation.", "translation": "抵制诱惑。", "categories": ["T"], "difficulty": 1 },
-{ "word": "ten", "phonetic": "/ten/", "meaning": "十", "example": "Count to ten.", "translation": "数到十。", "categories": ["T"], "difficulty": 1 },
+{ "word": "ten", "phonetic": "/ten/", "meaning": "十", "example": "Count to ten.", "translation": "数到十。", "categories": ["数词"], "difficulty": 1 },
 { "word": "tend", "phonetic": "/tend/", "meaning": "倾向于；照料", "example": "I tend to agree with you.", "translation": "我倾向于同意你。", "categories": ["T"], "difficulty": 1 },
 { "word": "tendency", "phonetic": "/ˈtendənsi/", "meaning": "趋势", "example": "There is a growing tendency.", "translation": "有增长的趋势。", "categories": ["T"], "difficulty": 1 },
 { "word": "tender", "phonetic": "/ˈtendə/", "meaning": "温柔的；嫩的", "example": "The meat is tender.", "translation": "这肉很嫩。", "categories": ["T"], "difficulty": 1 },
@@ -6642,10 +7075,10 @@
 { "word": "thing", "phonetic": "/θɪŋ/", "meaning": "东西；事情", "example": "What’s that thing?", "translation": "那是什么东西？", "categories": ["T"], "difficulty": 1 },
 { "word": "think", "phonetic": "/θɪŋk/", "meaning": "思考；认为", "example": "Think before you act.", "translation": "三思而后行。", "categories": ["T"], "difficulty": 1 },
 { "word": "thinking", "phonetic": "/ˈθɪŋkɪŋ/", "meaning": "思考；想法", "example": "Clear thinking is important.", "translation": "清晰的思考很重要。", "categories": ["T"], "difficulty": 1 },
-{ "word": "third", "phonetic": "/θɜːd/", "meaning": "第三", "example": "He came in third.", "translation": "他得了第三名。", "categories": ["T"], "difficulty": 1 },
+{ "word": "third", "phonetic": "/θɜːd/", "meaning": "第三", "example": "He came in third.", "translation": "他得了第三名。", "categories": ["序数词"], "difficulty": 1 },
 { "word": "thirst", "phonetic": "/θɜːst/", "meaning": "口渴；渴望", "example": "Quench your thirst with water.", "translation": "用水解渴。", "categories": ["T"], "difficulty": 1 },
 { "word": "thirsty", "phonetic": "/ˈθɜːsti/", "meaning": "口渴的", "example": "I’m thirsty after running.", "translation": "跑步后我很渴。", "categories": ["T"], "difficulty": 1 },
-{ "word": "thirteen", "phonetic": "/ˌθɜːˈtiːn/", "meaning": "十三", "example": "She is thirteen years old.", "translation": "她十三岁。", "categories": ["T"], "difficulty": 1 },
+{ "word": "thirteen", "phonetic": "/ˌθɜːˈtiːn/", "meaning": "十三", "example": "She is thirteen years old.", "translation": "她十三岁。", "categories": ["数词"], "difficulty": 1 },
 { "word": "thirty", "phonetic": "/ˈθɜːti/", "meaning": "三十", "example": "He is thirty this year.", "translation": "他今年三十岁。", "categories": ["T"], "difficulty": 1 },
 { "word": "this", "phonetic": "/ðɪs/", "meaning": "这；这个", "example": "This book is interesting.", "translation": "这本书很有趣。", "categories": ["T"], "difficulty": 1 },
 { "word": "thorough", "phonetic": "/ˈθʌrə/", "meaning": "彻底的", "example": "Give the room a thorough clean.", "translation": "把房间彻底打扫一遍。", "categories": ["T"], "difficulty": 1 },
@@ -6656,7 +7089,7 @@
 { "word": "thread", "phonetic": "/θred/", "meaning": "线；线索", "example": "Sew with cotton thread.", "translation": "用棉线缝纫。", "categories": ["T"], "difficulty": 1 },
 { "word": "threat", "phonetic": "/θret/", "meaning": "威胁", "example": "The threat of war is real.", "translation": "战争的威胁真实存在。", "categories": ["T"], "difficulty": 1 },
 { "word": "threaten", "phonetic": "/ˈθretn/", "meaning": "威胁", "example": "He threatened to leave.", "translation": "他威胁说要离开。", "categories": ["T"], "difficulty": 1 },
-{ "word": "three", "phonetic": "/θriː/", "meaning": "三", "example": "I have three apples.", "translation": "我有三个苹果。", "categories": ["T"], "difficulty": 1 },
+{ "word": "three", "phonetic": "/θriː/", "meaning": "三", "example": "I have three apples.", "translation": "我有三个苹果。", "categories": ["数词"], "difficulty": 1 },
 { "word": "throat", "phonetic": "/θrəʊt/", "meaning": "喉咙", "example": "My throat is sore.", "translation": "我喉咙痛。", "categories": ["T"], "difficulty": 1 },
 { "word": "through", "phonetic": "/θruː/", "meaning": "通过；贯穿", "example": "Walk through the forest.", "translation": "穿过森林。", "categories": ["T"], "difficulty": 1 },
 { "word": "throughout", "phonetic": "/θruːˈaʊt/", "meaning": "遍及；始终", "example": "It rained throughout the day.", "translation": "整天下雨。", "categories": ["T"], "difficulty": 1 },
@@ -6784,12 +7217,12 @@
 { "word": "turn", "phonetic": "/tɜːn/", "meaning": "转动；轮流", "example": "Turn the page, please.", "translation": "请翻页。", "categories": ["T"], "difficulty": 1 },
 { "word": "turning", "phonetic": "/ˈtɜːnɪŋ/", "meaning": "转弯处；旋转", "example": "Take the first turning left.", "translation": "在第一个转弯处左转。", "categories": ["T"], "difficulty": 1 },
 { "word": "tutor", "phonetic": "/ˈtjuːtə/", "meaning": "导师；家教", "example": "Hire a math tutor.", "translation": "请一位数学家教。", "categories": ["T"], "difficulty": 1 },
-{ "word": "twelve", "phonetic": "/ˈtwelv/", "meaning": "十二", "example": "A dozen is twelve.", "translation": "一打是十二个。", "categories": ["T"], "difficulty": 1 },
-{ "word": "twenty", "phonetic": "/ˈtwenti/", "meaning": "二十", "example": "She is twenty years old.", "translation": "她二十岁。", "categories": ["T"], "difficulty": 1 },
+{ "word": "twelve", "phonetic": "/ˈtwelv/", "meaning": "十二", "example": "A dozen is twelve.", "translation": "一打是十二个。", "categories": ["数词"], "difficulty": 1 },
+{ "word": "twenty", "phonetic": "/ˈtwenti/", "meaning": "二十", "example": "She is twenty years old.", "translation": "她二十岁。", "categories": ["数词"], "difficulty": 1 },
 { "word": "twice", "phonetic": "/twaɪs/", "meaning": "两次", "example": "I have been there twice.", "translation": "我去过那里两次。", "categories": ["T"], "difficulty": 1 },
 { "word": "twin", "phonetic": "/twɪn/", "meaning": "双胞胎之一", "example": "They are twin sisters.", "translation": "她们是双胞胎姐妹。", "categories": ["T"], "difficulty": 1 },
 { "word": "twist", "phonetic": "/twɪst/", "meaning": "扭曲；转折", "example": "Twist the cap to open.", "translation": "拧开盖子。", "categories": ["T"], "difficulty": 1 },
-{ "word": "two", "phonetic": "/tuː/", "meaning": "二", "example": "Two heads are better than one.", "translation": "两人智慧胜一人。", "categories": ["T"], "difficulty": 1 },
+{ "word": "two", "phonetic": "/tuː/", "meaning": "二", "example": "Two heads are better than one.", "translation": "两人智慧胜一人。", "categories": ["数词"], "difficulty": 1 },
 { "word": "type", "phonetic": "/taɪp/", "meaning": "类型；打字", "example": "What type do you prefer?", "translation": "你喜欢哪种类型？", "categories": ["T"], "difficulty": 1 },
 { "word": "typical", "phonetic": "/ˈtɪpɪkl/", "meaning": "典型的", "example": "A typical example is here.", "translation": "这里有一个典型例子。", "categories": ["T"], "difficulty": 1 },
 { "word": "tyre", "phonetic": "/ˈtaɪə/", "meaning": "轮胎（英式）", "example": "The tyre is flat.", "translation": "轮胎瘪了。", "categories": ["T"], "difficulty": 1 },
@@ -7115,7 +7548,7 @@
                 checkinDays: [],
                 currentStreak: 0,
                 weeklyLearning: Array(7).fill(0),
-                voiceSettings: { voice: 'default', rate: 1, pitch: 1 },
+                voiceSettings: { voice: 'default', rate: 1, pitch: 1, voiceType: 'default' },
                 achievements: [...achievements],
                 dailyProgress: { words: 0, listening: 0, memory: 0 }
             },
@@ -7135,7 +7568,8 @@
                 memoryCompleted: false
             },
             currentPage: 'home',
-            currentCategory: 'all'
+            currentCategory: 'all',
+            selectedGrade: 'all'
         };
 
         // ==================== DOM 元素缓存 ====================
@@ -7175,6 +7609,10 @@
             dailyMemoryScore: document.getElementById('daily-memory-score'),
             dailyWordsContainer: document.getElementById('daily-words-container'),
             completeCheckinBtn: document.getElementById('complete-checkin'),
+            gradeSelectBtn: document.getElementById('grade-select-btn'),
+            gradeSelectDropdown: document.getElementById('grade-select-dropdown'),
+            currentGrade: document.getElementById('current-grade'),
+            gradeOptions: document.querySelectorAll('.grade-option'),
             
             // 游戏页面元素
             gameTitle: document.getElementById('game-title'),
@@ -7337,68 +7775,454 @@
                 if (saved) {
                     Object.assign(state.userData, JSON.parse(saved));
                 }
+                
+                // 添加年级分类标签到wordDatabase
+                wordDatabase.forEach(word => {
+                    if (!word.categories) {
+                        word.categories = [];
+                    }
+                    
+                    // 检查每个年级的单词列表，为匹配的单词添加对应的年级标签
+                    for (const [grade, words] of Object.entries(gradeWordsMap)) {
+                        if (words.includes(word.word.toLowerCase())) {
+                            // 确保不重复添加相同的年级标签
+                            if (!word.categories.includes(grade)) {
+                                word.categories.push(grade);
+                            }
+                        }
+                    }
+                });
             },
             
-            // 获取所有分类
+            // 获取所有分类，按大类组织
             getAllCategories() {
-                const categories = new Set(['all']); // 先添加'all'标签
+                // 定义三大类及其包含的标签
+                const categoryGroups = {
+                    grades: {
+                        name: '年级筛选',
+                        icon: 'fa-graduation-cap',
+                        tags: ['一年级', '二年级', '三年级', '四年级', '五年级', '六年级', '初一', '初二', '初三', '高一', '高二', '高三']
+                    },
+                    types: {
+                        name: '词性分类',
+                        icon: 'fa-layer-group',
+                        tags: ['副词', '感叹词', '名词', '动词', '介词', '连词', '情态动词', '数词', '形容词', '序数词']
+                    },
+                    letters: {
+                        name: '首字母排序',
+                        icon: 'fa-sort-alpha-down',
+                        tags: Array.from({length: 26}, (_, i) => String.fromCharCode(65 + i))
+                    }
+                };
                 
-                // 添加wordDatabase中的分类
+                // 确保单词数据中包含的所有分类标签都被添加到对应类别
                 wordDatabase.forEach(word => {
                     if (word.categories) {
-                        word.categories.forEach(cat => categories.add(cat));
+                        word.categories.forEach(cat => {
+                            // 检查是否属于年级类别
+                            if (categoryGroups.grades.tags.includes(cat)) {
+                                return; // 已存在，无需添加
+                            }
+                            // 检查是否属于词性类别
+                            if (categoryGroups.types.tags.includes(cat)) {
+                                return; // 已存在，无需添加
+                            }
+                            // 检查是否属于字母类别
+                            if (/^[A-Z]$/.test(cat)) {
+                                return; // 已存在，无需添加
+                            }
+                        });
                     }
                 });
                 
-                // 添加从A到Z的字母标签（不会重复，因为已经用Set去重）
-                const letters = Array.from({length: 26}, (_, i) => String.fromCharCode(65 + i));
-                letters.forEach(letter => categories.add(letter));
-                
-                // 返回排序后的唯一标签
-                return Array.from(categories).sort((a, b) => {
-                    // 确保'all'始终在第一个
-                    if (a === 'all') return -1;
-                    if (b === 'all') return 1;
-                    // 然后按字母顺序排序
-                    return a.localeCompare(b);
-                });
+                return categoryGroups;
             }
         };
 
+        // 确保所有用户提供的单词都被添加到wordDatabase中
+        function ensureAllWordsInDatabase() {
+            // 创建一个集合，包含所有wordDatabase中已有的单词
+            const existingWords = new Set(wordDatabase.map(word => word.word.toLowerCase()));
+            
+            // 遍历userWordList，确保所有单词都在wordDatabase中
+            for (const [grade, categories] of Object.entries(userWordList)) {
+                for (const [category, words] of Object.entries(categories)) {
+                    for (const word of words) {
+                        const wordLower = word.toLowerCase();
+                        if (!existingWords.has(wordLower)) {
+                            // 添加新单词到wordDatabase
+                            wordDatabase.push({
+                                "word": word,
+                                "phonetic": "",
+                                "meaning": "",
+                                "example": "",
+                                "translation": "",
+                                "categories": [grade, category],
+                                "difficulty": 1
+                            });
+                            existingWords.add(wordLower);
+                        } else {
+                            // 更新现有单词的分类
+                            const existingWord = wordDatabase.find(w => w.word.toLowerCase() === wordLower);
+                            if (existingWord) {
+                                // 添加年级标签
+                                if (!existingWord.categories.includes(grade)) {
+                                    existingWord.categories.push(grade);
+                                }
+                                // 添加类别标签
+                                if (!existingWord.categories.includes(category)) {
+                                    existingWord.categories.push(category);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            
+            // 为数字和序数词添加特殊标签
+            const cardinalNumbers = ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen", "twenty", "twenty-one", "ninety-nine", "hundred"];
+            const ordinalNumbers = ["first", "second", "third", "fourth", "fifth", "sixth", "seventh", "eighth", "ninth", "tenth", "twentieth"];
+            
+            wordDatabase.forEach(word => {
+                const wordLower = word.word.toLowerCase();
+                if (cardinalNumbers.includes(wordLower) && !word.categories.includes("数词")) {
+                    word.categories.push("数词");
+                }
+                if (ordinalNumbers.includes(wordLower) && !word.categories.includes("序数词")) {
+                    word.categories.push("序数词");
+                }
+            });
+        }
+        
+        // 执行单词处理逻辑
+        ensureAllWordsInDatabase();
+        
         // ==================== 核心功能 ====================
+        // 词典API功能
+        const dictionaryAPI = {
+            // 获取单个单词的详细信息
+            async getWordDetails(word) {
+                try {
+                    const response = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    const data = await response.json();
+                    
+                    // 解析API返回的数据
+                    if (Array.isArray(data) && data.length > 0) {
+                        const wordData = data[0];
+                        
+                        // 提取音标
+                        const phonetic = wordData.phonetic || 
+                                      (wordData.phonetics && wordData.phonetics.length > 0 ? wordData.phonetics[0].text : '') ||
+                                      '';
+                        
+                        // 提取词性和释义
+                        let meaning = '';
+                        let partOfSpeech = '';
+                        const categories = [];
+                        
+                        if (wordData.meanings && wordData.meanings.length > 0) {
+                            const firstMeaning = wordData.meanings[0];
+                            partOfSpeech = firstMeaning.partOfSpeech || '';
+                            
+                            // 提取词性分类
+                            if (partOfSpeech) {
+                                categories.push(partOfSpeech);
+                            }
+                            
+                            // 提取释义
+                            if (firstMeaning.definitions && firstMeaning.definitions.length > 0) {
+                                meaning = firstMeaning.definitions[0].definition || '';
+                            }
+                        }
+                        
+                        // 提取例句
+                        const example = wordData.meanings && wordData.meanings.length > 0 && 
+                                      wordData.meanings[0].definitions && wordData.meanings[0].definitions.length > 0 && 
+                                      wordData.meanings[0].definitions[0].example ?
+                                      wordData.meanings[0].definitions[0].example : '';
+                        
+                        // 返回处理后的数据
+                        return {
+                            word: word,
+                            phonetic: phonetic,
+                            meaning: meaning,
+                            example: example,
+                            translation: meaning, // API返回的是英文释义，暂时用英文作为翻译
+                            categories: categories,
+                            difficulty: 2
+                        };
+                    }
+                    return null;
+                } catch (error) {
+                    console.error(`获取单词 ${word} 信息失败:`, error);
+                    return null;
+                }
+            },
+            
+            // 更新所有单词的详细信息
+            async updateAllWords() {
+                console.log('开始更新所有单词信息...');
+                let updatedCount = 0;
+                let totalWords = wordDatabase.length;
+                
+                for (let i = 0; i < totalWords; i++) {
+                    const word = wordDatabase[i];
+                    console.log(`更新单词 ${i + 1}/${totalWords}: ${word.word}`);
+                    
+                    // 调用API获取单词详细信息
+                    const details = await this.getWordDetails(word.word);
+                    
+                    if (details) {
+                        // 更新单词数据库
+                        if (!word.phonetic || word.phonetic === '') {
+                            word.phonetic = details.phonetic;
+                        }
+                        if (!word.meaning || word.meaning === '') {
+                            word.meaning = details.meaning;
+                            word.translation = details.translation;
+                        }
+                        if (!word.example || word.example === '') {
+                            word.example = details.example;
+                        }
+                        
+                        updatedCount++;
+                    }
+                    
+                    // 每次请求后延迟300ms，避免API限流
+                    await new Promise(resolve => setTimeout(resolve, 300));
+                }
+                
+                console.log(`单词信息更新完成！共更新了 ${updatedCount} 个单词。`);
+                return updatedCount;
+            },
+            
+            // 检查并完善单词标签分类
+            async checkAndFixWordCategories() {
+                console.log('开始检查并完善单词标签分类...');
+                let fixedCount = 0;
+                let totalWords = wordDatabase.length;
+                
+                for (let i = 0; i < totalWords; i++) {
+                    const word = wordDatabase[i];
+                    console.log(`检查单词 ${i + 1}/${totalWords}: ${word.word}`);
+                    
+                    // 确保categories数组存在
+                    if (!word.categories) {
+                        word.categories = [];
+                    }
+                    
+                    // 调用API获取单词详细信息，包含词性
+                    const details = await this.getWordDetails(word.word);
+                    
+                    if (details && details.categories.length > 0) {
+                        const apiCategories = details.categories;
+                        
+                        // 检查并添加词性分类
+                        for (const cat of apiCategories) {
+                            if (!word.categories.includes(cat)) {
+                                word.categories.push(cat);
+                                fixedCount++;
+                            }
+                        }
+                        
+                        // 移除错误的标签（这里可以根据需要添加更复杂的逻辑）
+                        const validCategories = [...new Set([...word.categories, ...apiCategories])];
+                        if (validCategories.length !== word.categories.length) {
+                            word.categories = validCategories;
+                            fixedCount++;
+                        }
+                    }
+                    
+                    // 每次请求后延迟300ms，避免API限流
+                    await new Promise(resolve => setTimeout(resolve, 300));
+                }
+                
+                console.log(`单词标签分类检查完成！共修复了 ${fixedCount} 个单词的标签。`);
+                return fixedCount;
+            }
+        };
+        
         const app = {
+            // 更新加载进度
+            updateLoadingProgress(percentage, message) {
+                const progressBar = dom.loadingProgress;
+                const percentageText = document.getElementById('loading-percentage');
+                const loadingText = dom.loadingText;
+                
+                progressBar.style.width = `${percentage}%`;
+                percentageText.textContent = `${percentage}%`;
+                loadingText.textContent = message;
+            },
+            
             // 初始化应用
             init() {
                 console.log('应用初始化...');
                 
+                // 初始化加载进度
+                this.updateLoadingProgress(10, '加载应用配置...');
+                
                 // 加载数据
                 utils.loadData();
+                this.updateLoadingProgress(20, '配置数据加载完成...');
+                
+                // 为单词添加年级分类标签
+                this.updateLoadingProgress(30, '整理单词分类...');
+                
+                wordDatabase.forEach(word => {
+                    // 确保categories数组存在
+                    if (!word.categories) {
+                        word.categories = [];
+                    }
+                    
+                    // 检查每个年级，添加对应的年级标签
+                    Object.entries(gradeWordsMap).forEach(([grade, words]) => {
+                        if (words.includes(word.word.toLowerCase())) {
+                            if (!word.categories.includes(grade)) {
+                                word.categories.push(grade);
+                            }
+                        }
+                    });
+                    
+                    // 补充数词和序数词标签
+                    const cardinalNumbers = ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen", "twenty", "twenty-one", "ninety-nine", "hundred"];
+                    const ordinalNumbers = ["first", "second", "third", "fourth", "fifth", "sixth", "seventh", "eighth", "ninth", "tenth", "twentieth"];
+                    
+                    // 检查是否为基数词
+                    if (cardinalNumbers.includes(word.word.toLowerCase())) {
+                        if (!word.categories.includes('数词')) {
+                            word.categories.push('数词');
+                        }
+                    }
+                    
+                    // 检查是否为序数词
+                    if (ordinalNumbers.includes(word.word.toLowerCase()) || 
+                        word.word.toLowerCase().endsWith('st') || 
+                        word.word.toLowerCase().endsWith('nd') || 
+                        word.word.toLowerCase().endsWith('rd') || 
+                        word.word.toLowerCase().endsWith('th')) {
+                        if (!word.categories.includes('序数词')) {
+                            word.categories.push('序数词');
+                        }
+                    }
+                });
+                
+                this.updateLoadingProgress(50, '单词分类完成...');
                 
                 // 显示总单词数
                 dom.totalWordCount.textContent = wordDatabase.length;
                 dom.totalWords.textContent = wordDatabase.length;
                 
-                // 模拟加载过程
-                let progress = 0;
-                const loading = setInterval(() => {
-                    progress += Math.random() * 15;
-                    if (progress > 100) progress = 100;
-                    
-                    dom.loadingProgress.style.width = `${progress}%`;
-                    dom.loadingText.textContent = `加载中... ${Math.floor(progress)}%`;
-                    
-                    if (progress >= 100) {
-                        clearInterval(loading);
-                        setTimeout(() => {
-                            dom.loadingScreen.style.opacity = '0';
-                            setTimeout(() => {
-                                dom.loadingScreen.style.display = 'none';
-                                dom.app.classList.remove('hidden');
-                                this.initUI();
-                            }, 300);
-                        }, 300);
-                    }
+                this.updateLoadingProgress(60, '准备应用界面...');
+                
+                // 后台运行：检查并完善单词标签分类（异步运行，不阻塞主线程）
+                setTimeout(async () => {
+                    console.log('启动后台任务：检查单词标签分类');
+                    await dictionaryAPI.checkAndFixWordCategories();
+                    utils.showNotification('单词标签分类检查完成！', 'success');
+                    console.log('后台任务完成：单词标签分类检查');
+                }, 1000);
+                
+                // 模拟加载过程，确保用户看到完整的加载动画
+                const self = this;
+                
+                // 逐步更新进度
+                setTimeout(() => {
+                    self.updateLoadingProgress(70, '初始化学习功能...');
                 }, 100);
+                
+                setTimeout(() => {
+                    self.updateLoadingProgress(80, '准备学习内容...');
+                }, 200);
+                
+                setTimeout(() => {
+                    self.updateLoadingProgress(90, '学习之旅即将开始...');
+                }, 300);
+                
+                // 完成加载
+                setTimeout(() => {
+                    self.updateLoadingProgress(100, '准备就绪，开始学习！');
+                    
+                    // 隐藏加载屏幕
+                    setTimeout(() => {
+                        dom.loadingScreen.style.opacity = '0';
+                        setTimeout(() => {
+                            dom.loadingScreen.style.display = 'none';
+                            dom.app.classList.remove('hidden');
+                            self.initUI();
+                            
+                            // 在后台更新单词信息，不影响用户使用
+                            self.updateWordsInBackground();
+                        }, 300);
+                    }, 500);
+                }, 400);
+            },
+            
+            // 在后台更新单词信息
+            async updateWordsInBackground() {
+                console.log('开始在后台更新单词信息...');
+                let updatedCount = 0;
+                
+                // 批量更新单词信息，每批次10个单词，提高加载速度
+                const batchSize = 10;
+                const batches = [];
+                for (let i = 0; i < wordDatabase.length; i += batchSize) {
+                    batches.push(wordDatabase.slice(i, i + batchSize));
+                }
+                
+                // 遍历每个批次
+                for (let batchIndex = 0; batchIndex < batches.length; batchIndex++) {
+                    const batch = batches[batchIndex];
+                    
+                    // 并发请求当前批次的所有单词信息
+                    const promises = batch.map(async (word) => {
+                        const details = await dictionaryAPI.getWordDetails(word.word);
+                        if (details) {
+                            // 更新单词数据库
+                            if (!word.phonetic || word.phonetic === '') {
+                                word.phonetic = details.phonetic;
+                            }
+                            if (!word.meaning || word.meaning === '') {
+                                word.meaning = details.meaning;
+                                word.translation = details.translation;
+                            }
+                            if (!word.example || word.example === '') {
+                                word.example = details.example;
+                            }
+                            return true;
+                        }
+                        return false;
+                    });
+                    
+                    // 等待当前批次的所有请求完成
+                    const results = await Promise.allSettled(promises);
+                    
+                    // 统计更新成功的单词数量
+                    const batchUpdated = results.filter(r => r.status === 'fulfilled' && r.value).length;
+                    updatedCount += batchUpdated;
+                    
+                    // 批次之间延迟500ms，避免API限流
+                    if (batchIndex < batches.length - 1) {
+                        await new Promise(resolve => setTimeout(resolve, 500));
+                    }
+                }
+                
+                console.log(`单词信息更新完成！共更新了 ${updatedCount} 个单词。`);
+                
+                // 显示更新完成通知
+                utils.showNotification(`单词信息已更新完成，共更新了 ${updatedCount} 个单词。`, 'success');
+            },
+            
+            // 跟读例句功能
+            followReadExample(example) {
+                // 使用浏览器的SpeechSynthesis API朗读例句
+                const synth = window.speechSynthesis;
+                const utterance = new SpeechSynthesisUtterance(example);
+                utterance.lang = 'en-US';
+                utterance.rate = 0.9;
+                synth.speak(utterance);
             },
             
             // 初始化UI
@@ -7436,88 +8260,166 @@
                 utils.showNotification(`欢迎使用小鹿AI编程全能英语词汇库--优秀学员专属！包含${wordDatabase.length}个单词`, 'info');
             },
             
-            // 生成分类标签
+            // 生成分类标签（带下拉功能）
             generateCategoryTags() {
-                const categories = utils.getAllCategories();
+                const categoryGroups = utils.getAllCategories();
                 dom.categoryTags.innerHTML = '';
                 
-                categories.forEach(category => {
-                    const tag = document.createElement('button');
-                    tag.className = `category-tag px-5 py-2 rounded-full text-sm font-medium transition-all duration-300 transform hover:scale-105 ${category === 'all' ? 'bg-blue-500 text-white shadow-md scale-105' : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:shadow-sm'}`;
-                    tag.dataset.category = category;
-                    tag.innerHTML = `
-                        <i class="fa ${category === 'all' ? 'fa-layer-group' : 
-                            category === 'school' ? 'fa-graduation-cap' :
-                            category === 'school-things' ? 'fa-pencil-alt' :
-                            category === 'body' ? 'fa-user' :
-                            category === 'colors' ? 'fa-palette' :
-                            category === 'animals' ? 'fa-paw' :
-                            category === 'people' ? 'fa-users' :
-                            category === 'family' ? 'fa-home' :
-                            category === 'job' ? 'fa-briefcase' :
-                            category === 'food' ? 'fa-utensils' :
-                            category === 'clothes' ? 'fa-tshirt' :
-                            category === 'vehicles' ? 'fa-car' :
-                            category === 'things' ? 'fa-cube' :
-                            category === 'locations' ? 'fa-map-marker-alt' :
-                            category === 'weather' ? 'fa-cloud' :
-                            category === 'nature' ? 'fa-tree' :
-                            category === 'plants' ? 'fa-leaf' :
-                            category === 'week' ? 'fa-calendar' :
-                            category === 'months' ? 'fa-calendar-alt' :
-                            category === 'seasons' ? 'fa-sun' :
-                            category === 'directions' ? 'fa-compass' :
-                            category === 'illness' ? 'fa-heartbeat' :
-                            category === 'numbers' ? 'fa-sort-numeric-up' :
-                            category === 'adj' ? 'fa-font' :
-                            category === 'prep' ? 'fa-language' :
-                            category === 'pron' ? 'fa-comment' :
-                            category === 'verb' ? 'fa-running' :
-                            'fa-tag'} mr-2"></i>
-                        ${utils.getCategoryName(category)}
-                    `;
-                    
-                    tag.addEventListener('click', () => {
-                        state.currentCategory = category;
-                        this.updateCategoryTags();
-                        dom.selectedCategory.textContent = utils.getCategoryName(category);
-                        
-                        // 平滑滚动到选中标签
-                        setTimeout(() => {
-                            const activeTag = dom.categoryTags.querySelector(`.category-tag[data-category="${category}"]`);
-                            if (activeTag) {
-                                activeTag.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-                            }
-                        }, 100);
-                        
-                        this.searchWords();
-                    });
-                    
-                    utils.addRippleEffect(tag);
-                    dom.categoryTags.appendChild(tag);
+                // 添加'全部'标签作为默认选项
+                const allTag = document.createElement('button');
+                allTag.className = `category-tag px-6 py-3 rounded-2xl text-sm font-medium transition-all duration-300 transform hover:scale-105 ${state.currentCategory === 'all' ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg scale-105' : 'bg-gradient-to-r from-indigo-50 to-indigo-100 text-indigo-700 hover:from-indigo-100 hover:to-indigo-200 hover:shadow-md'}`;
+                allTag.dataset.category = 'all';
+                allTag.innerHTML = `
+                    <i class="fa fa-layer-group mr-2"></i>
+                    全部
+                `;
+                
+                allTag.addEventListener('click', () => {
+                    state.currentCategory = 'all';
+                    this.updateCategoryTags();
+                    this.searchWords();
                 });
                 
-                // 让标签栏可以横向滚动
-                dom.categoryTags.style.display = 'flex';
-                dom.categoryTags.style.flexDirection = 'row';
-                dom.categoryTags.style.overflowX = 'auto';
-                dom.categoryTags.style.whiteSpace = 'nowrap';
-                dom.categoryTags.style.scrollbarWidth = 'thin';
-                dom.categoryTags.style.scrollbarColor = '#cbd5e0 transparent';
+                utils.addRippleEffect(allTag);
+                dom.categoryTags.appendChild(allTag);
                 
-                // 隐藏滚动条但保留功能（适用于WebKit浏览器）
-                dom.categoryTags.style.webkitOverflowScrolling = 'touch';
-                dom.categoryTags.style.maskImage = 'linear-gradient(90deg, transparent, black 10px, black calc(100% - 10px), transparent)';
-                dom.categoryTags.style.webkitMaskImage = 'linear-gradient(90deg, transparent, black 10px, black calc(100% - 10px), transparent)';
+                // 为每个大类创建下拉容器
+                Object.entries(categoryGroups).forEach(([groupKey, group]) => {
+                    const dropdownContainer = document.createElement('div');
+                    dropdownContainer.className = 'relative inline-block overflow-visible z-50';
+                    
+                    // 创建大类按钮
+                    const groupButton = document.createElement('button');
+                    groupButton.className = `category-group-btn px-6 py-3 rounded-2xl text-sm font-medium transition-all duration-300 transform hover:scale-105 flex items-center ${state.currentCategory.startsWith(groupKey) ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg scale-105' : 'bg-gradient-to-r from-indigo-50 to-indigo-100 text-indigo-700 hover:from-indigo-100 hover:to-indigo-200 hover:shadow-md'}`;
+                    groupButton.innerHTML = `
+                        <i class="fa ${group.icon} mr-2"></i>
+                        ${group.name}
+                        <i class="fa fa-chevron-down ml-2 transition-transform duration-300 dropdown-arrow"></i>
+                    `;
+                    
+                    // 创建下拉菜单
+                    const dropdownMenu = document.createElement('div');
+                    dropdownMenu.className = 'category-dropdown absolute mt-2 w-52 rounded-xl shadow-xl bg-white ring-2 ring-indigo-100 invisible transition-all duration-300 transform origin-top-right scale-95 opacity-0 pointer-events-none';
+                    dropdownMenu.style.top = '100%';
+                    dropdownMenu.style.left = '0';
+                    dropdownMenu.style.zIndex = '99999'; // 提高z-index确保不被挡住
+                    dropdownMenu.style.position = 'absolute'; // 改回absolute定位
+                    dropdownMenu.style.transformOrigin = 'top right'; // 恢复原变换原点
+                    
+                    // 添加子标签到下拉菜单
+                    group.tags.forEach(tag => {
+                        const subTag = document.createElement('a');
+                        subTag.href = '#';
+                        subTag.className = `block px-4 py-3 text-sm rounded-lg transition-all duration-200 ${state.currentCategory === tag ? 'bg-blue-100 text-blue-700 font-medium' : 'text-gray-700 hover:bg-gray-50 hover:text-indigo-600'}`;
+                        subTag.dataset.category = tag;
+                        subTag.textContent = tag;
+                        
+                        subTag.addEventListener('click', (e) => {
+                            e.preventDefault();
+                            state.currentCategory = tag;
+                            this.updateCategoryTags();
+                            
+                            // 隐藏所有下拉菜单
+                            document.querySelectorAll('.category-dropdown').forEach(menu => {
+                                menu.classList.add('invisible', 'opacity-0', 'scale-95', 'pointer-events-none');
+                                menu.classList.remove('visible', 'scale-100', 'opacity-100');
+                            });
+                            
+                            // 重置所有箭头方向
+                            document.querySelectorAll('.dropdown-arrow').forEach(arrow => {
+                                arrow.classList.remove('open');
+                            });
+                            
+                            this.searchWords();
+                        });
+                        
+                        dropdownMenu.appendChild(subTag);
+                    });
+                    
+                    // 添加下拉交互
+                    groupButton.addEventListener('click', () => {
+                        // 切换当前下拉菜单显示状态
+                        const isHidden = dropdownMenu.classList.contains('invisible');
+                        
+                        // 隐藏所有下拉菜单
+                        document.querySelectorAll('.category-dropdown').forEach(menu => {
+                            menu.classList.add('invisible', 'opacity-0', 'scale-95', 'pointer-events-none');
+                            menu.classList.remove('visible', 'opacity-100', 'scale-100');
+                        });
+                        
+                        // 重置所有箭头方向
+                        document.querySelectorAll('.dropdown-arrow').forEach(arrow => {
+                            arrow.classList.remove('open');
+                        });
+                        
+                        // 切换当前下拉菜单
+                        if (isHidden) {
+                            dropdownMenu.classList.remove('invisible', 'pointer-events-none');
+                            setTimeout(() => {
+                                dropdownMenu.classList.remove('scale-95', 'opacity-0');
+                                dropdownMenu.classList.add('scale-100', 'opacity-100');
+                            }, 10);
+                            
+                            // 旋转当前箭头
+                            const arrow = groupButton.querySelector('.dropdown-arrow');
+                            arrow.classList.add('open');
+                        }
+                    });
+                    
+                    // 点击页面其他地方关闭下拉菜单
+                    document.addEventListener('click', (e) => {
+                        if (!dropdownContainer.contains(e.target)) {
+                            dropdownMenu.classList.add('invisible', 'opacity-0', 'scale-95', 'pointer-events-none');
+                            dropdownMenu.classList.remove('visible', 'scale-100', 'opacity-100');
+                            
+                            // 重置箭头方向
+                            const arrow = groupButton.querySelector('.dropdown-arrow');
+                            arrow.classList.remove('open');
+                        }
+                    });
+                    
+                    dropdownContainer.appendChild(groupButton);
+                    dropdownContainer.appendChild(dropdownMenu);
+                    dom.categoryTags.appendChild(dropdownContainer);
+                });
+                
+                // 移除旧的样式设置，使用CSS类来控制样式
+                dom.categoryTags.style.removeProperty('display');
+                dom.categoryTags.style.removeProperty('flex-direction');
+                dom.categoryTags.style.removeProperty('align-items');
+                dom.categoryTags.style.removeProperty('overflow-x');
+                dom.categoryTags.style.removeProperty('overflow-y');
+                dom.categoryTags.style.removeProperty('white-space');
+                dom.categoryTags.style.removeProperty('scrollbar-width');
+                dom.categoryTags.style.removeProperty('scrollbar-color');
+                dom.categoryTags.style.removeProperty('-webkit-overflow-scrolling');
+                dom.categoryTags.style.removeProperty('mask-image');
+                dom.categoryTags.style.removeProperty('-webkit-mask-image');
+                dom.categoryTags.style.removeProperty('padding');
             },
             
             // 更新分类标签状态
             updateCategoryTags() {
-                document.querySelectorAll('.category-tag').forEach(tag => {
-                    const category = tag.getAttribute('data-category');
-                    // 使用一致的样式和动画效果
-                    tag.className = `category-tag px-5 py-2 rounded-full text-sm font-medium transition-all duration-300 transform hover:scale-105 ${category === state.currentCategory ? 'bg-blue-500 text-white shadow-md scale-105' : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:shadow-sm'}`;
+                // 更新'全部'标签状态
+                const allTag = dom.categoryTags.querySelector('.category-tag[data-category="all"]');
+                if (allTag) {
+                    allTag.className = `category-tag px-6 py-3 rounded-2xl text-sm font-medium transition-all duration-300 transform hover:scale-105 ${state.currentCategory === 'all' ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg scale-105' : 'bg-gradient-to-r from-gray-50 to-gray-100 text-gray-700 hover:from-gray-100 hover:to-gray-200 hover:shadow-md'}`;
+                }
+                
+                // 更新所有子标签状态
+                let selectedCategoryText = '全部单词';
+                document.querySelectorAll('.category-dropdown a').forEach(subTag => {
+                    const category = subTag.getAttribute('data-category');
+                    if (state.currentCategory === category) {
+                        subTag.className = 'block px-4 py-3 text-sm rounded-lg transition-all duration-200 bg-blue-100 text-blue-700 font-medium';
+                        selectedCategoryText = subTag.textContent;
+                    } else {
+                        subTag.className = 'block px-4 py-3 text-sm rounded-lg transition-all duration-200 text-gray-700 hover:bg-gray-50 hover:text-indigo-600';
+                    }
                 });
+                
+                // 更新已选分类显示
+                dom.selectedCategory.textContent = selectedCategoryText;
             },
             
             // 初始化图表
@@ -7639,41 +8541,50 @@
                 displayWords.forEach(word => {
                     const isLearned = state.userData.learnedWords.includes(word.word);
                     const card = document.createElement('div');
-                    card.className = `word-card-hover bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 ${isLearned ? 'border-l-4 border-green-500' : ''}`;
+                    card.className = `word-card-hover bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100 ${isLearned ? 'border-l-4 border-green-500 shadow-green-100' : ''} w-full max-w-full transition-all duration-300 hover:shadow-xl hover:-translate-y-1`;
                     
                     card.innerHTML = `
-                        <div class="p-5">
-                            <div class="flex justify-between items-start mb-4">
+                        <div class="p-5 animate-float-up">
+                            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-3">
                                 <div class="flex-1">
                                     <div class="flex items-center mb-2">
-                                        <h3 class="text-xl font-bold text-gray-800 mr-3">${word.word}</h3>
-                                        ${isLearned ? '<span class="px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">已学习</span>' : ''}
+                                        <h3 class="text-[clamp(1.2rem,3vw,1.5rem)] font-bold text-gray-800 mr-3">${word.word}</h3>
+                                        ${isLearned ? '<span class="px-3 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full animate-pulse-slow">已学习</span>' : ''}
                                     </div>
-                                    <p class="text-gray-500 text-sm mb-2">${word.phonetic}</p>
-                                    <p class="text-lg font-semibold text-blue-600">${word.meaning}</p>
+                                    <p class="text-gray-500 text-sm mb-2"><i class="fa fa-volume-up text-gray-400 mr-1"></i>${word.phonetic || '暂无音标'}</p>
+                                    <p class="text-lg font-semibold text-blue-600">${word.meaning || '暂无释义'}</p>
                                 </div>
-                                <button class="play-audio-btn w-10 h-10 rounded-full bg-blue-50 text-blue-500 hover:bg-blue-100 transition-colors duration-200 flex items-center justify-center" data-word="${word.word}">
-                                    <i class="fa fa-volume-up"></i>
+                                <button class="play-audio-btn w-12 h-12 rounded-full bg-gradient-to-r from-blue-50 to-blue-100 text-blue-600 hover:from-blue-100 hover:to-blue-200 transition-all duration-300 flex items-center justify-center shadow-sm hover:shadow-md" data-word="${word.word}">
+                                    <i class="fa fa-volume-up text-lg"></i>
                                 </button>
                             </div>
                             
-                            <div class="mb-4">
-                                <div class="bg-gray-50 rounded-lg p-3">
-                                    <p class="text-sm text-gray-600 italic">${word.example}</p>
-                                    <p class="text-sm text-gray-500 mt-1">${word.translation}</p>
+                            ${(word.example || word.translation) ? `
+                            <div class="mb-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl p-4 shadow-sm">
+                                <div class="flex items-start gap-3">
+                                    <div class="flex-1">
+                                        <p class="text-sm text-gray-700 italic leading-relaxed">${word.example || '暂无例句'}</p>
+                                        <p class="text-sm text-gray-600 mt-2">${word.translation || '暂无翻译'}</p>
+                                    </div>
+                                    ${word.example ? `
+                                    <button class="follow-read-btn p-3 bg-blue-100 text-blue-600 rounded-full hover:bg-blue-200 hover:scale-110 transition-all duration-300 shadow-sm" title="跟读例句" onclick="app.followReadExample('${word.example}')">
+                                        <i class="fas fa-volume-up"></i>
+                                    </button>
+                                    ` : ''}
                                 </div>
                             </div>
+                            ` : ''}
                             
-                            <div class="flex justify-between items-center">
-                                <div class="flex flex-wrap gap-1">
+                            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 pt-3 border-t border-gray-100">
+                                <div class="flex flex-wrap gap-2 w-full md:w-auto">
                                     ${word.categories ? word.categories.map(cat => `
-                                        <span class="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-full">
+                                        <span class="px-3 py-1 bg-blue-50 text-blue-600 text-xs font-medium rounded-full shadow-sm hover:bg-blue-100 transition-all duration-200">
                                             ${utils.getCategoryName(cat)}
                                         </span>
                                     `).join('') : ''}
                                 </div>
-                                <button class="mark-learned-btn px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${isLearned ? 'bg-gray-100 text-gray-600' : 'bg-blue-500 text-white hover:bg-blue-600'}" data-word="${word.word}">
-                                    ${isLearned ? '已学习 ✓' : '标记学习'}
+                                <button class="mark-learned-btn px-5 py-2.5 rounded-lg text-sm font-medium transition-all duration-300 ${isLearned ? 'bg-gray-100 text-gray-600 hover:bg-gray-200' : 'bg-gradient-to-r from-blue-500 to-blue-600 text-white hover:from-blue-600 hover:to-blue-700 shadow-md'} w-full md:w-auto hover:scale-105">
+                                    ${isLearned ? '<i class="fa fa-check mr-1"></i>已学习' : '<i class="fa fa-book mr-1"></i>标记学习'}
                                 </button>
                             </div>
                         </div>
@@ -7685,7 +8596,7 @@
                 // 显示更多提示
                 if (words.length > 100) {
                     const moreCard = document.createElement('div');
-                    moreCard.className = 'col-span-full text-center py-6';
+                    moreCard.className = 'w-full text-center py-6 bg-white rounded-xl shadow-md mt-4';
                     moreCard.innerHTML = `
                         <p class="text-gray-500 mb-2">还有 ${words.length - 100} 个单词未显示</p>
                         <p class="text-sm text-gray-400">请使用搜索功能查找特定单词</p>
@@ -7779,13 +8690,37 @@
                 utterance.lang = 'en-US';
                 
                 // 获取用户设置的语音参数
-                const voiceSetting = state.userData.voiceSettings.voice;
+                const voiceType = state.userData.voiceSettings.voiceType || 'default';
                 let rate = state.userData.voiceSettings.rate;
                 let pitch = state.userData.voiceSettings.pitch;
                 
-                // 直接应用用户设置的语速和音调
-                utterance.rate = rate;
-                utterance.pitch = pitch;
+                // 根据选择的语音效果调整参数
+                switch(voiceType) {
+                    case 'cute':
+                        // 可爱童声：稍快语速，较高音调
+                        utterance.rate = Math.min(rate * 1.2, 2);
+                        utterance.pitch = Math.min(pitch * 1.5, 2);
+                        break;
+                    case 'funny':
+                        // 有趣搞怪：快速语速，较高音调
+                        utterance.rate = Math.min(rate * 1.5, 2);
+                        utterance.pitch = Math.min(pitch * 1.8, 2);
+                        break;
+                    case 'friendly':
+                        // 友好亲切：正常语速，稍高音调
+                        utterance.rate = rate;
+                        utterance.pitch = Math.min(pitch * 1.3, 2);
+                        break;
+                    case 'excited':
+                        // 兴奋活泼：快速语速，中等音调
+                        utterance.rate = Math.min(rate * 1.4, 2);
+                        utterance.pitch = Math.min(pitch * 1.2, 2);
+                        break;
+                    default:
+                        // 默认语音：直接应用用户设置
+                        utterance.rate = rate;
+                        utterance.pitch = pitch;
+                }
                 
                 speechSynthesis.speak(utterance);
             },
@@ -7826,9 +8761,18 @@
                 // 重置每日进度
                 state.userData.dailyProgress = { words: 0, listening: 0, memory: 0 };
                 
-                // 从词汇库中随机选择10个单词
+                // 从词汇库中随机选择10个单词，支持年级筛选
                 state.dailyCheckin.words = [];
-                const availableWords = [...wordDatabase];
+                
+                // 根据选择的年级筛选单词
+                let filteredWords = [...wordDatabase];
+                if (state.selectedGrade !== 'all') {
+                    filteredWords = filteredWords.filter(word => 
+                        word.categories && word.categories.includes(state.selectedGrade)
+                    );
+                }
+                
+                const availableWords = [...filteredWords];
                 
                 for (let i = 0; i < 10 && availableWords.length > 0; i++) {
                     const randomIndex = Math.floor(Math.random() * availableWords.length);
@@ -7855,15 +8799,15 @@
                 state.dailyCheckin.words.forEach(word => {
                     const isLearned = state.userData.learnedWords.includes(word.word);
                     const card = document.createElement('div');
-                    card.className = `word-card-hover bg-white rounded-lg shadow border border-gray-200 ${isLearned ? 'border-green-300' : ''}`;
+                    card.className = `word-card-hover bg-white rounded-lg shadow border border-gray-200 ${isLearned ? 'border-green-300' : ''} w-full max-w-full`;
                     
                     card.innerHTML = `
                         <div class="p-4">
-                            <div class="flex justify-between items-start mb-3">
-                                <div>
+                            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-3 gap-3">
+                                <div class="flex-1">
                                     <h4 class="text-lg font-bold text-gray-800 mb-1">${word.word}</h4>
-                                    <p class="text-sm text-gray-500 mb-2">${word.phonetic}</p>
-                                    <p class="text-base font-semibold text-blue-600">${word.meaning}</p>
+                                    <p class="text-sm text-gray-500 mb-2">${word.phonetic || ''}</p>
+                                    <p class="text-base font-semibold text-blue-600">${word.meaning || ''}</p>
                                 </div>
                                 <div class="flex space-x-2">
                                     <button class="play-daily-audio-btn w-8 h-8 rounded-full bg-blue-50 text-blue-500 hover:bg-blue-100 transition-colors" data-word="${word.word}">
@@ -7874,9 +8818,14 @@
                                     </button>
                                 </div>
                             </div>
-                            <div class="bg-gray-50 rounded p-2">
-                                <p class="text-sm text-gray-600 italic">${word.example}</p>
-                                <p class="text-xs text-gray-500 mt-1">${word.translation}</p>
+                            <div class="bg-gray-50 rounded p-2 flex items-start">
+                                <div class="flex-1">
+                                    <p class="text-sm text-gray-600 italic">${word.example || '暂无例句'}</p>
+                                    <p class="text-xs text-gray-500 mt-1">${word.translation || '暂无翻译'}</p>
+                                </div>
+                                <button class="follow-read-btn ml-3 p-2 bg-blue-100 text-blue-600 rounded-full hover:bg-blue-200 transition-all duration-200" title="跟读例句" onclick="app.followReadExample('${word.example || ''}')">
+                                    <i class="fas fa-volume-up"></i>
+                                </button>
                             </div>
                         </div>
                     `;
@@ -7932,14 +8881,14 @@
             
             // 加载听力游戏单词
             loadListeningWord() {
-                if (state.currentGame.currentWordIndex >= state.currentGame.words.length) {
+                if (!state.currentGame.words || state.currentGame.currentWordIndex >= state.currentGame.words.length) {
                     this.showGameResult();
                     return;
                 }
                 
                 const word = state.currentGame.words[state.currentGame.currentWordIndex];
                 dom.listeningWordDisplay.innerHTML = `
-                    <div class="text-gray-400">
+                    <div class="text-gray-400 text-center">
                         准备第 ${state.currentGame.currentWordIndex + 1} 个单词...
                     </div>
                 `;
@@ -7958,7 +8907,7 @@
                 dom.listeningOptions.innerHTML = '';
                 options.forEach((option, index) => {
                     const button = document.createElement('button');
-                    button.className = 'p-4 border border-gray-300 rounded-xl hover:bg-gray-50 transition-all duration-200 text-left text-lg font-medium';
+                    button.className = 'p-4 border border-gray-300 rounded-xl hover:bg-gray-50 transition-all duration-200 text-left text-lg font-medium w-full mb-3 md:w-auto md:mb-0';
                     button.textContent = option;
                     button.dataset.option = option;
                     
@@ -8138,8 +9087,16 @@
                     totalPairs: 8 // 固定8个单词对，16张卡片
                 };
                 
+                // 根据选择的年级筛选单词
+                let filteredWords = [...wordDatabase];
+                if (state.selectedGrade !== 'all') {
+                    filteredWords = filteredWords.filter(word => 
+                        word.categories && word.categories.includes(state.selectedGrade)
+                    );
+                }
+                
                 // 随机选择8个单词
-                const shuffledWords = [...wordDatabase].sort(() => Math.random() - 0.5);
+                const shuffledWords = filteredWords.sort(() => Math.random() - 0.5);
                 state.currentGame.words = shuffledWords.slice(0, 8);
                 
                 this.switchPage('game');
@@ -8188,6 +9145,11 @@
                 
                 // 设置单词预览布局为4列，适合8个单词显示
                 previewWords.className = 'grid grid-cols-4 gap-4';
+                
+                // 确保游戏单词存在
+                if (!state.currentGame.words) {
+                    state.currentGame.words = [...wordDatabase].sort(() => Math.random() - 0.5).slice(0, 8);
+                }
                 
                 // 立即显示所有8个单词，让用户可以在1分钟内充分记忆
                 state.currentGame.words.forEach((word, index) => {
@@ -8614,9 +9576,18 @@
                 dom.gameResult.classList.remove('hidden');
                 
                 // 计算结果
-                const total = state.currentGame.type === 'listening' ? 
-                    state.currentGame.words.length * 10 : 
-                    state.currentGame.totalPairs * 25;
+                let total;
+                if (state.currentGame.type === 'listening') {
+                    // 确保单词列表存在且有效
+                    const wordCount = state.currentGame.words ? state.currentGame.words.length : 0;
+                    total = wordCount * 10;
+                } else {
+                    // 确保总对数存在且有效
+                    total = (state.currentGame.totalPairs || 0) * 25;
+                }
+                
+                // 确保总分不为0，避免除以0错误
+                total = Math.max(total, 1);
                 const percentage = Math.round((state.currentGame.score / total) * 100);
                 
                 dom.resultScore.textContent = state.currentGame.score;
@@ -8780,20 +9751,28 @@
                 list.innerHTML = '';
                 state.userData.achievements.forEach(achievement => {
                     const element = document.createElement('div');
-                    element.className = `p-4 rounded-xl ${achievement.unlocked ? 'bg-gray-50' : 'bg-gray-100 opacity-50'}`;
+                    element.className = `p-5 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 hover:translate-y-[-2px] ${achievement.unlocked ? 'bg-gradient-to-r from-gray-50 to-gray-100 border border-gray-200' : 'bg-gray-100 opacity-70 border border-gray-200'}`;
                     
                     element.innerHTML = `
                         <div class="flex items-center mb-3">
-                            <i class="fa ${achievement.icon} ${achievement.unlocked ? achievement.color : 'text-gray-400'} text-2xl mr-3"></i>
-                            <div>
-                                <h4 class="font-semibold text-gray-800">${achievement.title}</h4>
+                            <div class="w-14 h-14 rounded-full flex items-center justify-center ${achievement.unlocked ? 'bg-blue-100' : 'bg-gray-200'} mr-4">
+                                <i class="fa ${achievement.icon} ${achievement.unlocked ? achievement.color : 'text-gray-400'} text-2xl"></i>
+                            </div>
+                            <div class="flex-1">
+                                <h4 class="font-semibold text-lg text-gray-800">${achievement.title}</h4>
                                 <p class="text-sm text-gray-600 mt-1">${achievement.description}</p>
                             </div>
                         </div>
-                        ${!achievement.unlocked ? 
-                            '<div class="text-xs text-gray-500 flex items-center"><i class="fa fa-lock mr-1"></i> 未解锁</div>' : 
-                            '<div class="text-xs text-green-600 flex items-center"><i class="fa fa-unlock mr-1"></i> 已解锁</div>'
-                        }
+                        <div class="flex items-center justify-between">
+                            ${!achievement.unlocked ? 
+                                '<div class="text-xs text-gray-500 flex items-center"><i class="fa fa-lock mr-1"></i> 未解锁</div>' : 
+                                '<div class="text-xs text-green-600 flex items-center"><i class="fa fa-trophy mr-1"></i> 已解锁</div>'
+                            }
+                            ${achievement.unlocked ? 
+                                '<div class="text-xs font-medium text-gray-500">已获得</div>' : 
+                                '<div class="text-xs font-medium text-gray-400">继续努力</div>'
+                            }
+                        </div>
                     `;
                     
                     list.appendChild(element);
@@ -8822,9 +9801,11 @@
                 const modal = dom.voiceModal;
                 const voiceRate = modal.querySelector('#voice-rate');
                 const voicePitch = modal.querySelector('#voice-pitch');
+                const voiceSelect = modal.querySelector('#voice-select');
                 
                 voiceRate.value = state.userData.voiceSettings.rate;
                 voicePitch.value = state.userData.voiceSettings.pitch;
+                voiceSelect.value = state.userData.voiceSettings.voiceType || 'default';
                 
                 modal.classList.remove('hidden');
             },
@@ -8834,9 +9815,11 @@
                 const modal = dom.voiceModal;
                 const voiceRate = modal.querySelector('#voice-rate');
                 const voicePitch = modal.querySelector('#voice-pitch');
+                const voiceSelect = modal.querySelector('#voice-select');
                 
                 state.userData.voiceSettings = {
-                    voice: 'default', // 始终使用默认语音
+                    voice: 'default',
+                    voiceType: voiceSelect.value,
                     rate: parseFloat(voiceRate.value),
                     pitch: parseFloat(voicePitch.value)
                 };
@@ -8948,6 +9931,31 @@
                 
                 dom.backToCheckinBtn.addEventListener('click', () => {
                     this.switchPage('checkin');
+                });
+                
+                // 年级选择按钮
+                dom.gradeSelectBtn.addEventListener('click', () => {
+                    dom.gradeSelectDropdown.classList.toggle('hidden');
+                });
+                
+                // 年级选项点击事件
+                dom.gradeOptions.forEach(option => {
+                    option.addEventListener('click', () => {
+                        const grade = option.getAttribute('data-grade');
+                        state.selectedGrade = grade;
+                        dom.currentGrade.textContent = grade === 'all' ? '全部年级' : grade;
+                        dom.gradeSelectDropdown.classList.add('hidden');
+                        
+                        // 重新生成每日单词
+                        this.prepareDailyCheckin();
+                    });
+                });
+                
+                // 点击页面其他地方关闭下拉菜单
+                document.addEventListener('click', (e) => {
+                    if (!dom.gradeSelectBtn.contains(e.target) && !dom.gradeSelectDropdown.contains(e.target)) {
+                        dom.gradeSelectDropdown.classList.add('hidden');
+                    }
                 });
                 
                 // 语音设置
