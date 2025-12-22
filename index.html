@@ -11112,7 +11112,10 @@
                 this.wordCards = new Map(); // 用于缓存已创建的单词卡片
                 this.currentResults = []; // 当前搜索结果
                 
-                this.init();
+                // 延迟初始化，确保dom对象完全初始化
+                setTimeout(() => {
+                    this.init();
+                }, 0);
             }
             
             init() {
