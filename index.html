@@ -3771,19 +3771,19 @@
         <!-- 底部导航 -->
         <footer class="bg-white rounded-2xl shadow-lg py-4 mt-8">
             <div class="flex justify-around">
-                <button data-nav="home" class="mobile-nav-btn flex flex-col items-center text-blue-600 px-4 py-2">
+                <button type="button" data-nav="home" class="mobile-nav-btn flex flex-col items-center text-blue-600 px-4 py-2">
                     <i class="fa fa-home text-xl mb-1"></i>
                     <span class="text-sm font-medium">首页</span>
                 </button>
-                <button data-nav="library" class="mobile-nav-btn flex flex-col items-center text-gray-500 hover:text-blue-600 px-4 py-2 transition-colors duration-200">
+                <button type="button" data-nav="library" class="mobile-nav-btn flex flex-col items-center text-gray-500 hover:text-blue-600 px-4 py-2 transition-colors duration-200">
                     <i class="fa fa-book text-xl mb-1"></i>
                     <span class="text-sm font-medium">词汇库</span>
                 </button>
-                <button data-nav="checkin" class="mobile-nav-btn flex flex-col items-center text-gray-500 hover:text-blue-600 px-4 py-2 transition-colors duration-200">
+                <button type="button" data-nav="checkin" class="mobile-nav-btn flex flex-col items-center text-gray-500 hover:text-blue-600 px-4 py-2 transition-colors duration-200">
                     <i class="fa fa-calendar-check text-xl mb-1"></i>
                     <span class="text-sm font-medium">打卡</span>
                 </button>
-                <button data-nav="achievements" class="mobile-nav-btn flex flex-col items-center text-gray-500 hover:text-blue-600 px-4 py-2 transition-colors duration-200">
+                <button type="button" data-nav="achievements" class="mobile-nav-btn flex flex-col items-center text-gray-500 hover:text-blue-600 px-4 py-2 transition-colors duration-200">
                     <i class="fa fa-trophy text-xl mb-1"></i>
                     <span class="text-sm font-medium">成就</span>
                 </button>
@@ -9091,53 +9091,71 @@
             
             // 切换页面
             switchPage(page) {
-                // 隐藏所有页面
-                [dom.homePage, dom.libraryPage, dom.checkinPage, dom.gamePage].forEach(p => {
-                    p.classList.add('hidden');
-                });
+                // 防止页面刷新
+                window.stop();
                 
-                // 隐藏成就页面（如果存在）
-                const achievementsPage = document.getElementById('achievements-page');
-                if (achievementsPage) {
-                    achievementsPage.classList.add('hidden');
+                try {
+                    // 隐藏所有页面
+                    [dom.homePage, dom.libraryPage, dom.checkinPage, dom.gamePage].forEach(p => {
+                        p.classList.add('hidden');
+                    });
+                    
+                    // 隐藏成就页面（如果存在）
+                    const achievementsPage = document.getElementById('achievements-page');
+                    if (achievementsPage) {
+                        achievementsPage.classList.add('hidden');
+                    }
+                    
+                    // 显示目标页面
+                    switch(page) {
+                        case 'home':
+                            dom.homePage.classList.remove('hidden');
+                            // 设置当前日期
+                            const now = new Date();
+                            dom.currentDate.textContent = utils.formatDate(now);
+                            // 更新学习统计
+                            this.updateStats();
+                            // 初始化图表
+                            this.initChart();
+                            // 检查今日打卡
+                            this.checkTodayCheckin();
+                            // 更新总单词数
+                            dom.totalWordCount.textContent = wordDatabase.length;
+                            dom.totalWords.textContent = wordDatabase.length;
+                            console.log('首页已切换显示，已更新统计数据和图表');
+                            break;
+                        case 'library':
+                            dom.libraryPage.classList.remove('hidden');
+                            // 延迟执行，避免阻塞UI
+                            setTimeout(() => {
+                                this.generateCategoryTags(); // 每次切换到词汇库页面时重新生成分类标签
+                                this.searchWords();
+                            }, 0);
+                            break;
+                        case 'checkin':
+                            dom.checkinPage.classList.remove('hidden');
+                            // 延迟执行，避免阻塞UI
+                            setTimeout(() => {
+                                this.prepareDailyCheckin();
+                            }, 0);
+                            break;
+                        case 'game':
+                            dom.gamePage.classList.remove('hidden');
+                            break;
+                        case 'achievements':
+                            // 延迟执行，避免阻塞UI
+                            setTimeout(() => {
+                                this.showAchievements();
+                            }, 0);
+                            break;
+                    }
+                    
+                    state.currentPage = page;
+                } catch (error) {
+                    console.error('页面切换错误:', error);
+                    // 确保页面不会刷新
+                    window.stop();
                 }
-                
-                // 显示目标页面
-                switch(page) {
-                    case 'home':
-                        dom.homePage.classList.remove('hidden');
-                        // 设置当前日期
-                        const now = new Date();
-                        dom.currentDate.textContent = utils.formatDate(now);
-                        // 更新学习统计
-                        this.updateStats();
-                        // 初始化图表
-                        this.initChart();
-                        // 检查今日打卡
-                        this.checkTodayCheckin();
-                        // 更新总单词数
-                        dom.totalWordCount.textContent = wordDatabase.length;
-                        dom.totalWords.textContent = wordDatabase.length;
-                        console.log('首页已切换显示，已更新统计数据和图表');
-                        break;
-                    case 'library':
-                        dom.libraryPage.classList.remove('hidden');
-                        this.generateCategoryTags(); // 每次切换到词汇库页面时重新生成分类标签
-                        this.searchWords();
-                        break;
-                    case 'checkin':
-                        dom.checkinPage.classList.remove('hidden');
-                        this.prepareDailyCheckin();
-                        break;
-                    case 'game':
-                        dom.gamePage.classList.remove('hidden');
-                        break;
-                    case 'achievements':
-                        this.showAchievements();
-                        break;
-                }
-                
-                state.currentPage = page;
             },
             
             // 准备每日打卡
@@ -11099,6 +11117,22 @@
         window.addEventListener('DOMContentLoaded', () => {
             // 简化初始化流程，只保留最基本的初始化代码
             app.init();
+        });
+        
+        // 添加全局beforeunload事件处理器，防止意外刷新
+        window.addEventListener('beforeunload', (event) => {
+            // 检查是否是用户主动刷新
+            const activeElement = document.activeElement;
+            const isUserInitiated = activeElement && 
+                                  (activeElement.tagName === 'A' || 
+                                   (activeElement.tagName === 'BUTTON' && 
+                                    activeElement.type === 'submit'));
+            
+            // 如果不是用户主动刷新，阻止页面刷新
+            if (!isUserInitiated) {
+                event.preventDefault();
+                event.returnValue = '';
+            }
         });
         
         // 设置学习进度跟踪
