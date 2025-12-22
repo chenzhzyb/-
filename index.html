@@ -11342,24 +11342,35 @@
                 this.dom.emptyState.classList.add('hidden');
                 this.dom.wordList.innerHTML = '';
                 
+                // 针对移动端优化：进一步减少初始显示数量
+                const isMobile = window.innerWidth < 768;
+                const maxDisplayWords = isMobile ? 50 : 100;
+                
                 // 限制显示数量，使用文档片段优化性能
-                const displayWords = words.slice(0, 100);
+                const displayWords = words.slice(0, maxDisplayWords);
                 const fragment = document.createDocumentFragment();
                 
-                displayWords.forEach(word => {
-                    const card = this.createWordCard(word);
-                    fragment.appendChild(card);
+                // 使用requestAnimationFrame优化渲染
+                requestAnimationFrame(() => {
+                    displayWords.forEach(word => {
+                        // 利用缓存，只创建新的卡片
+                        let card = this.wordCards.get(word.word);
+                        if (!card) {
+                            card = this.createWordCard(word);
+                        }
+                        fragment.appendChild(card);
+                    });
+                    
+                    this.dom.wordList.appendChild(fragment);
+                    
+                    // 显示更多提示
+                    if (words.length > maxDisplayWords) {
+                        this.showMoreWordsHint(words.length - maxDisplayWords);
+                    }
+                    
+                    // 绑定单词卡片事件 - 使用事件委托优化
+                    this.attachWordCardEvents();
                 });
-                
-                this.dom.wordList.appendChild(fragment);
-                
-                // 显示更多提示
-                if (words.length > 100) {
-                    this.showMoreWordsHint(words.length - 100);
-                }
-                
-                // 绑定单词卡片事件
-                this.attachWordCardEvents();
             }
             
             // 创建单词卡片
@@ -11561,8 +11572,16 @@
             
             // 刷新词汇库
             refresh() {
-                this.generateCategoryTags();
-                this.searchWords();
+                // 针对移动端优化：使用setTimeout延迟执行，避免阻塞主线程
+                if (window.innerWidth < 768) {
+                    setTimeout(() => {
+                        this.generateCategoryTags();
+                        this.searchWords();
+                    }, 0);
+                } else {
+                    this.generateCategoryTags();
+                    this.searchWords();
+                }
             }
         }
         
