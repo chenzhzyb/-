@@ -8645,14 +8645,14 @@
                     
                     // 添加子标签到下拉菜单
                     group.tags.forEach(tag => {
-                        const subTag = document.createElement('a');
-                        subTag.href = '#';
-                        subTag.className = `block px-4 py-3 text-sm rounded-lg transition-all duration-200 ${state.currentCategory === tag ? 'bg-blue-100 text-blue-700 font-medium' : 'text-gray-700 hover:bg-gray-50 hover:text-indigo-600'}`;
+                        const subTag = document.createElement('button');
+                        subTag.className = `block w-full text-left px-4 py-3 text-sm rounded-lg transition-all duration-200 ${state.currentCategory === tag ? 'bg-blue-100 text-blue-700 font-medium' : 'text-gray-700 hover:bg-gray-50 hover:text-indigo-600'}`;
                         subTag.dataset.category = tag;
                         subTag.textContent = tag;
                         
                         subTag.addEventListener('click', (e) => {
                             e.preventDefault();
+                            e.stopPropagation();
                             state.currentCategory = tag;
                             this.updateCategoryTags();
                             
@@ -10680,11 +10680,20 @@
                 
                 // 导航按钮
                 document.querySelectorAll('[data-nav]').forEach(btn => {
-                    // 添加点击事件监听器
-                    btn.addEventListener('click', (event) => {
+                    // 用于标记触摸事件是否已处理
+                    let touchHandled = false;
+                    
+                    // 触摸事件处理 - 移动设备优先
+                    btn.addEventListener('touchstart', (event) => {
+                        // 阻止默认的触摸行为（如页面滚动）
+                        event.preventDefault();
+                        event.stopPropagation();
+                        touchHandled = false;
+                    });
+                    
+                    btn.addEventListener('touchend', (event) => {
                         // 阻止默认行为，防止页面刷新
                         event.preventDefault();
-                        // 阻止事件冒泡，防止父元素的事件处理器影响
                         event.stopPropagation();
                         
                         const page = btn.getAttribute('data-nav');
@@ -10692,19 +10701,21 @@
                         
                         // 更新导航按钮状态
                         this.updateNavButtonStatus(page);
+                        
+                        // 标记触摸事件已处理
+                        touchHandled = true;
                     });
                     
-                    // 添加触摸事件监听器，支持移动端
-                    btn.addEventListener('touchstart', (event) => {
-                        // 阻止默认的触摸行为（如页面滚动）
-                        event.preventDefault();
-                        event.stopPropagation();
-                    });
-                    
-                    btn.addEventListener('touchend', (event) => {
+                    // 点击事件处理 - 桌面设备和未处理触摸事件的情况
+                    btn.addEventListener('click', (event) => {
+                        // 如果触摸事件已经处理，跳过点击事件
+                        if (touchHandled) {
+                            return;
+                        }
+                        
                         // 阻止默认行为，防止页面刷新
                         event.preventDefault();
-                        // 阻止事件冒泡
+                        // 阻止事件冒泡，防止父元素的事件处理器影响
                         event.stopPropagation();
                         
                         const page = btn.getAttribute('data-nav');
