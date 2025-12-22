@@ -1289,6 +1289,13 @@
             margin-bottom: 2rem;
             width: 100%;
             max-width: 100%;
+            position: relative;
+            z-index: 50;
+        }
+        
+        /* 确保下拉菜单优先级最高 */
+        .category-dropdown {
+            z-index: 999999 !important;
         }
         
         /* 词汇库页面响应式优化 */
@@ -10722,13 +10729,11 @@
             
             // 初始化事件监听
             initEvents() {
-                // 检查是否已经初始化过事件监听
-                if (state.eventsInitialized) {
-                    console.log('事件监听已经初始化，跳过重复初始化...');
-                    return;
-                }
-                
+                // 页面刷新后强制重新初始化事件监听
                 console.log('初始化事件监听...');
+                
+                // 重置事件初始化标志
+                state.eventsInitialized = false;
                 
                 // 为所有按钮添加波纹效果
                 document.querySelectorAll('button').forEach(btn => {
@@ -10741,6 +10746,9 @@
                 document.querySelectorAll('[data-nav]').forEach(btn => {
                     // 添加type="button"属性，确保按钮不会被当作提交按钮
                     btn.setAttribute('type', 'button');
+                    
+                    // 移除旧的事件监听器（如果存在）
+                    btn.onclick = null;
                     
                     // 简化事件处理，只保留点击事件，现代浏览器会自动处理触摸事件
                     btn.addEventListener('click', (event) => {
