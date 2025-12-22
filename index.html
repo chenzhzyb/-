@@ -1300,10 +1300,43 @@
                 gap: 1rem;
             }
             
+            /* 分类标签容器优化 */
+            #category-tags {
+                width: 100%;
+                max-width: 100%;
+                overflow-x: auto;
+                flex-wrap: nowrap;
+                padding: 0.75rem;
+                margin-bottom: 1rem;
+            }
+            
+            /* 确保下拉菜单能正常显示 */
+            .category-dropdown {
+                position: fixed !important;
+                top: 50% !important;
+                left: 50% !important;
+                transform: translate(-50%, -50%) !important;
+                width: 90% !important;
+                max-width: 400px !important;
+            }
+            
             /* 单词列表调整 */
             #word-list {
                 grid-template-columns: 1fr !important;
                 gap: 1rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            /* 小屏手机优化 */
+            #category-tags {
+                gap: 0.5rem;
+                padding: 0.5rem;
+            }
+            
+            .category-group-btn {
+                padding: 0.75rem 1.5rem !important;
+                font-size: 0.875rem !important;
             }
         }
         
@@ -8573,10 +8606,15 @@
                 const now = new Date();
                 dom.currentDate.textContent = utils.formatDate(now);
                 
-                // 初始化词汇库
-                if (!window.vocabularyLibrary) {
-                    window.vocabularyLibrary = new VocabularyLibrary();
+                // 初始化词汇库 - 每次页面加载都创建新实例，确保DOM引用正确
+                // 移除旧实例的事件监听器（如果存在）
+                if (window.vocabularyLibrary) {
+                    // 重置词汇库实例
+                    window.vocabularyLibrary = null;
                 }
+                
+                // 创建新的词汇库实例
+                window.vocabularyLibrary = new VocabularyLibrary();
                 
                 // 更新学习统计
                 this.updateStats();
