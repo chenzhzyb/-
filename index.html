@@ -3168,33 +3168,33 @@
                     </div>
                     
                     <!-- 移动端汉堡菜单按钮 -->
-                    <button id="mobile-menu-btn" class="md:hidden flex items-center justify-center w-10 h-10 rounded-lg hover:bg-blue-50 transition-colors duration-200 active:bg-blue-100 min-h-[44px] min-w-[44px]">
+                    <button type="button" id="mobile-menu-btn" class="md:hidden flex items-center justify-center w-10 h-10 rounded-lg hover:bg-blue-50 transition-colors duration-200 active:bg-blue-100 min-h-[44px] min-w-[44px]">
                         <i class="fa fa-bars text-base"></i>
                     </button>
                     
                     <!-- 桌面端导航菜单 -->
                     <div class="hidden md:flex items-center space-x-4">
-                        <button data-nav="home" class="nav-btn px-4 py-3 font-medium text-sm rounded-lg hover:bg-blue-50 transition-colors duration-200 active:bg-blue-100 min-h-[44px] flex items-center justify-center">
+                        <button type="button" data-nav="home" class="nav-btn px-4 py-3 font-medium text-sm rounded-lg hover:bg-blue-50 transition-colors duration-200 active:bg-blue-100 min-h-[44px] flex items-center justify-center">
                             <i class="fa fa-home mr-2 text-base"></i>
                             <span class="hidden sm:inline">首页</span>
                         </button>
-                        <button data-nav="library" class="nav-btn px-4 py-3 font-medium text-sm rounded-lg hover:bg-blue-50 transition-colors duration-200 active:bg-blue-100 min-h-[44px] flex items-center justify-center">
+                        <button type="button" data-nav="library" class="nav-btn px-4 py-3 font-medium text-sm rounded-lg hover:bg-blue-50 transition-colors duration-200 active:bg-blue-100 min-h-[44px] flex items-center justify-center">
                             <i class="fa fa-book mr-2 text-base"></i>
                             <span class="hidden sm:inline">词汇库</span>
                         </button>
-                        <button data-nav="checkin" class="nav-btn px-4 py-3 font-medium text-sm rounded-lg hover:bg-blue-50 transition-colors duration-200 active:bg-blue-100 min-h-[44px] flex items-center justify-center">
+                        <button type="button" data-nav="checkin" class="nav-btn px-4 py-3 font-medium text-sm rounded-lg hover:bg-blue-50 transition-colors duration-200 active:bg-blue-100 min-h-[44px] flex items-center justify-center">
                             <i class="fa fa-calendar-check mr-2 text-base"></i>
                             <span class="hidden sm:inline">打卡</span>
                         </button>
-                        <button data-nav="achievements" class="nav-btn px-4 py-3 font-medium text-sm rounded-lg hover:bg-blue-50 transition-colors duration-200 active:bg-blue-100 min-h-[44px] flex items-center justify-center">
+                        <button type="button" data-nav="achievements" class="nav-btn px-4 py-3 font-medium text-sm rounded-lg hover:bg-blue-50 transition-colors duration-200 active:bg-blue-100 min-h-[44px] flex items-center justify-center">
                             <i class="fa fa-trophy mr-2 text-base"></i>
                             <span class="hidden sm:inline">成就</span>
                         </button>
-                        <button id="voice-settings-btn" class="btn-outline flex items-center justify-center text-sm px-3 py-3 min-h-[44px] min-w-[44px] sm:min-w-auto active:bg-blue-50">
+                        <button type="button" id="voice-settings-btn" class="btn-outline flex items-center justify-center text-sm px-3 py-3 min-h-[44px] min-w-[44px] sm:min-w-auto active:bg-blue-50">
                             <i class="fa fa-volume-up mr-2 sm:mr-2 text-base"></i>
                             <span id="current-voice" class="hidden sm:inline">语音设置</span>
                         </button>
-                        <button id="user-profile-btn" class="w-12 h-12 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 text-white flex items-center justify-center shadow-md hover:shadow-lg transition-shadow duration-200 active:opacity-90 min-h-[44px] min-w-[44px]">
+                        <button type="button" id="user-profile-btn" class="w-12 h-12 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 text-white flex items-center justify-center shadow-md hover:shadow-lg transition-shadow duration-200 active:opacity-90 min-h-[44px] min-w-[44px]">
                             <i class="fa fa-user text-lg"></i>
                         </button>
                     </div>
@@ -3226,7 +3226,7 @@
                             <span>成就</span>
                         </span>
                     </button>
-                    <button id="mobile-voice-btn" class="w-full flex items-center justify-between px-4 py-3 font-medium text-sm rounded-lg hover:bg-blue-50 transition-colors duration-200 active:bg-blue-100 min-h-[44px]">
+                    <button type="button" id="mobile-voice-btn" class="w-full flex items-center justify-between px-4 py-3 font-medium text-sm rounded-lg hover:bg-blue-50 transition-colors duration-200 active:bg-blue-100 min-h-[44px]">
                         <span class="flex items-center">
                             <i class="fa fa-volume-up mr-3 text-base"></i>
                             <span>语音设置</span>
@@ -3252,12 +3252,12 @@
                             <h2 class="text-[clamp(1.5rem,4vw,2.5rem)] font-bold mb-3 md:mb-4 drop-shadow-lg">欢迎使用小鹿AI编程全能英语词汇库！</h2>
                             <p class="text-base md:text-lg mb-4 md:mb-6 drop-shadow-sm">今天是 <span id="current-date" class="font-semibold"></span>，包含<span id="total-word-count" class="font-bold">0</span>个单词，让我们开始学习吧！</p>
                             <div class="flex flex-col sm:flex-row gap-3 md:gap-4">
-                                <button id="start-daily-btn" class="btn-primary flex items-center justify-center w-full sm:w-auto px-4 py-3 md:px-6 md:py-4 rounded-xl text-base md:text-lg font-semibold active:bg-blue-700 min-h-[44px] mb-0 hover:scale-105 transition-transform duration-200">
+                                <button type="button" id="start-daily-btn" class="btn-primary flex items-center justify-center w-full sm:w-auto px-4 py-3 md:px-6 md:py-4 rounded-xl text-base md:text-lg font-semibold active:bg-blue-700 min-h-[44px] mb-0 hover:scale-105 transition-transform duration-200">
                                     <i class="fa fa-calendar-check mr-2 md:mr-3 text-lg md:text-xl"></i>
                                     <span class="hidden sm:inline">开始今日打卡</span>
                                     <span class="sm:hidden">今日打卡</span>
                                 </button>
-                                <button id="continue-learning-btn" class="bg-white text-blue-600 hover:bg-gray-50 flex items-center justify-center w-full sm:w-auto px-4 py-3 md:px-6 md:py-4 rounded-xl text-base md:text-lg font-semibold shadow-md transition-all duration-200 active:bg-gray-100 min-h-[44px] hover:scale-105 transition-transform duration-200">
+                                <button type="button" id="continue-learning-btn" class="bg-white text-blue-600 hover:bg-gray-50 flex items-center justify-center w-full sm:w-auto px-4 py-3 md:px-6 md:py-4 rounded-xl text-base md:text-lg font-semibold shadow-md transition-all duration-200 active:bg-gray-100 min-h-[44px] hover:scale-105 transition-transform duration-200">
                                     <i class="fa fa-book mr-2 md:mr-3 text-lg md:text-xl"></i>
                                     <span class="hidden sm:inline">浏览词汇库</span>
                                     <span class="sm:hidden">词汇库</span>
@@ -3284,7 +3284,7 @@
                                 <div class="progress-value bg-blue-500 h-2 md:h-3 rounded-full transition-all duration-500" id="learned-words-progress" style="width: 0%"></div>
                             </div>
                             <p class="text-xs md:text-sm text-gray-500 mb-3">总单词数: <span class="font-medium" id="total-words">0</span></p>
-                            <button id="view-learned-words" class="btn-primary w-full py-2 text-sm hover:scale-105 transition-transform duration-200">
+                            <button type="button" id="view-learned-words" class="btn-primary w-full py-2 text-sm hover:scale-105 transition-transform duration-200">
                                 <i class="fa fa-list-ul mr-2"></i>查看学习记录
                             </button>
                         </div>
@@ -3345,7 +3345,7 @@
                                 <input type="text" id="search-input" placeholder="搜索单词或中文意思..." 
                                        class="w-full pl-12 pr-12 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-lg shadow-sm transition-all duration-300 hover:shadow-md">
                                 <i class="fa fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-lg"></i>
-                                <button id="clear-search" class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 hidden hover:scale-110 transition-transform duration-200">
+                                <button type="button" id="clear-search" class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 hidden hover:scale-110 transition-transform duration-200">
                                     <i class="fa fa-times"></i>
                                 </button>
                             </div>
@@ -3367,7 +3367,7 @@
                             </div>
                             <h3 class="text-xl font-semibold text-gray-800 mb-2">未找到匹配的单词</h3>
                             <p class="text-gray-600 mb-8">尝试其他搜索词或选择其他分类</p>
-                            <button id="reset-search" class="btn-primary px-6 py-3 hover:scale-105 transition-transform duration-200">
+                            <button type="button" id="reset-search" class="btn-primary px-6 py-3 hover:scale-105 transition-transform duration-200">
                                 <i class="fa fa-redo mr-2"></i>重置搜索
                             </button>
                         </div>
@@ -3411,7 +3411,7 @@
                             
                             <!-- 完成打卡按钮 - 移到更显眼的位置 -->
                             <div class="mb-6">
-                                <button id="complete-checkin" class="btn-primary w-full py-4 rounded-xl text-xl font-bold disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 transition-all duration-300 transform hover:shadow-2xl bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg" disabled>
+                                <button type="button" id="complete-checkin" class="btn-primary w-full py-4 rounded-xl text-xl font-bold disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 transition-all duration-300 transform hover:shadow-2xl bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg" disabled>
                                     <i class="fa fa-check mr-2"></i>完成今日打卡
                                 </button>
                                 <p class="text-center text-sm text-gray-500 mt-2">学习完10个单词即可打卡</p>
@@ -3423,12 +3423,12 @@
                             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-3">
                                 <h3 class="text-xl font-semibold">今日单词</h3>
                                 <div class="relative w-full sm:w-auto">
-                                    <button id="grade-select-btn" class="btn-primary px-4 py-2 rounded-lg hover:bg-blue-600 transition-all duration-200 flex items-center w-full sm:w-auto justify-center">
+                                    <button type="button" id="grade-select-btn" class="btn-primary px-4 py-2 rounded-lg hover:bg-blue-600 transition-all duration-200 flex items-center w-full sm:w-auto justify-center">
                                         <span id="current-grade">全部年级</span>
                                         <i class="fa fa-chevron-down ml-2 text-sm"></i>
                                     </button>
                                     <div id="grade-select-dropdown" class="absolute right-0 mt-2 w-full sm:w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50 hidden transition-all duration-300 animate-float-up">
-                                        <button class="grade-option w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 transition-colors" data-grade="all">全部年级</button>
+                                        <button type="button" class="grade-option w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 transition-colors" data-grade="all">全部年级</button>
                                         <button class="grade-option w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 transition-colors" data-grade="一年级">一年级</button>
                                         <button class="grade-option w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 transition-colors" data-grade="二年级">二年级</button>
                                         <button class="grade-option w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 transition-colors" data-grade="三年级">三年级</button>
@@ -8723,13 +8723,13 @@
                 
                 // 更新所有子标签状态
                 let selectedCategoryText = '全部单词';
-                document.querySelectorAll('.category-dropdown a').forEach(subTag => {
+                document.querySelectorAll('.category-dropdown button').forEach(subTag => {
                     const category = subTag.getAttribute('data-category');
                     if (state.currentCategory === category) {
-                        subTag.className = 'block px-4 py-3 text-sm rounded-lg transition-all duration-200 bg-blue-100 text-blue-700 font-medium';
+                        subTag.className = 'block w-full text-left px-4 py-3 text-sm rounded-lg transition-all duration-200 bg-blue-100 text-blue-700 font-medium';
                         selectedCategoryText = subTag.textContent;
                     } else {
-                        subTag.className = 'block px-4 py-3 text-sm rounded-lg transition-all duration-200 text-gray-700 hover:bg-gray-50 hover:text-indigo-600';
+                        subTag.className = 'block w-full text-left px-4 py-3 text-sm rounded-lg transition-all duration-200 text-gray-700 hover:bg-gray-50 hover:text-indigo-600';
                     }
                 });
                 
@@ -10680,39 +10680,11 @@
                 
                 // 导航按钮
                 document.querySelectorAll('[data-nav]').forEach(btn => {
-                    // 用于标记触摸事件是否已处理
-                    let touchHandled = false;
+                    // 添加type="button"属性，确保按钮不会被当作提交按钮
+                    btn.setAttribute('type', 'button');
                     
-                    // 触摸事件处理 - 移动设备优先
-                    btn.addEventListener('touchstart', (event) => {
-                        // 阻止默认的触摸行为（如页面滚动）
-                        event.preventDefault();
-                        event.stopPropagation();
-                        touchHandled = false;
-                    });
-                    
-                    btn.addEventListener('touchend', (event) => {
-                        // 阻止默认行为，防止页面刷新
-                        event.preventDefault();
-                        event.stopPropagation();
-                        
-                        const page = btn.getAttribute('data-nav');
-                        this.switchPage(page);
-                        
-                        // 更新导航按钮状态
-                        this.updateNavButtonStatus(page);
-                        
-                        // 标记触摸事件已处理
-                        touchHandled = true;
-                    });
-                    
-                    // 点击事件处理 - 桌面设备和未处理触摸事件的情况
+                    // 简化事件处理，只保留点击事件，现代浏览器会自动处理触摸事件
                     btn.addEventListener('click', (event) => {
-                        // 如果触摸事件已经处理，跳过点击事件
-                        if (touchHandled) {
-                            return;
-                        }
-                        
                         // 阻止默认行为，防止页面刷新
                         event.preventDefault();
                         // 阻止事件冒泡，防止父元素的事件处理器影响
@@ -10723,7 +10695,7 @@
                         
                         // 更新导航按钮状态
                         this.updateNavButtonStatus(page);
-                    });
+                    }, { passive: false });
                 });
                 
                 // 搜索功能
