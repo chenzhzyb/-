@@ -9141,8 +9141,8 @@
             
             // 切换页面
             switchPage(page) {
-                // 防止页面刷新
-                // 移除window.stop()调用，它会阻止页面正常加载
+                // 防止页面刷新 - 加强防护措施
+                console.log('开始切换到页面:', page);
                 
                 try {
                     // 隐藏所有页面
@@ -9176,19 +9176,32 @@
                             break;
                         case 'library':
                             dom.libraryPage.classList.remove('hidden');
-                            // 延迟执行，避免阻塞UI
-                            setTimeout(() => {
-                                // 使用重构后的词汇库类刷新内容
-                                if (window.vocabularyLibrary) {
+                            // 针对iOS优化：使用requestAnimationFrame确保DOM更新在正确的时机执行
+                            requestAnimationFrame(() => {
+                                // 使用try-catch包裹，确保任何错误都不会导致页面刷新
+                                try {
+                                    // 确保vocabularyLibrary实例存在
+                                    if (!window.vocabularyLibrary) {
+                                        window.vocabularyLibrary = new VocabularyLibrary();
+                                    }
+                                    window.vocabularyLibrary.refresh();
+                                } catch (error) {
+                                    console.error('词汇库刷新错误:', error);
+                                    // 尝试重新初始化词汇库
+                                    window.vocabularyLibrary = new VocabularyLibrary();
                                     window.vocabularyLibrary.refresh();
                                 }
-                            }, 0);
+                            });
                             break;
                         case 'checkin':
                             dom.checkinPage.classList.remove('hidden');
                             // 延迟执行，避免阻塞UI
                             setTimeout(() => {
-                                this.prepareDailyCheckin();
+                                try {
+                                    this.prepareDailyCheckin();
+                                } catch (error) {
+                                    console.error('准备打卡错误:', error);
+                                }
                             }, 0);
                             break;
                         case 'game':
@@ -9197,7 +9210,11 @@
                         case 'achievements':
                             // 延迟执行，避免阻塞UI
                             setTimeout(() => {
-                                this.showAchievements();
+                                try {
+                                    this.showAchievements();
+                                } catch (error) {
+                                    console.error('显示成就错误:', error);
+                                }
                             }, 0);
                             break;
                     }
@@ -9205,7 +9222,8 @@
                     state.currentPage = page;
                 } catch (error) {
                     console.error('页面切换错误:', error);
-                    // 移除window.stop()调用，它会阻止页面正常加载
+                    // 显示错误通知，但不刷新页面
+                    utils.showNotification('页面切换发生错误，请重试', 'error');
                 }
             },
             
@@ -10743,29 +10761,45 @@
                     if (!btn.classList.contains('modal-close')) {
                         utils.addRippleEffect(btn);
                     }
+                    // 添加type="button"属性，确保按钮不会被当作提交按钮
+                    btn.setAttribute('type', 'button');
                 });
                 
                 // 导航按钮
                 document.querySelectorAll('[data-nav]').forEach(btn => {
-                    // 添加type="button"属性，确保按钮不会被当作提交按钮
-                    btn.setAttribute('type', 'button');
-                    
                     // 移除旧的事件监听器（如果存在）
                     btn.onclick = null;
                     
-                    // 简化事件处理，只保留点击事件，现代浏览器会自动处理触摸事件
-                    btn.addEventListener('click', (event) => {
-                        // 阻止默认行为，防止页面刷新
+                    // 移除所有现有的点击事件监听器
+                    const oldHandlers = btn._clickHandlers || [];
+                    oldHandlers.forEach(handler => {
+                        btn.removeEventListener('click', handler);
+                    });
+                    
+                    // 创建新的事件处理函数
+                    const clickHandler = (event) => {
+                        // 对于iOS设备，加强阻止默认行为
                         event.preventDefault();
-                        // 阻止事件冒泡，防止父元素的事件处理器影响
                         event.stopPropagation();
+                        
+                        // 防止事件冒泡和默认行为
+                        event.cancelBubble = true;
+                        if (event.stopImmediatePropagation) {
+                            event.stopImmediatePropagation();
+                        }
                         
                         const page = btn.getAttribute('data-nav');
                         this.switchPage(page);
                         
                         // 更新导航按钮状态
                         this.updateNavButtonStatus(page);
-                    }, { passive: false });
+                    };
+                    
+                    // 存储事件处理器，以便后续移除
+                    btn._clickHandlers = [clickHandler];
+                    
+                    // 添加点击事件监听器，确保passive为false
+                    btn.addEventListener('click', clickHandler, { passive: false, capture: true });
                 });
                 
                 // 搜索功能已迁移到VocabularyLibrary类，此处不再需要
@@ -11643,12 +11677,50 @@
                                   activeElement.tagName === 'BUTTON' && 
                                   activeElement.type === 'submit';
             
-            // 如果不是用户主动刷新，阻止页面刷新
-            if (!isUserInitiated) {
+            // 检测iOS设备
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+            
+            // 对于iOS设备，加强保护，只允许真正的提交按钮触发刷新
+            // 对于其他设备，只在非用户主动刷新时阻止
+            if ((isIOS && !isUserInitiated) || (!isIOS && !isUserInitiated)) {
                 event.preventDefault();
                 event.returnValue = '';
             }
         });
+        
+        // 为iOS设备添加额外的保护措施，防止页面意外刷新
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        if (isIOS) {
+            console.log('检测到iOS设备，添加额外的保护措施...');
+            
+            // 为所有按钮添加touch事件处理，确保不会触发页面刷新
+            document.addEventListener('DOMContentLoaded', () => {
+                document.querySelectorAll('button').forEach(btn => {
+                    // 确保所有按钮都是button类型，而不是submit
+                    btn.setAttribute('type', 'button');
+                    
+                    // 添加触摸事件处理器，防止默认行为
+                    btn.addEventListener('touchstart', (e) => {
+                        // 确保按钮不会触发页面刷新
+                        btn.setAttribute('type', 'button');
+                    }, { passive: true });
+                    
+                    btn.addEventListener('touchend', (e) => {
+                        // 防止默认行为，特别是在iOS上
+                        e.preventDefault();
+                    }, { passive: false });
+                });
+            });
+            
+            // 防止点击某些元素导致页面刷新
+            document.addEventListener('click', (e) => {
+                // 检查点击的元素是否是按钮
+                if (e.target.tagName === 'BUTTON') {
+                    // 确保按钮类型是button
+                    e.target.setAttribute('type', 'button');
+                }
+            });
+        }
         
         // 初始化词汇库
         let vocabularyLibrary;
