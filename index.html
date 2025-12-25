@@ -3136,6 +3136,33 @@
                 transform: translateY(0);
             }
         }
+        
+        /* iOS Safari特定修复 */
+        @supports (-webkit-touch-callout: none) {
+            /* 防止iOS双击缩放 */
+            button, [data-nav], .nav-btn, .mobile-nav-btn {
+                touch-action: manipulation;
+            }
+            
+            /* 防止iOS点击高亮 */
+            button, a, [role="button"] {
+                -webkit-tap-highlight-color: transparent;
+            }
+            
+            /* 确保模态框在iOS上正常显示 */
+            .modal-content {
+                -webkit-overflow-scrolling: touch;
+            }
+        }
+        
+        /* 安卓特定优化 */
+        @supports (not (-webkit-touch-callout: none)) {
+            /* 安卓上的语音提示 */
+            .audio-btn::after {
+                content: ' 🔊';
+                font-size: 0.8em;
+            }
+        }
     </style>
 </head>
 <body class="bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 font-sans min-h-screen relative">
@@ -9639,78 +9666,101 @@
                 this.checkAchievements();
             },
             
-            // 朗读单词
+            // 朗读单词 - 修复版
             speakWord(word) {
-                // 检查浏览器是否支持语音合成
+                // 增强的浏览器兼容性检查
                 if (!('speechSynthesis' in window)) {
-                    utils.showNotification('您的浏览器不支持语音合成', 'error');
+                    utils.showNotification('您的浏览器不支持语音合成功能。建议使用Chrome、Edge或Safari浏览器。', 'warning');
+                    
+                    // 显示音标作为替代方案
+                    const wordData = wordDatabase.find(w => w.word === word);
+                    if (wordData && wordData.phonetic) {
+                        utils.showNotification(`单词 "${word}" 的发音: ${wordData.phonetic}`, 'info');
+                    }
                     return;
                 }
                 
                 const synth = window.speechSynthesis;
                 
-                // 创建语音实例
-                const utterance = new SpeechSynthesisUtterance(word);
-                utterance.lang = 'en-US';
-                
-                // 获取用户设置的语音参数
-                const voiceType = state.userData.voiceSettings.voiceType || 'default';
-                let rate = state.userData.voiceSettings.rate;
-                let pitch = state.userData.voiceSettings.pitch;
-                
-                // 根据选择的语音效果调整参数
-                switch(voiceType) {
-                    case 'cute':
-                        // 可爱童声：稍快语速，较高音调
-                        utterance.rate = Math.min(rate * 1.2, 2);
-                        utterance.pitch = Math.min(pitch * 1.5, 2);
-                        break;
-                    case 'funny':
-                        // 有趣搞怪：快速语速，较高音调
-                        utterance.rate = Math.min(rate * 1.5, 2);
-                        utterance.pitch = Math.min(pitch * 1.8, 2);
-                        break;
-                    case 'friendly':
-                        // 友好亲切：正常语速，稍高音调
-                        utterance.rate = rate;
-                        utterance.pitch = Math.min(pitch * 1.3, 2);
-                        break;
-                    case 'excited':
-                        // 兴奋活泼：快速语速，中等音调
-                        utterance.rate = Math.min(rate * 1.4, 2);
-                        utterance.pitch = Math.min(pitch * 1.2, 2);
-                        break;
-                    default:
-                        // 默认语音：直接应用用户设置
-                        utterance.rate = rate;
-                        utterance.pitch = pitch;
-                }
-                
-                // 处理语音合成未初始化的情况
-                const voices = synth.getVoices();
-                
-                // 尝试获取适合的英语语音
-                const englishVoice = voices.find(voice => 
-                    voice.lang === 'en-US' || voice.lang.startsWith('en-')
-                );
-                
-                // 如果找到英语语音，使用它
-                if (englishVoice) {
-                    utterance.voice = englishVoice;
-                }
-                
-                // 处理安卓浏览器的特殊情况
-                try {
-                    // 先取消所有可能正在进行的语音
+                // 检查语音合成是否可用
+                if (synth.speaking) {
                     synth.cancel();
+                }
+                
+                try {
+                    const utterance = new SpeechSynthesisUtterance(word);
+                    utterance.lang = 'en-US';
+                    
+                    // 获取用户设置的语音参数
+                    const voiceType = state.userData.voiceSettings.voiceType || 'default';
+                    let rate = state.userData.voiceSettings.rate;
+                    let pitch = state.userData.voiceSettings.pitch;
+                    
+                    // 根据选择的语音效果调整参数
+                    switch(voiceType) {
+                        case 'cute':
+                            // 可爱童声：稍快语速，较高音调
+                            utterance.rate = Math.min(rate * 1.2, 2);
+                            utterance.pitch = Math.min(pitch * 1.5, 2);
+                            break;
+                        case 'funny':
+                            // 有趣搞怪：快速语速，较高音调
+                            utterance.rate = Math.min(rate * 1.5, 2);
+                            utterance.pitch = Math.min(pitch * 1.8, 2);
+                            break;
+                        case 'friendly':
+                            // 友好亲切：正常语速，稍高音调
+                            utterance.rate = rate;
+                            utterance.pitch = Math.min(pitch * 1.3, 2);
+                            break;
+                        case 'excited':
+                            // 兴奋活泼：快速语速，中等音调
+                            utterance.rate = Math.min(rate * 1.4, 2);
+                            utterance.pitch = Math.min(pitch * 1.2, 2);
+                            break;
+                        default:
+                            // 默认语音：直接应用用户设置
+                            utterance.rate = rate;
+                            utterance.pitch = pitch;
+                    }
+                    
+                    // 处理语音合成未初始化的情况
+                    const voices = synth.getVoices();
+                    
+                    // 尝试获取适合的英语语音
+                    const englishVoice = voices.find(voice => 
+                        voice.lang === 'en-US' || voice.lang.startsWith('en-')
+                    );
+                    
+                    // 如果找到英语语音，使用它
+                    if (englishVoice) {
+                        utterance.voice = englishVoice;
+                    }
+                    
+                    // 添加错误处理
+                    utterance.onerror = function(event) {
+                        console.error('语音合成错误:', event);
+                        utils.showNotification('无法播放发音。请检查浏览器设置或使用其他浏览器。', 'error');
+                    };
+                    
+                    utterance.onend = function() {
+                        console.log('语音播放完成');
+                    };
                     
                     // 延迟一点时间再播放，确保语音合成已经准备好
                     setTimeout(() => {
                         synth.speak(utterance);
                     }, 50);
+                    
                 } catch (error) {
-                    console.error('语音合成失败:', error);
-                    // 只在控制台显示错误，不向用户显示，避免频繁打扰
+                    console.error('语音播放失败:', error);
+                    utils.showNotification(`单词 "${word}" 的发音，请跟读音标或使用在线词典。`, 'info');
+                    
+                    // 对于不支持语音合成的浏览器，显示单词音标
+                    const wordData = wordDatabase.find(w => w.word === word);
+                    if (wordData && wordData.phonetic) {
+                        console.log(`发音提示: ${word} [${wordData.phonetic}]`);
+                    }
                 }
             },
             
@@ -11815,6 +11865,54 @@
             });
         }
         
+        // 检查语音合成支持
+        function checkSpeechSynthesisSupport() {
+            const supportStatus = {
+                supported: 'speechSynthesis' in window,
+                voices: [],
+                hasEnglishVoice: false
+            };
+            
+            if (supportStatus.supported) {
+                // 获取可用的语音列表
+                const voices = speechSynthesis.getVoices();
+                supportStatus.voices = voices;
+                
+                // 检查是否有英文语音
+                supportStatus.hasEnglishVoice = voices.some(voice =>
+                    voice.lang.startsWith('en')
+                );
+                
+                console.log('语音合成支持状态:', supportStatus);
+                
+                // 如果没有英文语音，显示提示
+                if (!supportStatus.hasEnglishVoice && voices.length > 0) {
+                    console.warn('未找到英文语音，使用可用语音:', voices[0].name);
+                }
+            }
+            
+            return supportStatus;
+        }
+        
+        // 单词卡片音频按钮设置
+        function setupWordCardAudioButtons() {
+            document.addEventListener('click', function(e) {
+                if (e.target.closest('.audio-btn') || e.target.classList.contains('fa-volume-up')) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    const wordCard = e.target.closest('.word-card-hover');
+                    if (wordCard) {
+                        const wordElement = wordCard.querySelector('h3');
+                        if (wordElement) {
+                            const word = wordElement.textContent.trim();
+                            app.speakWord(word);
+                        }
+                    }
+                }
+            });
+        }
+        
         // ==================== 启动应用 ====================        
         window.addEventListener('DOMContentLoaded', () => {
             // 简化初始化流程，只保留最基本的初始化代码
@@ -11836,6 +11934,82 @@
             
             // 添加移动端特定事件监听
             setupMobileEventListeners();
+            
+            // 修复iOS Safari点击问题
+            document.querySelectorAll('[data-nav]').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    // 阻止默认行为和事件冒泡
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    // 获取目标页面
+                    const page = this.getAttribute('data-nav');
+                    app.switchPage(page);
+                    app.updateNavButtonStatus(page);
+                    
+                    // 关闭移动端菜单（如果打开）
+                    const mobileMenu = document.getElementById('mobile-menu');
+                    if (mobileMenu && !mobileMenu.classList.contains('hidden')) {
+                        mobileMenu.classList.add('hidden');
+                    }
+                    
+                    // iOS Safari特定修复 - 强制重新绘制
+                    setTimeout(() => {
+                        document.body.style.overflow = 'hidden';
+                        setTimeout(() => {
+                            document.body.style.overflow = '';
+                        }, 10);
+                    }, 50);
+                }, { passive: false }); // 非被动事件监听器
+            });
+            
+            // 修复移动端菜单按钮
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            if (mobileMenuBtn) {
+                mobileMenuBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    const mobileMenu = document.getElementById('mobile-menu');
+                    if (mobileMenu) {
+                        mobileMenu.classList.toggle('hidden');
+                    }
+                }, { passive: false });
+            }
+            
+            // 检查语音合成支持
+            if ('speechSynthesis' in window) {
+                // 部分浏览器需要触发一次getVoices才能加载语音列表
+                speechSynthesis.getVoices();
+                
+                // 延迟检查以确保语音列表已加载
+                setTimeout(checkSpeechSynthesisSupport, 1000);
+            }
+            
+            // 在语音设置模态框中添加说明
+            const voiceModal = document.getElementById('voice-modal');
+            if (voiceModal) {
+                const modalBody = voiceModal.querySelector('.modal-body');
+                if (modalBody) {
+                    const supportInfo = document.createElement('div');
+                    supportInfo.className = 'mt-4 p-3 bg-yellow-50 rounded-lg border border-yellow-200';
+                    supportInfo.innerHTML = `
+                        <h4 class="font-medium text-yellow-800 mb-2">语音合成支持说明</h4>
+                        <p class="text-sm text-yellow-700">
+                            语音合成功能需要浏览器支持。如果无法播放发音，请尝试：
+                            <ul class="list-disc pl-4 mt-1 text-sm">
+                                <li>使用 Chrome、Edge 或 Safari 浏览器</li>
+                                <li>确保浏览器已更新到最新版本</li>
+                                <li>检查浏览器权限设置</li>
+                            </ul>
+                        </p>
+                    `;
+                    modalBody.appendChild(supportInfo);
+                }
+            }
+            
+            // 设置单词卡片音频按钮
+            setupWordCardAudioButtons();
         });
         
         // ==================== 移动端优化 ====================
