@@ -11864,8 +11864,8 @@
                 // 启用触摸优化
                 enableTouchOptimizations();
                 
-                // 优化页面切换
-                optimizePageTransitions();
+                // 页面切换优化已注释，避免干扰原有switchPage函数
+                // optimizePageTransitions();
             }
         }
         
@@ -11894,6 +11894,10 @@
             // 防止双击缩放
             let lastTouchEnd = 0;
             document.addEventListener('touchend', function(event) {
+                // 检查是否是导航按钮
+                const navBtn = event.target.closest('[data-nav]');
+                if (navBtn) return; // 如果是导航按钮，跳过此事件处理
+                
                 const now = Date.now();
                 if (now - lastTouchEnd <= 300) {
                     event.preventDefault();
@@ -11901,8 +11905,8 @@
                 lastTouchEnd = now;
             }, false);
             
-            // 改善按钮触摸反馈
-            document.querySelectorAll('.btn-primary, .btn-secondary, .category-tag, .game-card').forEach(btn => {
+            // 改善按钮触摸反馈，只针对非导航按钮
+            document.querySelectorAll('.btn-primary:not([data-nav]), .btn-secondary:not([data-nav]), .category-tag, .game-card').forEach(btn => {
                 btn.addEventListener('touchstart', function() {
                     this.style.transition = 'transform 0.1s';
                     this.style.transform = 'scale(0.97)';
@@ -11914,7 +11918,8 @@
             });
         }
         
-        // 页面切换优化
+        // 页面切换优化 - 注释掉以避免干扰原有switchPage函数
+        /*
         function optimizePageTransitions() {
             const pageTransitions = {
                 duration: 300,
@@ -11962,6 +11967,7 @@
             // 替换原来的showPage函数
             window.showPage = smoothPageTransition;
         }
+        */
         
         // 移动端键盘优化
         function optimizeMobileKeyboard() {
@@ -12029,15 +12035,18 @@
         function setupMobileEventListeners() {
             // 防止页面滚动时的橡皮筋效果
             document.addEventListener('touchmove', function(e) {
-                if (e.target.closest('#memory-cards, #matching-cards')) {
+                // 检查是否是导航按钮
+                const navBtn = e.target.closest('[data-nav]');
+                if (navBtn || e.target.closest('#memory-cards, #matching-cards')) {
                     e.preventDefault();
                 }
             }, { passive: false });
             
-            // 长按事件处理
+            // 长按事件处理 - 只针对非导航按钮
             document.addEventListener('touchstart', function(e) {
                 const target = e.target.closest('.word-card-hover, .game-card');
-                if (target) {
+                const navBtn = e.target.closest('[data-nav]');
+                if (target && !navBtn) {
                     e.longPressTimer = setTimeout(() => {
                         // 这里可以添加长按功能
                         console.log('长按事件');
@@ -12048,6 +12057,7 @@
             document.addEventListener('touchend', function(e) {
                 if (e.longPressTimer) {
                     clearTimeout(e.longPressTimer);
+                    delete e.longPressTimer; // 清除定时器引用
                 }
             });
         }
