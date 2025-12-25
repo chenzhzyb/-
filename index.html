@@ -3475,9 +3475,10 @@
                                             <i class="fa fa-brain text-white text-2xl"></i>
                                         </div>
                                         <div>
-                                            <h4 class="font-semibold text-xl text-green-800">单词记忆</h4>
-                                            <p class="text-sm text-gray-600">翻转卡片，匹配英文单词和中文意思</p>
-                                        </div>
+                                    <h4 class="font-semibold text-xl text-green-800">单词记忆</h4>
+                                    <p class="text-sm text-gray-600">翻转卡片，匹配英文单词和中文意思</p>
+                                    <p class="text-xs text-orange-600 mt-1">该游戏建议电脑端使用</p>
+                                </div>
                                     </div>
                                     <button id="start-memory-game" class="btn-primary w-full py-3 rounded-lg hover:scale-105 transition-transform duration-200 btn-ripple relative overflow-hidden group">
                                         <span class="relative z-10 flex items-center justify-center"><i class="fa fa-play mr-2"></i>开始练习</span>
@@ -3537,6 +3538,7 @@
                         <div>
                             <h2 id="game-title" class="text-2xl font-bold text-gray-800">游戏名称</h2>
                             <p id="game-description" class="text-gray-600">游戏描述</p>
+                            <p id="game-note" class="text-xs text-orange-600 mt-1"></p>
                         </div>
                         <button id="exit-game" class="flex items-center px-4 py-2 text-gray-600 hover:text-red-600 transition-colors duration-200">
                             <i class="fa fa-times mr-2"></i>退出游戏
@@ -8833,6 +8835,7 @@
                     // 游戏页面元素
                     gameTitle: document.getElementById('game-title'),
                     gameDescription: document.getElementById('game-description'),
+                    gameNote: document.getElementById('game-note'),
                     exitGameBtn: document.getElementById('exit-game-btn'),
                     exitGame: document.getElementById('exit-game'),
                     listeningGame: document.getElementById('listening-game'),
@@ -9676,6 +9679,7 @@
                 // 设置游戏UI
                 dom.gameTitle.textContent = '听音辨义';
                 dom.gameDescription.textContent = '听单词发音，选择正确的中文意思';
+                dom.gameNote.textContent = '';
                 
                 // 显示听力游戏界面
                 dom.listeningGame.classList.remove('hidden');
@@ -9912,6 +9916,7 @@
                 // 设置游戏UI
                 dom.gameTitle.textContent = '单词记忆挑战';
                 dom.gameDescription.textContent = '记住单词及中文翻译，翻转卡片找出配对！';
+                dom.gameNote.textContent = '该游戏建议电脑端使用';
                 
                 // 显示记忆游戏界面
                 dom.listeningGame.classList.add('hidden');
@@ -9954,6 +9959,7 @@
                 // 设置游戏UI
                 dom.gameTitle.textContent = '单词拼写';
                 dom.gameDescription.textContent = '根据中文意思，拼写英文单词';
+                dom.gameNote.textContent = '';
                 
                 // 显示拼写游戏界面
                 dom.listeningGame.classList.add('hidden');
@@ -10074,6 +10080,7 @@
                 // 设置游戏UI
                 dom.gameTitle.textContent = '单词连连看';
                 dom.gameDescription.textContent = '将英文单词与中文意思配对';
+                dom.gameNote.textContent = '';
                 
                 // 显示连连看游戏界面
                 dom.listeningGame.classList.add('hidden');
@@ -11101,41 +11108,35 @@
                     }
                 });
                 
-                // 导航按钮
-                document.querySelectorAll('[data-nav]').forEach(btn => {
-                    // 添加点击事件监听器
-                    btn.addEventListener('click', (event) => {
-                        // 阻止默认行为，防止页面刷新
-                        event.preventDefault();
-                        // 阻止事件冒泡，防止父元素的事件处理器影响
-                        event.stopPropagation();
-                        
-                        const page = btn.getAttribute('data-nav');
-                        this.switchPage(page);
-                        
-                        // 更新导航按钮状态
-                        this.updateNavButtonStatus(page);
-                    });
+                // 使用事件委托处理导航按钮点击，解决iOS上的页面刷新问题
+                document.addEventListener('click', (e) => {
+                    const btn = e.target.closest('[data-nav]');
+                    if (!btn) return;
+                    e.preventDefault(); // 关键：阻止默认行为
+                    e.stopPropagation(); // 阻止事件冒泡
                     
-                    // 添加触摸事件监听器，支持移动端
-                    btn.addEventListener('touchstart', (event) => {
-                        // 阻止默认的触摸行为（如页面滚动）
-                        event.preventDefault();
-                        event.stopPropagation();
-                    });
+                    const page = btn.dataset.nav;
+                    this.switchPage(page);
+                    this.updateNavButtonStatus(page);
+                });
+                
+                // 为触摸事件添加事件委托，支持移动端
+                document.addEventListener('touchstart', (e) => {
+                    const btn = e.target.closest('[data-nav]');
+                    if (!btn) return;
+                    e.preventDefault(); // 阻止默认触摸行为
+                    e.stopPropagation(); // 阻止事件冒泡
+                });
+                
+                document.addEventListener('touchend', (e) => {
+                    const btn = e.target.closest('[data-nav]');
+                    if (!btn) return;
+                    e.preventDefault(); // 关键：阻止默认行为，防止页面刷新
+                    e.stopPropagation(); // 阻止事件冒泡
                     
-                    btn.addEventListener('touchend', (event) => {
-                        // 阻止默认行为，防止页面刷新
-                        event.preventDefault();
-                        // 阻止事件冒泡
-                        event.stopPropagation();
-                        
-                        const page = btn.getAttribute('data-nav');
-                        this.switchPage(page);
-                        
-                        // 更新导航按钮状态
-                        this.updateNavButtonStatus(page);
-                    });
+                    const page = btn.dataset.nav;
+                    this.switchPage(page);
+                    this.updateNavButtonStatus(page);
                 });
                 
                 // 搜索功能
