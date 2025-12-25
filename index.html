@@ -1,9 +1,30 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
+    <!-- 移动端优化视口设置 -->
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>小鹿AI编程全能英语词汇库-优秀学员专属</title>
+    
+    <!-- 添加到主屏幕时的设置 -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#3B82F6">
+    
+    <!-- 禁止iOS电话号码自动识别 -->
+    <meta name="format-detection" content="telephone=no">
+    
+    <!-- PWA相关 -->
+    <link rel="manifest" href="/manifest.json">
+    
+    <!-- iOS Safari图标 -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    
+    <!-- 字体加载优化 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap" rel="stylesheet">
+    
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Font Awesome -->
@@ -23,9 +44,9 @@
                         dark: '#1E3A8A'
                     },
                     fontFamily: {
-                        sans: ['Inter', 'system-ui', 'sans-serif'],
-                    },
-                    animation: {
+                sans: ['Inter', 'system-ui', 'sans-serif'],
+            },
+            animation: {
                         'bounce-slow': 'bounce 2s infinite',
                         'pulse-slow': 'pulse 3s infinite',
                         'fade-in': 'fadeIn 0.5s ease-in',
@@ -47,6 +68,69 @@
     </script>
     
     <style>
+        /* 移动端优先的CSS框架 */
+        /* 基础移动端样式重置 */
+        * {
+            -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+            -webkit-touch-callout: none;
+            -webkit-text-size-adjust: 100%;
+            -moz-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
+        }
+        
+        /* 移动端字体优化 */
+        :root {
+            /* 移动端基础字体大小 */
+            font-size: 16px;
+        }
+        
+        @media screen and (max-width: 320px) {
+            :root {
+                font-size: 14px;
+            }
+        }
+        
+        @media screen and (min-width: 321px) and (max-width: 414px) {
+            :root {
+                font-size: 15px;
+            }
+        }
+        
+        @media screen and (min-width: 415px) and (max-width: 768px) {
+            :root {
+                font-size: 16px;
+            }
+        }
+        
+        /* 移动端安全区域适配 */
+        body {
+            padding-top: env(safe-area-inset-top);
+            padding-bottom: env(safe-area-inset-bottom);
+            padding-left: env(safe-area-inset-left);
+            padding-right: env(safe-area-inset-right);
+        }
+        
+        /* iOS Safari优化 */
+        @supports (-webkit-touch-callout: none) {
+            /* iOS only */
+            input, textarea, select {
+                font-size: 16px !important; /* 防止iOS自动缩放 */
+            }
+            
+            .memory-card {
+                -webkit-transform: translate3d(0,0,0); /* 硬件加速 */
+            }
+        }
+        
+        /* 安卓优化 */
+        @supports (not (-webkit-touch-callout: none)) {
+            /* Android only */
+            body {
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
+            }
+        }
+        
         /* 基础响应式样式 */
         html, body {
             overflow-x: hidden;
@@ -2979,6 +3063,76 @@
             
             .matching-card {
                 padding: 2rem !important;
+            }
+        }
+        
+        /* 鸿蒙系统特定优化 */
+        @media (hover: none) and (pointer: coarse) {
+            /* 触摸设备通用优化 */
+            a, button, [role="button"] {
+                touch-action: manipulation;
+                min-height: 44px;
+                min-width: 44px;
+            }
+            
+            /* 提高触摸反馈 */
+            .btn-primary:active,
+            .btn-secondary:active,
+            .category-tag:active {
+                transform: scale(0.97);
+                transition: transform 0.1s;
+            }
+            
+            /* 滑动优化 */
+            #word-list, #daily-words-container {
+                -webkit-overflow-scrolling: touch;
+                scroll-behavior: smooth;
+            }
+        }
+        
+        /* 移动端专用样式 - 加载状态和模态框 */
+        .mobile-loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+        
+        .mobile-loading-spinner {
+            width: 48px;
+            height: 48px;
+            border: 3px solid #F3F4F6;
+            border-top: 3px solid #3B82F6;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        /* 移动端模态框优化 */
+        .modal.mobile-modal .modal-content {
+            margin: 0;
+            max-width: 100%;
+            max-height: 100%;
+            border-radius: 0;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            animation: slideUp 0.3s ease-out;
+        }
+        
+        @keyframes slideUp {
+            from {
+                transform: translateY(100%);
+            }
+            to {
+                transform: translateY(0);
             }
         }
     </style>
@@ -11615,7 +11769,275 @@
         window.addEventListener('DOMContentLoaded', () => {
             // 简化初始化流程，只保留最基本的初始化代码
             app.init();
+            
+            // 应用移动端优化
+            optimizeForMobile();
+            
+            // 优化移动端键盘
+            optimizeMobileKeyboard();
+            
+            // 设置离线支持
+            setupOfflineSupport();
+            
+            // 监控性能
+            if (!isMobile.ios()) { // iOS对Performance API支持有限
+                monitorMobilePerformance();
+            }
+            
+            // 添加移动端特定事件监听
+            setupMobileEventListeners();
         });
+        
+        // ==================== 移动端优化 ====================
+        
+        // 移动端检测和优化
+        const isMobile = {
+            android: () => /Android/i.test(navigator.userAgent),
+            ios: () => /iPhone|iPad|iPod/i.test(navigator.userAgent),
+            harmony: () => /HarmonyOS/i.test(navigator.userAgent),
+            any: () => (isMobile.android() || isMobile.ios() || isMobile.harmony() || 
+                        /webOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)),
+            tablet: () => /iPad|Android(?!.*Mobile)|Tablet/i.test(navigator.userAgent)
+        };
+        
+        // 移动端性能优化
+        function optimizeForMobile() {
+            if (isMobile.any()) {
+                console.log('检测到移动设备，应用移动端优化...');
+                
+                // 减少动画复杂度
+                document.documentElement.style.setProperty('--animation-duration', '0.3s');
+                
+                // 优化游戏设置
+                optimizeGamesForMobile();
+                
+                // 启用触摸优化
+                enableTouchOptimizations();
+                
+                // 优化页面切换
+                optimizePageTransitions();
+            }
+        }
+        
+        // 移动端游戏优化
+        function optimizeGamesForMobile() {
+            // 记忆游戏移动端优化
+            if (isMobile.any()) {
+                // 减少卡片数量
+                window.memoryGameSettings = {
+                    easy: { pairs: 4, columns: 4 },
+                    normal: { pairs: 6, columns: 4 },
+                    hard: { pairs: 8, columns: 4 },
+                    expert: { pairs: 10, columns: 5 }
+                };
+                
+                // 听音辨义优化
+                window.listeningGameSettings = {
+                    questionCount: 8, // 移动端减少题目数量
+                    timePerQuestion: 30 // 增加答题时间
+                };
+            }
+        }
+        
+        // 触摸优化
+        function enableTouchOptimizations() {
+            // 防止双击缩放
+            let lastTouchEnd = 0;
+            document.addEventListener('touchend', function(event) {
+                const now = Date.now();
+                if (now - lastTouchEnd <= 300) {
+                    event.preventDefault();
+                }
+                lastTouchEnd = now;
+            }, false);
+            
+            // 改善按钮触摸反馈
+            document.querySelectorAll('.btn-primary, .btn-secondary, .category-tag, .game-card').forEach(btn => {
+                btn.addEventListener('touchstart', function() {
+                    this.style.transition = 'transform 0.1s';
+                    this.style.transform = 'scale(0.97)';
+                });
+                
+                btn.addEventListener('touchend', function() {
+                    this.style.transform = 'scale(1)';
+                });
+            });
+        }
+        
+        // 页面切换优化
+        function optimizePageTransitions() {
+            const pageTransitions = {
+                duration: 300,
+                timing: 'cubic-bezier(0.4, 0, 0.2, 1)'
+            };
+            
+            // 重写页面切换函数
+            function smoothPageTransition(pageId) {
+                const currentPage = document.querySelector('[id$="-page"]:not(.hidden)');
+                const targetPage = document.getElementById(pageId);
+                
+                if (!currentPage || !targetPage) return;
+                
+                // 淡出当前页面
+                currentPage.style.transition = `opacity ${pageTransitions.duration}ms ${pageTransitions.timing}`;
+                currentPage.style.opacity = '0';
+                
+                setTimeout(() => {
+                    // 隐藏当前页面
+                    currentPage.classList.add('hidden');
+                    currentPage.style.opacity = '1';
+                    
+                    // 显示目标页面
+                    targetPage.classList.remove('hidden');
+                    targetPage.style.opacity = '0';
+                    targetPage.style.transition = `opacity ${pageTransitions.duration}ms ${pageTransitions.timing}`;
+                    
+                    // 强制重绘
+                    void targetPage.offsetWidth;
+                    
+                    // 淡入目标页面
+                    setTimeout(() => {
+                        targetPage.style.opacity = '1';
+                    }, 50);
+                    
+                    // 滚动到顶部
+                    window.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    });
+                    
+                }, pageTransitions.duration);
+            }
+            
+            // 替换原来的showPage函数
+            window.showPage = smoothPageTransition;
+        }
+        
+        // 移动端键盘优化
+        function optimizeMobileKeyboard() {
+            const inputs = document.querySelectorAll('input, textarea');
+            
+            inputs.forEach(input => {
+                input.addEventListener('focus', function() {
+                    // 延迟滚动以确保键盘不会遮挡输入框
+                    setTimeout(() => {
+                        this.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'center'
+                        });
+                    }, 300);
+                });
+                
+                // iOS键盘完成按钮优化
+                if (isMobile.ios()) {
+                    input.setAttribute('enterkeyhint', 'done');
+                }
+            });
+        }
+        
+        // 离线支持优化
+        function setupOfflineSupport() {
+            // 监听在线状态
+            window.addEventListener('online', function() {
+                utils.showNotification('网络已恢复', 'success');
+            });
+            
+            window.addEventListener('offline', function() {
+                utils.showNotification('网络连接已断开，部分功能可能受限', 'warning');
+            });
+        }
+        
+        // 移动端性能监控
+        function monitorMobilePerformance() {
+            // 监控长任务
+            if ('PerformanceObserver' in window) {
+                const observer = new PerformanceObserver((list) => {
+                    for (const entry of list.getEntries()) {
+                        if (entry.duration > 100) {
+                            console.warn('检测到长任务，可能影响移动端性能:', entry);
+                            // 这里可以添加性能优化逻辑
+                        }
+                    }
+                });
+                
+                observer.observe({ entryTypes: ['longtask'] });
+            }
+            
+            // 监控内存使用
+            if ('memory' in performance) {
+                setInterval(() => {
+                    const mem = performance.memory;
+                    if (mem.usedJSHeapSize > mem.jsHeapSizeLimit * 0.7) {
+                        console.warn('内存使用率过高，建议优化');
+                        // 触发垃圾回收提示
+                    }
+                }, 60000);
+            }
+        }
+        
+        // 移动端事件监听器设置
+        function setupMobileEventListeners() {
+            // 防止页面滚动时的橡皮筋效果
+            document.addEventListener('touchmove', function(e) {
+                if (e.target.closest('#memory-cards, #matching-cards')) {
+                    e.preventDefault();
+                }
+            }, { passive: false });
+            
+            // 长按事件处理
+            document.addEventListener('touchstart', function(e) {
+                const target = e.target.closest('.word-card-hover, .game-card');
+                if (target) {
+                    e.longPressTimer = setTimeout(() => {
+                        // 这里可以添加长按功能
+                        console.log('长按事件');
+                    }, 800);
+                }
+            });
+            
+            document.addEventListener('touchend', function(e) {
+                if (e.longPressTimer) {
+                    clearTimeout(e.longPressTimer);
+                }
+            });
+        }
+        
+        // 移动端通知优化
+        function showMobileNotification(title, message, type = 'info') {
+            if (isMobile.any()) {
+                // 使用更显眼但占用空间更小的通知
+                const notification = document.createElement('div');
+                notification.className = `mobile-notification mobile-notification-${type}`;
+                notification.innerHTML = `
+                    <div class="notification-content">
+                        <i class="fa ${getNotificationIcon(type)}"></i>
+                        <div>
+                            <strong>${title}</strong>
+                            <p>${message}</p>
+                        </div>
+                    </div>
+                `;
+                
+                const notificationContainer = document.getElementById('notification-container') || document.body;
+                notificationContainer.appendChild(notification);
+                
+                // 自动消失
+                setTimeout(() => {
+                    notification.remove();
+                }, 3000);
+            }
+        }
+        
+        // 获取通知图标
+        function getNotificationIcon(type) {
+            const icons = {
+                success: 'fa-check-circle',
+                error: 'fa-exclamation-circle',
+                warning: 'fa-exclamation-triangle',
+                info: 'fa-info-circle'
+            };
+            return icons[type] || icons.info;
+        }
         
         // 设置学习进度跟踪
         function setupProgressTracking() {
