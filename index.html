@@ -8980,12 +8980,44 @@
             
             // 跟读例句功能
             followReadExample(example) {
+                // 检查浏览器是否支持语音合成
+                if (!('speechSynthesis' in window)) {
+                    utils.showNotification('您的浏览器不支持语音合成', 'error');
+                    return;
+                }
+                
                 // 使用浏览器的SpeechSynthesis API朗读例句
                 const synth = window.speechSynthesis;
                 const utterance = new SpeechSynthesisUtterance(example);
                 utterance.lang = 'en-US';
                 utterance.rate = 0.9;
-                synth.speak(utterance);
+                
+                // 获取语音列表
+                const voices = synth.getVoices();
+                
+                // 尝试获取适合的英语语音
+                const englishVoice = voices.find(voice => 
+                    voice.lang === 'en-US' || voice.lang.startsWith('en-')
+                );
+                
+                // 如果找到英语语音，使用它
+                if (englishVoice) {
+                    utterance.voice = englishVoice;
+                }
+                
+                // 处理安卓浏览器的特殊情况
+                try {
+                    // 先取消所有可能正在进行的语音
+                    synth.cancel();
+                    
+                    // 延迟一点时间再播放，确保语音合成已经准备好
+                    setTimeout(() => {
+                        synth.speak(utterance);
+                    }, 50);
+                } catch (error) {
+                    console.error('语音合成失败:', error);
+                    // 只在控制台显示错误，不向用户显示，避免频繁打扰
+                }
             },
             
             // 初始化UI
@@ -9442,11 +9474,15 @@
             
             // 朗读单词
             speakWord(word) {
+                // 检查浏览器是否支持语音合成
                 if (!('speechSynthesis' in window)) {
                     utils.showNotification('您的浏览器不支持语音合成', 'error');
                     return;
                 }
                 
+                const synth = window.speechSynthesis;
+                
+                // 创建语音实例
                 const utterance = new SpeechSynthesisUtterance(word);
                 utterance.lang = 'en-US';
                 
@@ -9483,7 +9519,32 @@
                         utterance.pitch = pitch;
                 }
                 
-                speechSynthesis.speak(utterance);
+                // 处理语音合成未初始化的情况
+                const voices = synth.getVoices();
+                
+                // 尝试获取适合的英语语音
+                const englishVoice = voices.find(voice => 
+                    voice.lang === 'en-US' || voice.lang.startsWith('en-')
+                );
+                
+                // 如果找到英语语音，使用它
+                if (englishVoice) {
+                    utterance.voice = englishVoice;
+                }
+                
+                // 处理安卓浏览器的特殊情况
+                try {
+                    // 先取消所有可能正在进行的语音
+                    synth.cancel();
+                    
+                    // 延迟一点时间再播放，确保语音合成已经准备好
+                    setTimeout(() => {
+                        synth.speak(utterance);
+                    }, 50);
+                } catch (error) {
+                    console.error('语音合成失败:', error);
+                    // 只在控制台显示错误，不向用户显示，避免频繁打扰
+                }
             },
             
             // 隐藏所有下拉菜单
