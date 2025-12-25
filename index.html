@@ -2362,6 +2362,24 @@
             transform: translateY(0) scale(0.98);
             box-shadow: 0 3px 6px rgba(79, 70, 229, 0.2);
         }
+        /* 庆祝粒子动画 */
+        @keyframes celebration-float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        .celebration-particle {
+            position: absolute;
+            bottom: -50px;
+            animation: celebration-float 3s ease-in-out forwards;
+            pointer-events: none;
+        }
     </style>
 </head>
 <body class="bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 font-sans min-h-screen relative">
@@ -2690,7 +2708,7 @@
                         </div>
                         
                         <!-- 单词列表 -->
-                        <div id="word-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div id="word-list" class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-4 lg:grid-cols-4 gap-2 sm:gap-3 md:gap-4">
                             <!-- 单词卡片将通过JavaScript动态生成 -->
                         </div>
                         
@@ -2714,10 +2732,28 @@
                 <div class="mb-8">
                     <h2 class="text-2xl font-bold mb-6 text-gray-800">每日打卡</h2>
                     <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
-                        <!-- 今日进度 -->
+                        <!-- 年级筛选和今日进度 -->
                         <div class="mb-8">
-                            <div class="flex items-center justify-between mb-4">
+                            <div class="flex flex-wrap items-center justify-between mb-4 gap-4">
                                 <h3 class="text-xl font-semibold">今日进度</h3>
+                                <div class="flex items-center gap-3">
+                                    <span class="text-base font-semibold text-gray-700">年级筛选:</span>
+                                    <select id="grade-filter" class="px-5 py-3 border-2 border-blue-300 rounded-xl focus:outline-none focus:ring-3 focus:ring-blue-500 focus:border-transparent text-base font-medium bg-white text-gray-800 shadow-md hover:shadow-lg transition-all duration-300 w-48">
+                                        <option value="all">全部年级</option>
+                                        <option value="一年级">一年级</option>
+                                        <option value="二年级">二年级</option>
+                                        <option value="三年级">三年级</option>
+                                        <option value="四年级">四年级</option>
+                                        <option value="五年级">五年级</option>
+                                        <option value="六年级">六年级</option>
+                                        <option value="初一">初一</option>
+                                        <option value="初二">初二</option>
+                                        <option value="初三">初三</option>
+                                        <option value="高一">高一</option>
+                                        <option value="高二">高二</option>
+                                        <option value="高三">高三</option>
+                                    </select>
+                                </div>
                                 <span class="text-sm text-gray-500" id="checkin-date"></span>
                             </div>
                             <div class="grid grid-cols-3 gap-4 mb-6">
@@ -2733,6 +2769,13 @@
                                     <div class="text-2xl font-bold text-yellow-600 mb-1" id="daily-memory-score">0</div>
                                     <div class="text-sm text-gray-600">记忆得分</div>
                                 </div>
+                            </div>
+                            
+                            <!-- 完成打卡按钮 -->
+                            <div class="flex justify-center mb-4">
+                                <button id="complete-checkin" class="btn-primary flex items-center px-10 py-4 rounded-lg text-lg disabled:opacity-50 disabled:cursor-not-allowed bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white font-bold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105" disabled>
+                                    完成打卡 <span class="text-sm opacity-90 ml-2">（学习完10个单词即可打卡）</span><i class="fa fa-check ml-3"></i>
+                                </button>
                             </div>
                         </div>
                         
@@ -2771,22 +2814,22 @@
                                         <div>
                                             <h4 class="font-semibold text-lg">单词记忆</h4>
                                             <p class="text-sm text-gray-600">翻转卡片，匹配英文单词和中文意思</p>
+                                            <p class="text-xs text-orange-600 mt-1">该游戏建议电脑端使用</p>
                                         </div>
                                     </div>
                                     <button id="start-memory-game" class="btn-primary w-full py-3 rounded-lg">
                                         <i class="fa fa-play mr-2"></i>开始练习
                                     </button>
                                 </div>
+                                
+
                             </div>
                         </div>
                         
                         <!-- 操作按钮 -->
-                        <div class="flex justify-between pt-6 border-t border-gray-200">
+                        <div class="flex justify-end pt-6 border-t border-gray-200">
                             <button data-nav="home" class="flex items-center px-5 py-2.5 text-gray-600 hover:text-blue-600 transition-colors duration-200">
                                 <i class="fa fa-arrow-left mr-2"></i>返回主页
-                            </button>
-                            <button id="complete-checkin" class="btn-primary flex items-center px-6 py-3 rounded-lg text-lg disabled:opacity-50 disabled:cursor-not-allowed" disabled>
-                                完成打卡<i class="fa fa-check ml-2"></i>
                             </button>
                         </div>
                     </div>
@@ -2931,6 +2974,9 @@
                             </div>
                         </div>
                     </div>
+                    
+                    <!-- 单词拼写游戏 -->
+
                     
                     <!-- 游戏结果 -->
                     <div id="game-result" class="hidden">
@@ -7502,7 +7548,13 @@
                 memoryCompleted: false
             },
             currentPage: 'home',
-            currentCategory: 'all'
+            currentCategory: 'all',
+            // 分页相关状态
+            pagination: {
+                currentPage: 1,
+                itemsPerPage: 50,
+                totalPages: 0
+            }
         };
 
         // ==================== DOM 元素缓存 ====================
@@ -7542,6 +7594,7 @@
             dailyMemoryScore: document.getElementById('daily-memory-score'),
             dailyWordsContainer: document.getElementById('daily-words-container'),
             completeCheckinBtn: document.getElementById('complete-checkin'),
+            gradeFilter: document.getElementById('grade-filter'),
             
             // 游戏页面元素
             gameTitle: document.getElementById('game-title'),
@@ -7766,10 +7819,6 @@
                 // 加载数据
                 utils.loadData();
                 
-                // 显示总单词数
-                dom.totalWordCount.textContent = wordDatabase.length;
-                dom.totalWords.textContent = wordDatabase.length;
-                
                 // 模拟加载过程
                 let progress = 0;
                 const loading = setInterval(() => {
@@ -7804,6 +7853,10 @@
                 // 生成分类标签
                 this.generateCategoryTags();
                 
+                // 显示总单词数
+                dom.totalWordCount.textContent = wordDatabase.length;
+                dom.totalWords.textContent = wordDatabase.length;
+                
                 // 更新学习统计
                 this.updateStats();
                 
@@ -7824,6 +7877,9 @@
                 if (starryBg) {
                     utils.createStars(starryBg);
                 }
+                
+                // 初始化打卡按钮状态
+                this.updateDailyProgress();
                 
                 utils.showNotification(`欢迎使用小鹿AI编程全能英语词汇库--优秀学员专属！包含${wordDatabase.length}个单词`, 'info');
             },
@@ -8057,53 +8113,80 @@
                 if (words.length === 0) {
                     dom.wordList.innerHTML = '';
                     dom.emptyState.classList.remove('hidden');
+                    // 移除分页控件
+                    const paginationContainer = document.getElementById('pagination-container');
+                    if (paginationContainer) {
+                        paginationContainer.remove();
+                    }
                     return;
                 }
                 
                 dom.emptyState.classList.add('hidden');
+                
+                // 计算分页信息
+                const totalItems = words.length;
+                const itemsPerPage = state.pagination.itemsPerPage;
+                const totalPages = Math.ceil(totalItems / itemsPerPage);
+                state.pagination.totalPages = totalPages;
+                
+                // 确保当前页码有效
+                if (state.pagination.currentPage > totalPages) {
+                    state.pagination.currentPage = totalPages;
+                }
+                if (state.pagination.currentPage < 1) {
+                    state.pagination.currentPage = 1;
+                }
+                
+                // 获取当前页的单词
+                const startIndex = (state.pagination.currentPage - 1) * itemsPerPage;
+                const endIndex = startIndex + itemsPerPage;
+                const displayWords = words.slice(startIndex, endIndex);
+                
+                // 渲染单词
                 dom.wordList.innerHTML = '';
-                
-                // 限制显示数量，避免性能问题
-                const displayWords = words.slice(0, 100);
-                
                 displayWords.forEach(word => {
                     const isLearned = state.userData.learnedWords.includes(word.word);
                     const card = document.createElement('div');
                     card.className = `word-card-hover bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 ${isLearned ? 'border-l-4 border-green-500' : ''}`;
                     
                     card.innerHTML = `
-                        <div class="p-5">
-                            <div class="flex justify-between items-start mb-4">
-                                <div class="flex-1">
-                                    <div class="flex items-center mb-2">
-                                        <h3 class="text-xl font-bold text-gray-800 mr-3">${word.word}</h3>
-                                        ${isLearned ? '<span class="px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">已学习</span>' : ''}
+                        <div class="p-3 sm:p-4">
+                            <div class="flex justify-between items-start mb-3">
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex items-center mb-1 sm:mb-2 flex-wrap">
+                                        <h3 class="text-lg sm:text-xl font-bold text-gray-800 mr-2 truncate">${word.word}</h3>
+                                        ${isLearned ? '<span class="px-1.5 sm:px-2 py-0.5 sm:py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">已学习</span>' : ''}
                                     </div>
-                                    <p class="text-gray-500 text-sm mb-2">${word.phonetic}</p>
-                                    <p class="text-lg font-semibold text-blue-600">${word.meaning}</p>
+                                    <p class="text-gray-500 text-xs sm:text-sm mb-1 sm:mb-2 truncate">${word.phonetic}</p>
+                                    <p class="text-base sm:text-lg font-semibold text-blue-600 truncate">${word.meaning}</p>
                                 </div>
-                                <button class="play-audio-btn w-10 h-10 rounded-full bg-blue-50 text-blue-500 hover:bg-blue-100 transition-colors duration-200 flex items-center justify-center" data-word="${word.word}">
-                                    <i class="fa fa-volume-up"></i>
+                                <button class="play-audio-btn w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-blue-50 text-blue-500 hover:bg-blue-100 transition-colors duration-200 flex items-center justify-center ml-2 flex-shrink-0" data-word="${word.word}">
+                                    <i class="fa fa-volume-up text-xs sm:text-base"></i>
                                 </button>
                             </div>
                             
-                            <div class="mb-4">
-                                <div class="bg-gray-50 rounded-lg p-3">
-                                    <p class="text-sm text-gray-600 italic">${word.example}</p>
-                                    <p class="text-sm text-gray-500 mt-1">${word.translation}</p>
+                            <div class="mb-3 sm:mb-4">
+                                <div class="bg-gray-50 rounded-md sm:rounded-lg p-2 sm:p-3">
+                                    <p class="text-xs sm:text-sm text-gray-600 italic truncate">${word.example}</p>
+                                    <p class="text-xs sm:text-sm text-gray-500 mt-0.5 sm:mt-1 truncate">${word.translation}</p>
+                                    <div class="mt-1 sm:mt-2 flex justify-end">
+                                        <button class="read-example-btn px-2 sm:px-3 py-0.5 sm:py-1 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-md text-[10px] sm:text-xs font-medium transition-colors duration-200 flex items-center" data-example="${word.example}">
+                                            <i class="fa fa-volume-up mr-0.5 sm:mr-1 text-[10px]"></i> 朗读
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                             
                             <div class="flex justify-between items-center">
-                                <div class="flex flex-wrap gap-1">
+                                <div class="flex flex-wrap gap-0.5 sm:gap-1 max-w-[60%]">
                                     ${word.categories ? word.categories.map(cat => `
-                                        <span class="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-full">
+                                        <span class="px-1.5 sm:px-2 py-0.5 sm:py-1 bg-gray-100 text-gray-600 text-[10px] sm:text-xs rounded-full truncate">
                                             ${utils.getCategoryName(cat)}
                                         </span>
                                     `).join('') : ''}
                                 </div>
-                                <button class="mark-learned-btn px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${isLearned ? 'bg-gray-100 text-gray-600' : 'bg-blue-500 text-white hover:bg-blue-600'}" data-word="${word.word}">
-                                    ${isLearned ? '已学习 ✓' : '标记学习'}
+                                <button class="mark-learned-btn px-3 sm:px-4 py-1 sm:py-2 rounded-md sm:rounded-lg text-[10px] sm:text-sm font-medium transition-all duration-200 ${isLearned ? 'bg-gray-100 text-gray-600' : 'bg-blue-500 text-white hover:bg-blue-600'} min-w-[55px] flex-shrink-0" data-word="${word.word}">
+                                    ${isLearned ? '已学 ✓' : '标记'}
                                 </button>
                             </div>
                         </div>
@@ -8112,19 +8195,110 @@
                     dom.wordList.appendChild(card);
                 });
                 
-                // 显示更多提示
-                if (words.length > 100) {
-                    const moreCard = document.createElement('div');
-                    moreCard.className = 'col-span-full text-center py-6';
-                    moreCard.innerHTML = `
-                        <p class="text-gray-500 mb-2">还有 ${words.length - 100} 个单词未显示</p>
-                        <p class="text-sm text-gray-400">请使用搜索功能查找特定单词</p>
-                    `;
-                    dom.wordList.appendChild(moreCard);
-                }
+                // 渲染分页控件
+                this.renderPagination(totalPages, startIndex, endIndex, totalItems);
                 
                 // 添加事件监听
                 this.attachWordCardEvents();
+                this.attachPaginationEvents();
+            },
+            
+            // 渲染分页控件
+            renderPagination(totalPages, startIndex, endIndex, totalItems) {
+                // 检查是否已有分页控件，如果有则移除
+                let paginationContainer = document.getElementById('pagination-container');
+                if (paginationContainer) {
+                    paginationContainer.remove();
+                }
+                
+                paginationContainer = document.createElement('div');
+                paginationContainer.id = 'pagination-container';
+                paginationContainer.className = 'mt-10 flex flex-col md:flex-row justify-between items-center gap-4';
+                
+                // 页码信息
+                const pageInfo = document.createElement('div');
+                pageInfo.className = 'text-sm text-gray-600';
+                pageInfo.innerHTML = `
+                    <span>显示 ${startIndex + 1}-${Math.min(endIndex, totalItems)} 项，共 ${totalItems} 项</span>
+                `;
+                paginationContainer.appendChild(pageInfo);
+                
+                // 分页按钮
+                const pageButtons = document.createElement('div');
+                pageButtons.className = 'flex items-center gap-2';
+                
+                // 首页按钮
+                const firstPageBtn = document.createElement('button');
+                firstPageBtn.className = `px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200 ${state.pagination.currentPage === 1 ? 'bg-gray-100 text-gray-500 cursor-not-allowed' : 'bg-white text-blue-600 hover:bg-blue-50'}`;
+                firstPageBtn.innerHTML = '<i class="fa fa-angle-double-left"></i> 首页';
+                firstPageBtn.dataset.page = '1';
+                pageButtons.appendChild(firstPageBtn);
+                
+                // 上一页按钮
+                const prevPageBtn = document.createElement('button');
+                prevPageBtn.className = `px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200 ${state.pagination.currentPage === 1 ? 'bg-gray-100 text-gray-500 cursor-not-allowed' : 'bg-white text-blue-600 hover:bg-blue-50'}`;
+                prevPageBtn.innerHTML = '<i class="fa fa-angle-left"></i> 上一页';
+                prevPageBtn.dataset.page = state.pagination.currentPage - 1;
+                pageButtons.appendChild(prevPageBtn);
+                
+                // 页码数字按钮
+                const maxVisiblePages = 5;
+                let startPage = Math.max(1, state.pagination.currentPage - Math.floor(maxVisiblePages / 2));
+                let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+                
+                if (endPage - startPage + 1 < maxVisiblePages) {
+                    startPage = Math.max(1, endPage - maxVisiblePages + 1);
+                }
+                
+                for (let i = startPage; i <= endPage; i++) {
+                    const pageBtn = document.createElement('button');
+                    pageBtn.className = `px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200 ${state.pagination.currentPage === i ? 'bg-blue-500 text-white' : 'bg-white text-blue-600 hover:bg-blue-50'}`;
+                    pageBtn.textContent = i;
+                    pageBtn.dataset.page = i;
+                    pageButtons.appendChild(pageBtn);
+                }
+                
+                // 下一页按钮
+                const nextPageBtn = document.createElement('button');
+                nextPageBtn.className = `px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200 ${state.pagination.currentPage === totalPages ? 'bg-gray-100 text-gray-500 cursor-not-allowed' : 'bg-white text-blue-600 hover:bg-blue-50'}`;
+                nextPageBtn.innerHTML = '下一页 <i class="fa fa-angle-right"></i>';
+                nextPageBtn.dataset.page = state.pagination.currentPage + 1;
+                pageButtons.appendChild(nextPageBtn);
+                
+                // 末页按钮
+                const lastPageBtn = document.createElement('button');
+                lastPageBtn.className = `px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200 ${state.pagination.currentPage === totalPages ? 'bg-gray-100 text-gray-500 cursor-not-allowed' : 'bg-white text-blue-600 hover:bg-blue-50'}`;
+                lastPageBtn.innerHTML = '末页 <i class="fa fa-angle-double-right"></i>';
+                lastPageBtn.dataset.page = totalPages;
+                pageButtons.appendChild(lastPageBtn);
+                
+                paginationContainer.appendChild(pageButtons);
+                
+                // 添加到页面
+                dom.wordList.parentNode.appendChild(paginationContainer);
+            },
+            
+            // 添加分页事件监听
+            attachPaginationEvents() {
+                // 移除旧的事件监听器
+                document.querySelectorAll('#pagination-container button').forEach(btn => {
+                    btn.removeEventListener('click', this.handlePageClick.bind(this));
+                    btn.addEventListener('click', this.handlePageClick.bind(this));
+                });
+            },
+            
+            // 处理分页按钮点击
+            handlePageClick(e) {
+                const page = parseInt(e.target.closest('button').dataset.page);
+                if (isNaN(page) || page < 1 || page > state.pagination.totalPages) {
+                    return;
+                }
+                
+                // 更新当前页码
+                state.pagination.currentPage = page;
+                
+                // 重新渲染单词列表
+                this.searchWords();
             },
             
             // 搜索单词
@@ -8194,6 +8368,9 @@
                     this.renderDailyWords();
                 }
                 
+                // 更新每日进度，检查是否可以完成打卡
+                this.updateDailyProgress();
+                
                 // 检查成就
                 this.checkAchievements();
             },
@@ -8256,10 +8433,19 @@
                 // 重置每日进度
                 state.userData.dailyProgress = { words: 0, listening: 0, memory: 0 };
                 
-                // 从词汇库中随机选择10个单词
-                state.dailyCheckin.words = [];
-                const availableWords = [...wordDatabase];
+                // 根据选中的年级筛选单词
+                const selectedGrade = dom.gradeFilter.value;
+                let availableWords = [...wordDatabase];
                 
+                // 如果选择了特定年级，筛选该年级的单词
+                if (selectedGrade !== 'all') {
+                    availableWords = availableWords.filter(word => {
+                        return word.categories && word.categories.includes(selectedGrade);
+                    });
+                }
+                
+                // 从筛选后的词汇库中随机选择10个单词
+                state.dailyCheckin.words = [];
                 for (let i = 0; i < 10 && availableWords.length > 0; i++) {
                     const randomIndex = Math.floor(Math.random() * availableWords.length);
                     state.dailyCheckin.words.push(availableWords[randomIndex]);
@@ -8307,6 +8493,11 @@
                             <div class="bg-gray-50 rounded p-2">
                                 <p class="text-sm text-gray-600 italic">${word.example}</p>
                                 <p class="text-xs text-gray-500 mt-1">${word.translation}</p>
+                                <div class="mt-2 flex justify-end">
+                                    <button class="read-example-btn px-3 py-1 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg text-xs font-medium transition-colors duration-200 flex items-center" data-example="${word.example}">
+                                        <i class="fa fa-volume-up mr-1"></i> 朗读例句
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     `;
@@ -8324,9 +8515,11 @@
                 dom.dailyListeningScore.textContent = state.userData.dailyProgress.listening;
                 dom.dailyMemoryScore.textContent = state.userData.dailyProgress.memory;
                 
-                // 检查是否可以完成打卡
-                if (state.dailyCheckin.listeningCompleted && state.dailyCheckin.memoryCompleted) {
+                // 检查是否可以完成打卡 - 学习完任意10个单词即可打卡
+                if (state.userData.learnedWords.length >= 10) {
                     dom.completeCheckinBtn.disabled = false;
+                } else {
+                    dom.completeCheckinBtn.disabled = true;
                 }
             },
             
@@ -8539,6 +8732,9 @@
                 // 直接显示记忆预览界面
                 this.showMemoryPreview();
             },
+            
+            // 开始单词拼写游戏
+
             
             // 显示记忆预览界面
             showMemoryPreview() {
@@ -9058,6 +9254,57 @@
             },
             
             // 完成打卡
+            // 创建庆祝特效
+            createCelebrationEffect() {
+                // 创建庆祝容器
+                const celebrationContainer = document.createElement('div');
+                celebrationContainer.className = 'fixed inset-0 pointer-events-none z-50';
+                document.body.appendChild(celebrationContainer);
+                
+                // 创建100个庆祝粒子
+                for (let i = 0; i < 100; i++) {
+                    const particle = document.createElement('div');
+                    particle.className = 'celebration-particle';
+                    
+                    // 随机选择粒子类型
+                    const particleTypes = ['✨', '🎉', '🎊', '🎈', '🎁', '🌟'];
+                    const randomType = particleTypes[Math.floor(Math.random() * particleTypes.length)];
+                    particle.textContent = randomType;
+                    
+                    // 随机位置
+                    particle.style.left = `${Math.random() * 100}%`;
+                    
+                    // 随机大小
+                    const size = Math.floor(Math.random() * 30) + 10;
+                    particle.style.fontSize = `${size}px`;
+                    
+                    // 随机颜色
+                    const colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8', '#F7DC6F', '#BB8FCE', '#85C1E2'];
+                    particle.style.color = colors[Math.floor(Math.random() * colors.length)];
+                    
+                    // 随机持续时间
+                    const duration = Math.random() * 3 + 2;
+                    particle.style.animationDuration = `${duration}s`;
+                    
+                    // 随机延迟
+                    const delay = Math.random() * 0.5;
+                    particle.style.animationDelay = `${delay}s`;
+                    
+                    // 随机旋转角度
+                    const rotation = Math.random() * 360;
+                    particle.style.transform = `rotate(${rotation}deg)`;
+                    
+                    // 添加到容器
+                    celebrationContainer.appendChild(particle);
+                }
+                
+                // 2秒后移除庆祝效果
+                setTimeout(() => {
+                    celebrationContainer.remove();
+                }, 2000);
+            },
+            
+            // 完成打卡
             completeCheckin() {
                 const today = new Date().toDateString();
                 
@@ -9078,6 +9325,9 @@
                     utils.saveData();
                     this.updateStats();
                     this.checkTodayCheckin();
+                    
+                    // 显示庆祝效果
+                    this.createCelebrationEffect();
                     
                     utils.showNotification('恭喜完成今日打卡！', 'success');
                 }
@@ -9282,9 +9532,16 @@
                     this.startMemoryGame();
                 });
                 
+
+                
                 // 完成打卡
                 dom.completeCheckinBtn.addEventListener('click', () => {
                     this.completeCheckin();
+                });
+                
+                // 年级筛选变化
+                dom.gradeFilter.addEventListener('change', () => {
+                    this.prepareDailyCheckin();
                 });
                 
                 // 游戏控制
@@ -9368,6 +9625,15 @@
                     });
                 });
                 
+                // 朗读例句
+                document.querySelectorAll('.read-example-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const example = btn.getAttribute('data-example');
+                        this.speakWord(example);
+                    });
+                });
+                
                 // 标记学习
                 document.querySelectorAll('.mark-learned-btn').forEach(btn => {
                     btn.addEventListener('click', (e) => {
@@ -9396,6 +9662,15 @@
                         const word = btn.getAttribute('data-word');
                         this.toggleLearnedWord(word);
                         this.updateDailyProgress();
+                    });
+                });
+                
+                // 朗读例句
+                document.querySelectorAll('.read-example-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const example = btn.getAttribute('data-example');
+                        this.speakWord(example);
                     });
                 });
             }
@@ -9584,9 +9859,6 @@
             // 创建庆祝动画容器
             createCelebrationContainer();
             
-            // 创建吉祥物角色
-            createMascot();
-            
             // 设置学习进度更新
             setupProgressTracking();
             
@@ -9601,44 +9873,7 @@
             document.body.appendChild(container);
         }
         
-        // 创建吉祥物角色
-        function createMascot() {
-            // 检查是否已经存在吉祥物
-            if (document.querySelector('.mascot')) return;
-            
-            const mascot = document.createElement('div');
-            mascot.className = 'mascot';
-            mascot.textContent = '🐰'; // 可爱的兔子吉祥物
-            
-            // 添加提示气泡
-            const hintBubble = document.createElement('div');
-            hintBubble.className = 'hint-bubble';
-            hintBubble.textContent = '你好！让我们一起学习单词吧！💪';
-            mascot.appendChild(hintBubble);
-            
-            // 点击吉祥物时切换提示信息
-            const hints = [
-                '加油！你今天学习了几个单词？',
-                '记得每天练习哦！',
-                '哇！你真棒！',
-                '遇到困难时不要放弃！',
-                '学习新单词真有趣！'
-            ];
-            
-            let currentHint = 0;
-            mascot.addEventListener('click', () => {
-                currentHint = (currentHint + 1) % hints.length;
-                hintBubble.textContent = hints[currentHint];
-                
-                // 添加点击动画
-                mascot.style.transform = 'scale(0.9) rotate(10deg)';
-                setTimeout(() => {
-                    mascot.style.transform = 'scale(1) rotate(0)';
-                }, 200);
-            });
-            
-            document.body.appendChild(mascot);
-        }
+
         
         // 设置学习进度跟踪
         function setupProgressTracking() {
