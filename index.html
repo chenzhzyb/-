@@ -1127,7 +1127,18 @@
             /* 触摸目标优化 - 确保足够大的点击区域 */
             button, .btn, .category-tag, .word-card-hover {
                 min-height: 48px;
+                min-width: 48px;
                 touch-action: manipulation;
+                -webkit-tap-highlight-color: transparent; /* 移除iOS点击高亮 */
+                cursor: pointer; /* 明确指示可点击 */
+                user-select: none; /* 防止文字被选中 */
+            }
+            
+            /* 导航按钮特殊优化 */
+            [data-nav] {
+                -webkit-tap-highlight-color: transparent;
+                cursor: pointer;
+                user-select: none;
             }
         }
         
@@ -11170,10 +11181,11 @@
                 });
                 
                 // 使用事件委托处理导航按钮点击，解决iOS上的页面刷新问题
+                // 1. 处理click事件，适用于桌面端和部分移动端浏览器
                 document.addEventListener('click', (e) => {
                     const btn = e.target.closest('[data-nav]');
                     if (!btn) return;
-                    e.preventDefault(); // 关键：阻止默认行为
+                    e.preventDefault(); // 阻止默认行为，防止页面刷新
                     e.stopPropagation(); // 阻止事件冒泡
                     
                     const page = btn.dataset.nav;
@@ -11181,14 +11193,8 @@
                     this.updateNavButtonStatus(page);
                 });
                 
-                // 为触摸事件添加事件委托，支持移动端
-                document.addEventListener('touchstart', (e) => {
-                    const btn = e.target.closest('[data-nav]');
-                    if (!btn) return;
-                    e.preventDefault(); // 阻止默认触摸行为
-                    e.stopPropagation(); // 阻止事件冒泡
-                });
-                
+                // 2. 处理触摸事件，适用于iOS Safari等移动端浏览器
+                // 注意：不要在touchstart中调用preventDefault()，这会干扰iOS的事件处理
                 document.addEventListener('touchend', (e) => {
                     const btn = e.target.closest('[data-nav]');
                     if (!btn) return;
@@ -11198,7 +11204,14 @@
                     const page = btn.dataset.nav;
                     this.switchPage(page);
                     this.updateNavButtonStatus(page);
-                });
+                }, { passive: false }); // 必须设置passive: false，否则preventDefault()可能无效
+                
+                // 3. 添加touchcancel事件处理，确保触摸被取消时的完整性
+                document.addEventListener('touchcancel', (e) => {
+                    const btn = e.target.closest('[data-nav]');
+                    if (!btn) return;
+                    e.stopPropagation(); // 阻止事件冒泡
+                }, { passive: true });
                 
                 // 搜索功能
                 dom.searchInput.addEventListener('input', () => this.searchWords());
