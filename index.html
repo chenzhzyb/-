@@ -9114,14 +9114,15 @@
                     
                     // 添加子标签到下拉菜单
                     group.tags.forEach(tag => {
-                        const subTag = document.createElement('a');
-                        subTag.href = '#';
-                        subTag.className = `block px-4 py-3 text-sm rounded-lg transition-all duration-200 ${state.currentCategory === tag ? 'bg-blue-100 text-blue-700 font-medium' : 'text-gray-700 hover:bg-gray-50 hover:text-indigo-600'}`;
+                        const subTag = document.createElement('button');
+                        subTag.type = 'button';
+                        subTag.className = `block w-full text-left px-4 py-3 text-sm rounded-lg transition-all duration-200 ${state.currentCategory === tag ? 'bg-blue-100 text-blue-700 font-medium' : 'text-gray-700 hover:bg-gray-50 hover:text-indigo-600'}`;
                         subTag.dataset.category = tag;
                         subTag.textContent = tag;
                         
                         subTag.addEventListener('click', (e) => {
                             e.preventDefault();
+                            e.stopPropagation();
                             state.currentCategory = tag;
                             this.updateCategoryTags();
                             
