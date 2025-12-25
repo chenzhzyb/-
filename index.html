@@ -119,6 +119,7 @@
             
             .memory-card {
                 -webkit-transform: translate3d(0,0,0); /* 硬件加速 */
+                transform: translate3d(0,0,0); /* 兼容性 */
             }
         }
         
@@ -9744,53 +9745,87 @@
             
             // 切换页面
             switchPage(page) {
+                console.log(`switchPage 被调用，页面: ${page}`);
+                
                 // 隐藏所有页面
-                [dom.homePage, dom.libraryPage, dom.checkinPage, dom.gamePage].forEach(p => {
-                    p.classList.add('hidden');
-                });
-                
-                // 隐藏成就页面（如果存在）
-                const achievementsPage = document.getElementById('achievements-page');
-                if (achievementsPage) {
-                    achievementsPage.classList.add('hidden');
+                try {
+                    [dom.homePage, dom.libraryPage, dom.checkinPage, dom.gamePage].forEach(p => {
+                        if (p) {
+                            p.classList.add('hidden');
+                        }
+                    });
+                    
+                    // 隐藏成就页面（如果存在）
+                    const achievementsPage = document.getElementById('achievements-page');
+                    if (achievementsPage) {
+                        achievementsPage.classList.add('hidden');
+                    }
+                    
+                    // 显示目标页面
+                    switch(page) {
+                        case 'home':
+                            if (dom.homePage) {
+                                dom.homePage.classList.remove('hidden');
+                                // 设置当前日期
+                                const now = new Date();
+                                if (dom.currentDate) {
+                                    dom.currentDate.textContent = utils.formatDate(now);
+                                }
+                                // 更新学习统计
+                                this.updateStats();
+                                // 初始化图表
+                                this.initChart();
+                                // 检查今日打卡
+                                this.checkTodayCheckin();
+                                // 更新总单词数
+                                if (dom.totalWordCount) {
+                                    dom.totalWordCount.textContent = wordDatabase.length;
+                                }
+                                if (dom.totalWords) {
+                                    dom.totalWords.textContent = wordDatabase.length;
+                                }
+                                console.log('首页已切换显示，已更新统计数据和图表');
+                            }
+                            break;
+                        case 'library':
+                            console.log('切换到词汇库页面');
+                            if (dom.libraryPage) {
+                                dom.libraryPage.classList.remove('hidden');
+                                console.log('词汇库页面已显示');
+                                
+                                // 使用setTimeout确保页面显示后再执行后续操作
+                                setTimeout(() => {
+                                    console.log('开始生成分类标签');
+                                    this.generateCategoryTags(); // 每次切换到词汇库页面时重新生成分类标签
+                                    console.log('分类标签生成完成');
+                                    
+                                    console.log('开始搜索单词');
+                                    this.searchWords();
+                                    console.log('单词搜索完成');
+                                }, 0);
+                            }
+                            break;
+                        case 'checkin':
+                            if (dom.checkinPage) {
+                                dom.checkinPage.classList.remove('hidden');
+                                this.prepareDailyCheckin();
+                            }
+                            break;
+                        case 'game':
+                            if (dom.gamePage) {
+                                dom.gamePage.classList.remove('hidden');
+                            }
+                            break;
+                        case 'achievements':
+                            this.showAchievements();
+                            break;
+                    }
+                    
+                    state.currentPage = page;
+                    console.log(`页面切换完成，当前页面: ${page}`);
+                } catch (error) {
+                    console.error('页面切换出错:', error);
                 }
-                
-                // 显示目标页面
-                switch(page) {
-                    case 'home':
-                        dom.homePage.classList.remove('hidden');
-                        // 设置当前日期
-                        const now = new Date();
-                        dom.currentDate.textContent = utils.formatDate(now);
-                        // 更新学习统计
-                        this.updateStats();
-                        // 初始化图表
-                        this.initChart();
-                        // 检查今日打卡
-                        this.checkTodayCheckin();
-                        // 更新总单词数
-                        dom.totalWordCount.textContent = wordDatabase.length;
-                        dom.totalWords.textContent = wordDatabase.length;
-                        console.log('首页已切换显示，已更新统计数据和图表');
-                        break;
-                    case 'library':
-                        dom.libraryPage.classList.remove('hidden');
-                        this.generateCategoryTags(); // 每次切换到词汇库页面时重新生成分类标签
-                        this.searchWords();
-                        break;
-                    case 'checkin':
-                        dom.checkinPage.classList.remove('hidden');
-                        this.prepareDailyCheckin();
-                        break;
-                    case 'game':
-                        dom.gamePage.classList.remove('hidden');
-                        break;
-                    case 'achievements':
-                        this.showAchievements();
-                        break;
-                }
-                
-                state.currentPage = page;
             },
             
             // 准备每日打卡
@@ -11336,16 +11371,33 @@
                 });
                 
                 // 使用事件委托处理导航按钮点击，解决iOS上的页面刷新问题
+                // 为了避免事件冲突，我们将使用一个统一的事件处理函数
+                
+                // 导航按钮点击处理函数
+                const handleNavButtonClick = (e, page) => {
+                    e.preventDefault(); // 阻止默认行为，防止页面刷新
+                    e.stopPropagation(); // 阻止事件冒泡
+                    
+                    // 确保按钮是可见的，并且不是禁用状态
+                    const btn = e.target.closest('[data-nav]');
+                    if (!btn || btn.style.display === 'none' || btn.disabled) return;
+                    
+                    console.log(`切换到页面: ${page}`);
+                    
+                    // 使用setTimeout确保事件处理完成
+                    setTimeout(() => {
+                        this.switchPage(page);
+                        this.updateNavButtonStatus(page);
+                    }, 0);
+                };
+                
                 // 1. 处理click事件，适用于桌面端和部分移动端浏览器
                 document.addEventListener('click', (e) => {
                     const btn = e.target.closest('[data-nav]');
                     if (!btn) return;
-                    e.preventDefault(); // 阻止默认行为，防止页面刷新
-                    e.stopPropagation(); // 阻止事件冒泡
                     
                     const page = btn.dataset.nav;
-                    this.switchPage(page);
-                    this.updateNavButtonStatus(page);
+                    handleNavButtonClick(e, page);
                 });
                 
                 // 2. 处理触摸事件，适用于iOS Safari等移动端浏览器
@@ -11353,12 +11405,9 @@
                 document.addEventListener('touchend', (e) => {
                     const btn = e.target.closest('[data-nav]');
                     if (!btn) return;
-                    e.preventDefault(); // 关键：阻止默认行为，防止页面刷新
-                    e.stopPropagation(); // 阻止事件冒泡
                     
                     const page = btn.dataset.nav;
-                    this.switchPage(page);
-                    this.updateNavButtonStatus(page);
+                    handleNavButtonClick(e, page);
                 }, { passive: false }); // 必须设置passive: false，否则preventDefault()可能无效
                 
                 // 3. 添加touchcancel事件处理，确保触摸被取消时的完整性
@@ -11385,9 +11434,10 @@
                 
                 // 全局点击事件：点击页面其他地方关闭下拉菜单
                 document.addEventListener('click', (e) => {
-                    // 检查点击目标是否在分类标签容器外
+                    // 检查点击目标是否在分类标签容器外，且不是导航按钮
                     const categoryTags = dom.categoryTags;
-                    if (categoryTags && !categoryTags.contains(e.target)) {
+                    const navBtn = e.target.closest('[data-nav]');
+                    if (categoryTags && !categoryTags.contains(e.target) && !navBtn) {
                         this.hideAllDropdowns();
                     }
                 });
