@@ -2976,7 +2976,7 @@
                         <!-- 今日单词 -->
                         <div class="mb-8">
                             <h3 class="text-xl font-semibold mb-4">今日单词</h3>
-                            <div id="daily-words-container" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 sm:gap-3 mb-6">
+                            <div id="daily-words-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 mb-6">
                                 <!-- 今日单词卡片将通过JavaScript动态生成 -->
                             </div>
                         </div>
@@ -9101,29 +9101,29 @@
                     card.className = `word-card-hover bg-white rounded-lg shadow border border-gray-200 animate-float-up ${isLearned ? 'border-green-300' : ''}`;
                     
                     card.innerHTML = `
-                        <div class="p-3 sm:p-4">
-                            <div class="flex justify-between items-start mb-2 sm:mb-3">
-                                <div class="flex-1 min-w-0">
-                                    <h4 class="text-base sm:text-lg font-bold text-gray-800 mb-1">${word.word}</h4>
-                                    <p class="text-xs sm:text-sm text-gray-500 mb-1 sm:mb-2">${word.phonetic}</p>
-                                    <p class="text-sm sm:text-base font-semibold text-blue-600 break-words">${word.meaning}</p>
+                        <div class="p-2 sm:p-3">
+                            <div class="flex flex-col">
+                                <div class="mb-2">
+                                    <h4 class="text-sm sm:text-base font-bold text-gray-800 mb-1 break-words">${word.word}</h4>
+                                    <p class="text-xs text-gray-500 mb-1 break-words">${word.phonetic}</p>
+                                    <p class="text-sm font-semibold text-blue-600 break-words">${word.meaning}</p>
                                 </div>
-                                <div class="flex space-x-1 sm:space-x-2">
-                                    <button class="play-daily-audio-btn w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-blue-50 text-blue-500 hover:bg-blue-100 transition-colors" data-word="${word.word}">
-                                        <i class="fa fa-volume-up text-xs sm:text-sm"></i>
+                                <div class="flex justify-between items-center mb-2">
+                                    <button class="play-daily-audio-btn w-7 h-7 rounded-full bg-blue-50 text-blue-500 hover:bg-blue-100 transition-colors flex items-center justify-center" data-word="${word.word}">
+                                        <i class="fa fa-volume-up text-xs"></i>
                                     </button>
-                                    <button class="mark-daily-learned-btn px-2 sm:px-3 py-1 rounded text-xs sm:text-sm font-medium transition-all ${isLearned ? 'bg-green-100 text-green-700' : 'bg-blue-500 text-white hover:bg-blue-600'} min-w-[50px] sm:min-w-[55px]" data-word="${word.word}">
+                                    <button class="mark-daily-learned-btn px-3 py-1 rounded text-xs font-medium transition-all ${isLearned ? 'bg-green-100 text-green-700' : 'bg-blue-500 text-white hover:bg-blue-600'} min-w-[50px]" data-word="${word.word}">
                                         ${isLearned ? '已学' : '学习'}
                                     </button>
                                 </div>
-                            </div>
-                            <div class="bg-gray-50 rounded p-2">
-                                <p class="text-xs sm:text-sm text-gray-600 italic break-words">${word.example}</p>
-                                <p class="text-xs text-gray-500 mt-1 break-words">${word.translation}</p>
-                                <div class="mt-2 flex justify-end">
-                                    <button class="read-example-btn px-2 sm:px-3 py-1 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg text-xs font-medium transition-colors duration-200 flex items-center" data-example="${word.example}">
-                                        <i class="fa fa-volume-up mr-0.5 sm:mr-1 text-[10px] sm:text-xs"></i> 朗读例句
-                                    </button>
+                                <div class="bg-gray-50 rounded p-2">
+                                    <p class="text-xs text-gray-600 italic break-words">${word.example}</p>
+                                    <p class="text-xs text-gray-500 mt-1 break-words">${word.translation}</p>
+                                    <div class="mt-2 flex justify-center">
+                                        <button class="read-example-btn px-3 py-1 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg text-xs font-medium transition-colors duration-200 flex items-center justify-center" data-example="${word.example}">
+                                            <i class="fa fa-volume-up mr-0.5 text-[10px]"></i> 朗读例句
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -10815,6 +10815,13 @@
                 });
                 
                 // 创建搜索结果缓存
+                this.searchCache = new Map();
+            },
+            
+            // 重置搜索优化数据结构
+            resetSearchOptimization() {
+                // 清除搜索优化数据结构，下次搜索时会重新初始化
+                this.learnedWordsHash = null;
                 this.searchCache = new Map();
             },
             
