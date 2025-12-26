@@ -8717,6 +8717,9 @@
                     } else {
                         utils.showNotification(`已取消学习: ${word}`, 'info');
                     }
+                    
+                    // 8. 重置搜索优化数据结构
+                    this.resetSearchOptimization();
                 } catch (error) {
                     // 8. 恢复本地状态
                     if (isLearned) {
@@ -8767,6 +8770,9 @@
                     // 11. 显示错误通知
                     utils.showNotification(`操作失败: ${error.message}`, 'error');
                     console.error('Toggle learned word failed:', error);
+                    
+                    // 13. 重置搜索优化数据结构
+                    this.resetSearchOptimization();
                     
                     // 12. 恢复UI状态
                     // 由于我们在事件监听器中直接更新了UI，这里需要重新查找并更新按钮状态
@@ -10787,36 +10793,143 @@
                 });
             },
             
-            // 搜索模态框中的单词
+            // 搜索优化：初始化索引和缓存
+            initSearchOptimization() {
+                // 创建已学单词哈希表，用于O(1)查找
+                this.learnedWordsHash = new Map();
+                state.userData.learnedWords.forEach(item => {
+                    if (item.word) {
+                        // 从wordDatabase获取详细信息
+                        const wordDetail = wordDatabase.find(w => w.word === item.word) || {
+                            word: item.word, 
+                            meaning: item.details?.meaning || '',
+                            example: item.details?.example || '',
+                            translation: item.details?.translation || '',
+                            categories: item.details?.categories || []
+                        };
+                        this.learnedWordsHash.set(item.word, {
+                            ...item,
+                            details: wordDetail
+                        });
+                    }
+                });
+                
+                // 创建搜索结果缓存
+                this.searchCache = new Map();
+            },
+            
+            // 搜索模态框中的单词 - 优化版本
             searchModalWords(searchTerm) {
-                // 获取所有已学单词作为搜索范围，不限制日期
-                let allLearnedWords = [...state.userData.learnedWords].filter(item => item.word).sort((a, b) => a.word.localeCompare(b.word));
+                // 初始化搜索优化数据结构（如果尚未初始化）
+                if (!this.learnedWordsHash) {
+                    this.initSearchOptimization();
+                }
+                
+                // 标准化搜索词
+                const normalizedTerm = searchTerm.trim().toLowerCase();
+                
+                // 检查缓存
+                const cacheKey = normalizedTerm;
+                if (this.searchCache.has(cacheKey)) {
+                    const cachedResults = this.searchCache.get(cacheKey);
+                    this.renderLearnedWordsModal(cachedResults);
+                    return;
+                }
+                
+                // 获取所有已学单词
+                let allLearnedWords = Array.from(this.learnedWordsHash.values());
                 
                 let filteredWords = allLearnedWords;
-                if (searchTerm) {
-                    const term = searchTerm.toLowerCase();
-                    filteredWords = allLearnedWords.filter(learnedItem => {
-                        if (!learnedItem || !learnedItem.word) return false;
-                        
-                        const word = learnedItem.word;
-                        const wordDetail = wordDatabase.find(w => w.word === word) || {
-                            word: word, 
-                            meaning: learnedItem.details?.meaning || '',
-                            example: learnedItem.details?.example || '',
-                            translation: learnedItem.details?.translation || ''
-                        };
-                        
-                        // 支持中英文混合搜索，匹配单词、释义、例句和翻译
-                        return word.toLowerCase().includes(term) ||
-                               (wordDetail.meaning && wordDetail.meaning.toLowerCase().includes(term)) ||
-                               (wordDetail.example && wordDetail.example.toLowerCase().includes(term)) ||
-                               (wordDetail.translation && wordDetail.translation.toLowerCase().includes(term));
-                    });
+                if (normalizedTerm) {
+                    // 实现高效的搜索算法
+                    filteredWords = this.performEfficientSearch(normalizedTerm, allLearnedWords);
                 }
+                
+                // 优化搜索结果排序
+                filteredWords = this.sortSearchResults(filteredWords, normalizedTerm);
                 
                 // 提取单词文本数组传递给渲染函数
                 const wordTexts = filteredWords.map(item => item.word);
+                
+                // 缓存结果
+                this.searchCache.set(cacheKey, wordTexts);
+                
+                // 限制缓存大小
+                if (this.searchCache.size > 50) {
+                    // 移除最早的缓存项
+                    const firstKey = this.searchCache.keys().next().value;
+                    this.searchCache.delete(firstKey);
+                }
+                
                 this.renderLearnedWordsModal(wordTexts);
+            },
+            
+            // 高效搜索算法实现
+            performEfficientSearch(searchTerm, allLearnedWords) {
+                // 实现多字段搜索，支持模糊匹配和精确匹配
+                return allLearnedWords.filter(item => {
+                    if (!item || !item.word) return false;
+                    
+                    const word = item.word.toLowerCase();
+                    const details = item.details;
+                    
+                    // 精确匹配
+                    if (word === searchTerm) return true;
+                    
+                    // 前缀匹配
+                    if (word.startsWith(searchTerm)) return true;
+                    
+                    // 后缀匹配
+                    if (word.endsWith(searchTerm)) return true;
+                    
+                    // 包含匹配
+                    if (word.includes(searchTerm)) return true;
+                    
+                    // 释义搜索
+                    if (details.meaning && details.meaning.toLowerCase().includes(searchTerm)) return true;
+                    
+                    // 例句搜索
+                    if (details.example && details.example.toLowerCase().includes(searchTerm)) return true;
+                    
+                    // 翻译搜索
+                    if (details.translation && details.translation.toLowerCase().includes(searchTerm)) return true;
+                    
+                    return false;
+                });
+            },
+            
+            // 优化搜索结果排序
+            sortSearchResults(results, searchTerm) {
+                // 根据相关性、最近学习时间和字母顺序排序
+                return [...results].sort((a, b) => {
+                    const aWord = a.word.toLowerCase();
+                    const bWord = b.word.toLowerCase();
+                    const term = searchTerm.toLowerCase();
+                    
+                    // 1. 精确匹配优先
+                    if (aWord === term && bWord !== term) return -1;
+                    if (aWord !== term && bWord === term) return 1;
+                    
+                    // 2. 前缀匹配次之
+                    if (aWord.startsWith(term) && !bWord.startsWith(term)) return -1;
+                    if (!aWord.startsWith(term) && bWord.startsWith(term)) return 1;
+                    
+                    // 3. 后缀匹配再次之
+                    if (aWord.endsWith(term) && !bWord.endsWith(term)) return -1;
+                    if (!aWord.endsWith(term) && bWord.endsWith(term)) return 1;
+                    
+                    // 4. 包含匹配
+                    if (aWord.includes(term) && !bWord.includes(term)) return -1;
+                    if (!aWord.includes(term) && bWord.includes(term)) return 1;
+                    
+                    // 5. 最近学习时间
+                    const aTime = new Date(a.timestamp).getTime();
+                    const bTime = new Date(b.timestamp).getTime();
+                    if (aTime !== bTime) return bTime - aTime;
+                    
+                    // 6. 字母顺序
+                    return aWord.localeCompare(bWord);
+                });
             },
             
             // 关闭已学单词模态框
