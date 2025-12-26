@@ -318,9 +318,19 @@
             }
             
             @keyframes float-fast {
-                0%, 100% { transform: translateY(0px); }
-                50% { transform: translateY(-20px); }
-            }
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        /* 旋转动画 */
+        @keyframes spin-slow {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .animate-spin-slow {
+            animation: spin-slow 2s linear infinite;
+        }
             
             @keyframes bounce-slow {
                 0%, 100% { transform: translateY(0px); }
@@ -435,19 +445,98 @@
                 animation: pulse-slow 3s ease-in-out infinite;
             }
         
-        /* 自定义按钮样式 - 儿童友好版 */
-        .btn-primary {
-            background: linear-gradient(135deg, #4F46E5, #3B82F6);
-            color: white;
-            font-weight: 600;
-            padding: 0.75rem 1.5rem;
-            border-radius: 1.5rem;
-            border: 2px solid #60A5FA;
-            box-shadow: 0 6px 12px rgba(59, 130, 246, 0.3), 0 2px 4px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-            position: relative;
-            overflow: hidden;
+        /* 统一按钮样式规范 */
+        :root {
+            --btn-primary: #4CAF50;
+            --btn-primary-hover: #45a049;
+            --btn-secondary: #2196F3;
+            --btn-secondary-hover: #1e88e5;
+            --btn-text: #ffffff;
+            --btn-text-dark: #333333;
+            --btn-border-radius: 8px;
+            --btn-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.2), 0 2px 4px rgba(0, 0, 0, 0.1);
+            --btn-transition: all 0.2s ease;
+        }
+        
+        /* 基础按钮样式 */
+        button {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            font-size: 14px;
+            line-height: 1.5;
+            font-weight: 500;
+            border: none;
+            border-radius: var(--btn-border-radius);
             cursor: pointer;
+            transition: var(--btn-transition);
+            min-height: 44px;
+            min-width: 44px;
+            padding: 10px 20px;
+            box-shadow: var(--btn-shadow);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            white-space: nowrap;
+            user-select: none;
+        }
+        
+        /* 主按钮样式 */
+        .btn-primary, button.btn-primary {
+            background-color: var(--btn-primary);
+            color: var(--btn-text);
+        }
+        
+        /* 辅助按钮样式 */
+        .btn-secondary, button.btn-secondary {
+            background-color: var(--btn-secondary);
+            color: var(--btn-text);
+        }
+        
+        /* 正常状态 */
+        button:not(:disabled) {
+            opacity: 1;
+        }
+        
+        /* 悬停状态 */
+        button:hover:not(:disabled) {
+            filter: brightness(1.1);
+            transform: scale(1.03);
+        }
+        
+        /* 点击状态 */
+        button:active:not(:disabled) {
+            filter: brightness(0.9);
+            transform: scale(0.98);
+        }
+        
+        /* 禁用状态 */
+        button:disabled {
+            filter: grayscale(1);
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        /* 导航按钮样式 */
+        .nav-btn, [data-nav] {
+            background-color: transparent;
+            color: var(--btn-text-dark);
+            border-radius: var(--btn-border-radius);
+        }
+        
+        .nav-btn:hover, [data-nav]:hover {
+            background-color: rgba(76, 175, 80, 0.1);
+        }
+        
+        /* 辅助按钮样式 */
+        .btn-outline {
+            background-color: transparent;
+            color: var(--btn-primary);
+            border: 1px solid var(--btn-primary);
+        }
+        
+        .btn-outline:hover {
+            background-color: var(--btn-primary);
+            color: var(--btn-text);
         }
         
         /* 科技文字发光效果 */
@@ -462,19 +551,6 @@
             text-shadow: 0 0 15px rgba(59, 130, 246, 0.9),
                          0 0 30px rgba(59, 130, 246, 0.7),
                          0 0 45px rgba(59, 130, 246, 0.5);
-        }
-        
-        /* 科技按钮样式 */
-        .tech-button {
-            position: relative;
-            overflow: hidden;
-            transition: all 0.3s ease;
-            border-radius: 8px;
-            border: 2px solid transparent;
-            background-image: linear-gradient(to right, #3b82f6, #60a5fa);
-            background-origin: border-box;
-            background-clip: padding-box, border-box;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
         
         /* 上浮渐入动画 */
@@ -493,11 +569,37 @@
             }
         }
         
+        @keyframes fade-in-out {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; }
+        }
+        
+        .animate-fade-in-out {
+            animation: fade-in-out 2s ease-in-out infinite;
+        }
+        
         /* 单词卡片悬停效果优化 */
         .word-card-hover:hover {
             transform: translateY(-5px) scale(1.02);
             box-shadow: 0 10px 25px rgba(59, 130, 246, 0.3);
             transition: all 0.3s ease;
+        }
+        
+        /* 单词卡片响应式字体大小 */
+        .word-card-hover h3 {
+            font-size: clamp(1rem, 4vw, 1.8rem) !important;
+        }
+        
+        .word-card-hover .meaning {
+            font-size: clamp(0.8rem, 3vw, 1.2rem);
+        }
+        
+        .word-card-hover .example {
+            font-size: clamp(0.75rem, 2.5vw, 1.1rem);
+        }
+        
+        .word-card-hover .phonetic {
+            font-size: clamp(0.7rem, 2.5vw, 1rem);
         }
         
         /* 标签美化 */
@@ -778,7 +880,29 @@
             
             .card, .word-card-hover, .stat-card {
                 margin-bottom: 1.5rem;
-                padding: 1.5rem;
+                padding: 1.25rem;
+            }
+            
+            /* 单词卡片响应式优化 */
+            .word-card-hover {
+                margin: 0.75rem;
+                padding: 1.25rem;
+            }
+            
+            .word-card-hover h3 {
+                font-size: 1.6rem !important;
+            }
+            
+            .word-card-hover .meaning {
+                font-size: 1.1rem;
+            }
+            
+            .word-card-hover .example {
+                font-size: 1rem;
+            }
+            
+            .word-card-hover .phonetic {
+                font-size: 0.9rem;
             }
         }
         
@@ -796,9 +920,84 @@
             }
             
             /* 触摸目标优化 - 确保足够大的点击区域 */
-            button, .btn, .category-tag, .word-card-hover {
+            button, .btn, .category-tag, .play-audio-btn {
                 min-height: 48px;
+                min-width: 48px;
                 touch-action: manipulation;
+            }
+            
+            /* 单词卡片进一步优化 */
+            .word-card-hover {
+                margin: 0.5rem;
+                padding: 1rem;
+                border-radius: 16px !important;
+                border-width: 2px;
+            }
+            
+            .word-card-hover h3 {
+                font-size: 1.4rem !important;
+                margin-bottom: 0.375rem;
+            }
+            
+            .word-card-hover h3::after {
+                font-size: 1.2rem;
+            }
+            
+            .word-card-hover .meaning {
+                font-size: 1rem;
+                margin-bottom: 0.75rem;
+                padding-left: 0.75rem;
+            }
+            
+            .word-card-hover .example {
+                font-size: 0.9rem;
+                padding: 0.625rem;
+            }
+            
+            .word-card-hover .phonetic {
+                font-size: 0.85rem;
+            }
+            
+            /* 单词音频按钮优化 */
+            .word-card-hover .audio-btn {
+                width: 48px;
+                height: 48px;
+                margin-top: 0.375rem;
+            }
+            
+            /* 已学习标记优化 */
+            .learned-badge {
+                font-size: 0.75rem;
+                padding: 0.25rem 0.625rem;
+                top: 0.75rem;
+                right: 0.75rem;
+            }
+            
+            /* 标签优化 */
+            .category-tag {
+                padding: 0.4rem 1rem;
+                font-size: 0.85rem;
+                margin: 0.3rem;
+            }
+        }
+        
+        /* 超小屏幕优化 (360px以下) */
+        @media (max-width: 360px) {
+            .word-card-hover {
+                margin: 0.375rem;
+                padding: 0.875rem;
+            }
+            
+            .word-card-hover h3 {
+                font-size: 1.3rem !important;
+            }
+            
+            .word-card-hover .meaning {
+                font-size: 0.95rem;
+            }
+            
+            .word-card-hover .example {
+                font-size: 0.85rem;
             }
         }
         
@@ -2391,95 +2590,59 @@
         <div class="absolute bottom-1/4 right-1/4 w-72 h-72 bg-pink-200 rounded-full opacity-20 blur-3xl"></div>
     </div>
     <!-- 加载屏幕 -->
-    <div id="loading-screen" class="fixed inset-0 bg-gradient-to-br from-blue-400 to-purple-500 flex flex-col items-center justify-center z-50 relative overflow-hidden w-full h-full top-0 left-0 m-0 p-0 min-h-screen min-w-screen" style="position: fixed; inset: 0; z-index: 9999; margin: 0; padding: 0; width: 100vw; height: 100vh;">
-        <!-- 星星背景动画 -->
-        <div class="star-field absolute inset-0 pointer-events-none"></div>
-        <!-- 浮动气泡 -->
-        <div class="bubbles absolute inset-0 pointer-events-none"></div>
+    <div id="loading-screen" class="fixed inset-0 bg-gradient-to-br from-green-400 via-blue-400 to-purple-400 flex flex-col items-center justify-center z-50 relative overflow-hidden w-full h-full top-0 left-0 m-0 p-0 min-h-screen min-w-screen transition-all duration-1000 ease-in-out">
+        <!-- 背景装饰 -->
+        <div class="absolute inset-0 pointer-events-none overflow-hidden">
+            <div class="absolute top-0 left-0 w-64 h-64 bg-yellow-300 rounded-full opacity-20 blur-3xl animate-float-slow"></div>
+            <div class="absolute top-1/3 right-0 w-96 h-96 bg-pink-300 rounded-full opacity-20 blur-3xl animate-float-medium"></div>
+            <div class="absolute bottom-0 left-1/4 w-80 h-80 bg-blue-300 rounded-full opacity-20 blur-3xl animate-float-fast"></div>
+        </div>
         
         <div class="text-center px-4 z-10 max-w-md mx-auto">
-            <div class="relative mx-auto">
-                <!-- 活泼的小鹿卡通形象 -->
-                <svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 300 300" class="w-48 h-auto mb-6 mx-auto animate-bounce-slow object-contain" style="max-height: 40vh;">
-                  <!-- 背景圆环 -->
-                  <circle cx="150" cy="150" r="140" fill="none" stroke="#1a1a2e" stroke-width="2"/>
-                  <circle cx="150" cy="150" r="135" fill="none" stroke="#16213e" stroke-width="1"/>
-                  
-                  <!-- 科技感网格背景 -->
-                  <defs>
-                    <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
-                      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#0f3460" stroke-width="0.5"/>
-                    </pattern>
-                    <linearGradient id="techGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" stop-color="#00f2fe"/>
-                      <stop offset="100%" stop-color="#4facfe"/>
-                    </linearGradient>
-                    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
-                      <feGaussianBlur stdDeviation="5" result="blur"/>
-                      <feMerge>
-                        <feMergeNode in="blur"/>
-                        <feMergeNode in="SourceGraphic"/>
-                      </feMerge>
-                    </filter>
-                  </defs>
-                  
-                  <!-- 小鹿主体 - 几何化科技风格 -->
-                  <g filter="url(#glow)">
-                    <!-- 头部 -->
-                    <path d="M 150 100 L 180 120 L 200 140 L 190 170 L 170 180 L 150 170 L 130 180 L 110 170 L 100 140 L 120 120 Z" 
-                          fill="#16213e" stroke="url(#techGradient)" stroke-width="2"/>
+            <!-- 可爱的小鹿加载动画 -->
+            <div class="relative mx-auto mb-6">
+                <!-- 旋转的彩色圆环 -->
+                <div class="w-32 h-32 relative mx-auto animate-spin-slow">
+                    <div class="absolute inset-0 rounded-full border-4 border-transparent border-t-4 border-yellow-300"></div>
+                    <div class="absolute inset-2 rounded-full border-4 border-transparent border-t-4 border-green-300"></div>
+                    <div class="absolute inset-4 rounded-full border-4 border-transparent border-t-4 border-blue-300"></div>
                     
-                    <!-- 眼睛 -->
-                    <circle cx="140" cy="140" r="5" fill="#00f2fe"/>
-                    <circle cx="160" cy="140" r="5" fill="#00f2fe"/>
-                    <circle cx="140" cy="140" r="2" fill="#ffffff"/>
-                    <circle cx="160" cy="140" r="2" fill="#ffffff"/>
-                    
-                    <!-- 鹿角 - 科技风格 -->
-                    <path d="M 150 100 L 140 70 L 130 60" stroke="url(#techGradient)" stroke-width="3" fill="none"/>
-                    <path d="M 130 60 L 120 55 L 110 60" stroke="url(#techGradient)" stroke-width="3" fill="none"/>
-                    <path d="M 130 60 L 125 45 L 130 30" stroke="url(#techGradient)" stroke-width="3" fill="none"/>
-                    <path d="M 150 100 L 160 70 L 170 60" stroke="url(#techGradient)" stroke-width="3" fill="none"/>
-                    <path d="M 170 60 L 180 55 L 190 60" stroke="url(#techGradient)" stroke-width="3" fill="none"/>
-                    <path d="M 170 60 L 175 45 L 170 30" stroke="url(#techGradient)" stroke-width="3" fill="none"/>
-                    
-                    <!-- 科技元素点缀 -->
-                    <circle cx="150" cy="100" r="3" fill="#4facfe"/>
-                    <circle cx="130" cy="60" r="3" fill="#00f2fe"/>
-                    <circle cx="170" cy="60" r="3" fill="#00f2fe"/>
-                    
-                    <!-- 线条装饰 -->
-                    <path d="M 100 140 L 90 160" stroke="#4facfe" stroke-width="1.5" stroke-dasharray="4,2"/>
-                    <path d="M 200 140 L 210 160" stroke="#4facfe" stroke-width="1.5" stroke-dasharray="4,2"/>
-                    
-                    <!-- 未来感数字元素 -->
-                    <text x="150" y="210" font-family="Arial" font-size="12" fill="#00f2fe" text-anchor="middle">AI·DEER</text>
-                    <text x="150" y="225" font-family="Arial" font-size="8" fill="#4facfe" text-anchor="middle">VOCABULARY SYSTEM</text>
-                  </g>
-                  
-                  <!-- 环绕的科技圆环 -->
-                  <circle cx="150" cy="150" r="120" fill="none" stroke="#00f2fe" stroke-width="1" stroke-dasharray="5,3" opacity="0.7"/>
-                  <circle cx="150" cy="150" r="110" fill="none" stroke="#4facfe" stroke-width="0.5" opacity="0.5"/>
-                  
-                  <!-- 科技感光芒 -->
-                  <path d="M 150 30 L 150 10" stroke="#00f2fe" stroke-width="2"/>
-                  <path d="M 270 150 L 290 150" stroke="#00f2fe" stroke-width="2"/>
-                  <path d="M 150 270 L 150 290" stroke="#00f2fe" stroke-width="2"/>
-                  <path d="M 30 150 L 10 150" stroke="#00f2fe" stroke-width="2"/>
-                  <path d="M 220 80 L 240 60" stroke="#4facfe" stroke-width="1.5"/>
-                  <path d="M 220 220 L 240 240" stroke="#4facfe" stroke-width="1.5"/>
-                  <path d="M 80 220 L 60 240" stroke="#4facfe" stroke-width="1.5"/>
-                  <path d="M 80 80 L 60 60" stroke="#4facfe" stroke-width="1.5"/>
-                </svg>
-                <div class="absolute -inset-4 bg-yellow-300 rounded-full opacity-20 blur-lg animate-pulse-slow"></div>
-                <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-pulse"></div>
+                    <!-- 中央小鹿图标 -->
+                    <div class="absolute inset-6 bg-white rounded-full flex items-center justify-center shadow-lg">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 100 100" class="animate-bounce-slow">
+                            <!-- 小鹿头部 -->
+                            <circle cx="50" cy="40" r="25" fill="#ffd93d" stroke="#ff8c42" stroke-width="2"/>
+                            <!-- 鹿角 -->
+                            <path d="M 35 25 L 25 15 L 20 10" stroke="#ff8c42" stroke-width="3" fill="none"/>
+                            <path d="M 35 25 L 30 10" stroke="#ff8c42" stroke-width="3" fill="none"/>
+                            <path d="M 65 25 L 75 15 L 80 10" stroke="#ff8c42" stroke-width="3" fill="none"/>
+                            <path d="M 65 25 L 70 10" stroke="#ff8c42" stroke-width="3" fill="none"/>
+                            <!-- 眼睛 -->
+                            <circle cx="42" cy="35" r="5" fill="white" stroke="#333" stroke-width="1"/>
+                            <circle cx="58" cy="35" r="5" fill="white" stroke="#333" stroke-width="1"/>
+                            <circle cx="42" cy="35" r="2" fill="#333"/>
+                            <circle cx="58" cy="35" r="2" fill="#333"/>
+                            <!-- 鼻子 -->
+                            <circle cx="50" cy="45" r="3" fill="#ff8c42"/>
+                            <!-- 嘴巴 -->
+                            <path d="M 45 50 Q 50 55 55 50" stroke="#333" stroke-width="1.5" fill="none"/>
+                        </svg>
+                    </div>
+                </div>
             </div>
-            <h1 class="text-white text-[clamp(2rem,5vw,3.5rem)] font-bold mb-3 drop-shadow-lg leading-tight">小鹿AI编程全能英语词汇库</h1>
-            <p class="text-white/90 mb-8 text-lg font-medium">快乐学习英语，轻松掌握词汇！</p>
-            <div class="w-full max-w-xs bg-white/30 rounded-full h-3 mb-3 mx-auto">
-                <div id="loading-progress" class="bg-white h-3 rounded-full transition-all duration-300" style="width: 0%"></div>
+            
+            <h1 class="text-white text-[clamp(1.8rem,5vw,3rem)] font-bold mb-2 drop-shadow-lg leading-tight">小鹿AI编程全能英语词汇库</h1>
+            <p class="text-white/95 mb-6 text-base sm:text-lg font-medium">快乐学习英语，轻松掌握词汇！</p>
+            
+            <!-- 彩色进度条 -->
+            <div class="w-full max-w-xs bg-white/30 rounded-full h-4 mb-4 mx-auto overflow-hidden relative">
+                <div id="loading-progress" class="bg-gradient-to-r from-yellow-400 via-green-400 to-blue-400 h-4 rounded-full transition-all duration-500 ease-out relative" style="width: 0%">
+                    <div class="absolute inset-0 bg-white opacity-50 animate-pulse"></div>
+                </div>
             </div>
-            <p id="loading-text" class="text-white/90 text-base font-medium">准备魔法学习之旅...</p>
+            
+            <!-- 动态加载文字 -->
+            <p id="loading-text" class="text-white/95 text-base font-medium">准备魔法学习之旅...</p>
         </div>
     </div>
     
@@ -2573,7 +2736,7 @@
               <p class="text-xs text-gray-500">快乐学习英语，轻松掌握词汇！</p>
                         </div>
                     </div>
-                    <div class="flex items-center space-x-4">
+                    <div class="hidden md:flex items-center space-x-4">
                         <button data-nav="home" class="nav-btn px-4 py-3 font-medium text-sm rounded-lg hover:bg-blue-50 transition-colors duration-200 active:bg-blue-100 min-h-[44px] flex items-center justify-center">
                             <i class="fa fa-home mr-2 text-base"></i>
                             <span class="hidden sm:inline">首页</span>
@@ -2607,23 +2770,23 @@
             <!-- 首页 -->
             <div id="home-page">
                 <!-- 欢迎区域 -->
-                <section id="welcome-section" class="mb-10">
-                    <div class="bg-gradient-to-r from-blue-500 via-purple-500 to-blue-600 rounded-2xl p-8 text-white relative overflow-hidden">
+                <section id="welcome-section" class="mb-8">
+                    <div class="bg-gradient-to-r from-blue-500 via-purple-500 to-blue-600 rounded-2xl p-4 sm:p-6 text-white relative overflow-hidden">
                         <!-- 星星背景 -->
                         <div class="starry-bg absolute inset-0 pointer-events-none"></div>
                         <div class="absolute top-0 right-0 w-full max-w-xs h-full opacity-10 md:w-1/3">
                             <img src="https://picsum.photos/id/96/800/400" alt="English Learning" class="w-full h-full object-cover">
                         </div>
                         <div class="relative z-10">
-                            <h2 class="text-3xl font-bold mb-4">欢迎使用小鹿AI编程全能英语词汇库！</h2>
-                            <p class="text-lg mb-6">今天是 <span id="current-date" class="font-semibold"></span>，包含<span id="total-word-count" class="font-bold">0</span>个单词，让我们开始学习吧！</p>
-                            <div class="flex flex-wrap gap-4">
-                                <button id="start-daily-btn" class="btn-primary flex items-center justify-center w-full sm:w-auto px-6 py-4 rounded-xl text-lg font-semibold active:bg-blue-700 min-h-[44px] mb-3 sm:mb-0">
-                                    <i class="fa fa-calendar-check mr-3 text-xl"></i>
+                            <h2 class="text-2xl sm:text-3xl font-bold mb-3">欢迎使用小鹿AI编程全能英语词汇库！</h2>
+                            <p class="text-base sm:text-lg mb-4">今天是 <span id="current-date" class="font-semibold"></span>，包含<span id="total-word-count" class="font-bold">0</span>个单词，让我们开始学习吧！</p>
+                            <div class="flex flex-col sm:flex-row gap-3">
+                                <button id="start-daily-btn" class="btn-primary flex items-center justify-center w-full sm:w-auto px-5 sm:px-6 py-3 sm:py-4 rounded-xl text-base sm:text-lg font-semibold active:bg-blue-700 min-h-[44px]">
+                                    <i class="fa fa-calendar-check mr-2 sm:mr-3 text-lg sm:text-xl"></i>
                                     开始今日打卡
                                 </button>
-                                <button id="continue-learning-btn" class="bg-white text-blue-600 hover:bg-gray-50 flex items-center justify-center w-full sm:w-auto px-6 py-4 rounded-xl text-lg font-semibold shadow-md transition-all duration-200 active:bg-gray-100 min-h-[44px]">
-                                    <i class="fa fa-book mr-3 text-xl"></i>
+                                <button id="continue-learning-btn" class="bg-white text-blue-600 hover:bg-gray-50 flex items-center justify-center w-full sm:w-auto px-5 sm:px-6 py-3 sm:py-4 rounded-xl text-base sm:text-lg font-semibold shadow-md transition-all duration-200 active:bg-gray-100 min-h-[44px]">
+                                    <i class="fa fa-book mr-2 sm:mr-3 text-lg sm:text-xl"></i>
                                     浏览词汇库
                                 </button>
                             </div>
@@ -2631,11 +2794,45 @@
                     </div>
                 </section>
 
+                <!-- 移动端快捷操作按钮 -->
+                <section id="mobile-actions" class="md:hidden mb-8">
+                    <div class="bg-white rounded-xl shadow-md p-4 space-y-3">
+                        <h3 class="text-lg font-bold text-gray-800 mb-3">快捷操作</h3>
+                        <div class="grid grid-cols-4 gap-3">
+                            <button data-nav="home" class="nav-btn flex flex-col items-center justify-center p-3 bg-blue-50 rounded-lg hover:bg-blue-100 transition-all duration-200 active:bg-blue-200 min-h-[80px]">
+                                <i class="fa fa-home text-blue-500 text-xl mb-1"></i>
+                                <span class="text-xs text-gray-600">首页</span>
+                            </button>
+                            <button data-nav="library" class="nav-btn flex flex-col items-center justify-center p-3 bg-blue-50 rounded-lg hover:bg-blue-100 transition-all duration-200 active:bg-blue-200 min-h-[80px]">
+                                <i class="fa fa-book text-blue-500 text-xl mb-1"></i>
+                                <span class="text-xs text-gray-600">词汇库</span>
+                            </button>
+                            <button data-nav="checkin" class="nav-btn flex flex-col items-center justify-center p-3 bg-blue-50 rounded-lg hover:bg-blue-100 transition-all duration-200 active:bg-blue-200 min-h-[80px]">
+                                <i class="fa fa-calendar-check text-blue-500 text-xl mb-1"></i>
+                                <span class="text-xs text-gray-600">打卡</span>
+                            </button>
+                            <button data-nav="achievements" class="nav-btn flex flex-col items-center justify-center p-3 bg-blue-50 rounded-lg hover:bg-blue-100 transition-all duration-200 active:bg-blue-200 min-h-[80px]">
+                                <i class="fa fa-trophy text-blue-500 text-xl mb-1"></i>
+                                <span class="text-xs text-gray-600">成就</span>
+                            </button>
+                        </div>
+                        <div class="flex gap-3 mt-2">
+                            <button id="voice-settings-btn" class="flex-1 flex items-center justify-center p-3 bg-purple-50 rounded-lg hover:bg-purple-100 transition-all duration-200 active:bg-purple-200 min-h-[44px]">
+                                <i class="fa fa-volume-up text-purple-500 mr-2"></i>
+                                <span class="text-sm text-gray-600">语音设置</span>
+                            </button>
+                            <button id="user-profile-btn" class="w-12 h-12 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 text-white flex items-center justify-center shadow-md hover:shadow-lg transition-shadow duration-200 active:opacity-90 min-h-[44px] min-w-[44px]">
+                                <i class="fa fa-user text-lg"></i>
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
                 <!-- 学习统计 -->
-                <section id="stats-section" class="mb-10">
-                    <h2 class="text-2xl font-bold mb-6 text-gray-800">学习统计</h2>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-                        <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-100 transition-all duration-300 hover:shadow-xl">
+                <section id="stats-section" class="mb-8">
+                    <h2 class="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 text-gray-800">学习统计</h2>
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
+                        <div class="bg-white rounded-xl shadow-md sm:shadow-lg p-4 sm:p-6 border border-gray-100 transition-all duration-300 hover:shadow-xl">
                             <div class="flex items-center justify-between mb-4">
                                 <div class="p-3 bg-blue-50 rounded-lg">
                                     <i class="fa fa-book text-blue-500 text-xl"></i>
@@ -2646,7 +2843,10 @@
                             <div class="progress-bar bg-gray-200 rounded-full h-3 mb-2">
                                 <div class="progress-value bg-blue-500 h-3 rounded-full transition-all duration-500" id="learned-words-progress" style="width: 0%"></div>
                             </div>
-                            <p class="text-sm text-gray-500">总单词数: <span class="font-medium" id="total-words">0</span></p>
+                            <p class="text-sm text-gray-500 mb-4">总单词数: <span class="font-medium" id="total-words">0</span></p>
+                            <button id="view-learned-words-btn" class="w-full btn-primary py-2 px-4 rounded-lg flex items-center justify-center transition-all duration-300 hover:shadow-md">
+                                <i class="fa fa-list-ul mr-2"></i> 查看已学单词列表
+                            </button>
                         </div>
                         
                         <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-100 transition-all duration-300 hover:shadow-xl">
@@ -2665,18 +2865,7 @@
                             </div>
                         </div>
                         
-                        <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-100 transition-all duration-300 hover:shadow-xl">
-                            <div class="flex items-center justify-between mb-4">
-                                <div class="p-3 bg-yellow-50 rounded-lg">
-                                    <i class="fa fa-chart-line text-yellow-500 text-xl"></i>
-                                </div>
-                                <span class="text-3xl font-bold text-yellow-600" id="weekly-score">0</span>
-                            </div>
-                            <h3 class="text-lg font-semibold text-gray-800 mb-2">本周学习情况</h3>
-                            <div style="height: 100px; width: 100%;">
-                                <canvas id="weekly-chart"></canvas>
-                            </div>
-                        </div>
+
                     </div>
                 </section>
             </div>
@@ -2708,7 +2897,7 @@
                         </div>
                         
                         <!-- 单词列表 -->
-                        <div id="word-list" class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-4 lg:grid-cols-4 gap-2 sm:gap-3 md:gap-4">
+                        <div id="word-list" class="grid grid-cols-1 min-[340px]:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-1.5 sm:gap-2 md:gap-3">
                             <!-- 单词卡片将通过JavaScript动态生成 -->
                         </div>
                         
@@ -2782,7 +2971,7 @@
                         <!-- 今日单词 -->
                         <div class="mb-8">
                             <h3 class="text-xl font-semibold mb-4">今日单词</h3>
-                            <div id="daily-words-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+                            <div id="daily-words-container" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 sm:gap-3 mb-6">
                                 <!-- 今日单词卡片将通过JavaScript动态生成 -->
                             </div>
                         </div>
@@ -3036,6 +3225,51 @@
     </div>
 
     <!-- 模态框 -->
+    <!-- 查看已学单词模态框 -->
+    <div id="learned-words-modal" class="modal hidden">
+        <div class="modal-content bg-white rounded-xl shadow-xl p-6 max-w-md w-full mx-auto relative">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold text-gray-800">已学单词列表</h3>
+                <button class="modal-close w-8 h-8 rounded-full flex items-center justify-center text-gray-500 hover:text-gray-700 transition-colors">
+                    <i class="fa fa-times"></i>
+                </button>
+            </div>
+            
+            <!-- 日期显示 -->
+            <div class="mb-4 p-2 bg-blue-50 rounded-md">
+                <h4 id="modal-date" class="text-sm font-medium text-blue-700">周一</h4>
+            </div>
+            
+            <!-- 搜索框 -->
+            <div class="relative mb-4">
+                <input type="text" id="modal-search-input" placeholder="搜索单词..." 
+                       class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm">
+                <i class="fa fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm"></i>
+            </div>
+            
+            <!-- 单词列表 -->
+            <div id="modal-words-list" class="max-h-[400px] overflow-y-auto pr-2 mb-4">
+                <!-- 单词项将通过JavaScript动态生成 -->
+            </div>
+            
+            <!-- 空状态 -->
+            <div id="modal-empty-state" class="text-center py-8 hidden">
+                <div class="inline-block p-4 bg-gray-100 rounded-full mb-3">
+                    <i class="fa fa-book text-gray-400 text-2xl"></i>
+                </div>
+                <h4 class="text-lg font-medium text-gray-600 mb-1">今日尚未学习</h4>
+                <p class="text-sm text-gray-500">快去词汇库学习新单词吧！</p>
+            </div>
+            
+            <!-- 底部按钮 -->
+            <div class="flex justify-end gap-3">
+                <button class="modal-close bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2 px-4 rounded-lg transition-colors">
+                    关闭
+                </button>
+            </div>
+        </div>
+    </div>
+    
     <!-- 语音设置模态框 -->
     <div id="voice-modal" class="modal hidden">
         <div class="modal-content max-w-md">
@@ -7524,7 +7758,7 @@
         // ==================== 状态管理 ====================
         const state = {
             userData: {
-                learnedWords: [],
+                learnedWords: [], // 现在是对象数组，每个对象包含 { word: string, timestamp: string, details: object }
                 checkinDays: [],
                 currentStreak: 0,
                 weeklyLearning: Array(7).fill(0),
@@ -7595,6 +7829,13 @@
             dailyWordsContainer: document.getElementById('daily-words-container'),
             completeCheckinBtn: document.getElementById('complete-checkin'),
             gradeFilter: document.getElementById('grade-filter'),
+            
+            // 查看已学单词模态框元素
+            learnedWordsModal: document.getElementById('learned-words-modal'),
+            modalDate: document.getElementById('modal-date'),
+            modalSearchInput: document.getElementById('modal-search-input'),
+            modalWordsList: document.getElementById('modal-words-list'),
+            modalEmptyState: document.getElementById('modal-empty-state'),
             
             // 游戏页面元素
             gameTitle: document.getElementById('game-title'),
@@ -7748,7 +7989,12 @@
             loadData() {
                 const saved = localStorage.getItem('deerEnglishUserData');
                 if (saved) {
-                    Object.assign(state.userData, JSON.parse(saved));
+                    const data = JSON.parse(saved);
+                    Object.assign(state.userData, data);
+                    // 确保已学习单词列表去重
+                    state.userData.learnedWords = [...new Set(state.userData.learnedWords)];
+                    // 按字母顺序排序已学习单词
+                    state.userData.learnedWords.sort();
                 }
             },
             
@@ -8008,6 +8254,11 @@
             
             // 初始化图表
             initChart() {
+                // 检查weeklyChart元素是否存在，因为我们可能已经移除了"本周学习情况"模块
+                if (!dom.weeklyChart) {
+                    return; // 如果元素不存在，直接返回，不执行后续代码
+                }
+                
                 const ctx = dom.weeklyChart.getContext('2d');
                 const labels = ['周一', '周二', '周三', '周四', '周五', '周六', '周日'];
                 
@@ -8084,13 +8335,49 @@
                 dom.streakCount.textContent = state.userData.currentStreak;
                 
                 // 周学习总分
-                const weeklyTotal = state.userData.weeklyLearning.reduce((a, b) => a + b, 0);
-                dom.weeklyScore.textContent = weeklyTotal;
-                
-                // 更新图表
-                if (this.chart) {
-                    this.chart.data.datasets[0].data = state.userData.weeklyLearning;
-                    this.chart.update();
+                if (dom.weeklyScore) {
+                    const weeklyTotal = state.userData.weeklyLearning.reduce((a, b) => a + b, 0);
+                    dom.weeklyScore.textContent = weeklyTotal;
+                    
+                    // 更新每日数据显示
+                    state.userData.weeklyLearning.forEach((score, index) => {
+                        // 模拟学习单词数量（基于分数）
+                        const wordsCount = Math.round(score / 10);
+                        // 模拟学习时长（基于分数）
+                        const duration = Math.round(score / 5);
+                        // 计算进度百分比
+                        const progressPercent = Math.min((score / 100) * 100, 100);
+                        
+                        // 更新分数
+                        const dayScoreElement = document.querySelector(`[data-day-score="${index}"]`);
+                        if (dayScoreElement) {
+                            dayScoreElement.textContent = score;
+                        }
+                        
+                        // 更新学习单词数量
+                        const dayWordsElement = document.querySelector(`[data-day-words="${index}"]`);
+                        if (dayWordsElement) {
+                            dayWordsElement.textContent = wordsCount;
+                        }
+                        
+                        // 更新学习时长
+                        const dayDurationElement = document.querySelector(`[data-day-duration="${index}"]`);
+                        if (dayDurationElement) {
+                            dayDurationElement.textContent = duration;
+                        }
+                        
+                        // 更新进度条
+                        const dayProgressElement = document.querySelector(`[data-day-progress="${index}"]`);
+                        if (dayProgressElement) {
+                            dayProgressElement.style.width = `${progressPercent}%`;
+                        }
+                    });
+                    
+                    // 更新图表
+                    if (this.chart) {
+                        this.chart.data.datasets[0].data = state.userData.weeklyLearning;
+                        this.chart.update();
+                    }
                 }
             },
             
@@ -8145,48 +8432,50 @@
                 // 渲染单词
                 dom.wordList.innerHTML = '';
                 displayWords.forEach(word => {
-                    const isLearned = state.userData.learnedWords.includes(word.word);
+                    const isLearned = state.userData.learnedWords.some(item => item.word === word.word);
                     const card = document.createElement('div');
-                    card.className = `word-card-hover bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 ${isLearned ? 'border-l-4 border-green-500' : ''}`;
+                    card.className = `word-card-hover bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 animate-float-up ${isLearned ? 'border-l-4 border-green-500' : ''}`;
                     
                     card.innerHTML = `
-                        <div class="p-3 sm:p-4">
-                            <div class="flex justify-between items-start mb-3">
-                                <div class="flex-1 min-w-0">
-                                    <div class="flex items-center mb-1 sm:mb-2 flex-wrap">
-                                        <h3 class="text-lg sm:text-xl font-bold text-gray-800 mr-2 truncate">${word.word}</h3>
-                                        ${isLearned ? '<span class="px-1.5 sm:px-2 py-0.5 sm:py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">已学习</span>' : ''}
+                        <div class="p-2 sm:p-3">
+                            <div class="flex flex-col">
+                                <div class="flex justify-between items-start mb-2">
+                                    <div class="flex-1 min-w-0">
+                                        <div class="flex items-center mb-1 flex-wrap gap-1">
+                                            <h3 class="text-lg font-bold text-gray-800 mr-1 break-words">${word.word}</h3>
+                                            ${isLearned ? '<span class="px-1.5 py-0.5 bg-green-100 text-green-800 text-[10px] font-medium rounded-full whitespace-nowrap">已学习</span>' : ''}
+                                        </div>
+                                        <p class="text-gray-500 text-[10px] mb-1 break-words">${word.phonetic}</p>
+                                        <p class="text-base font-semibold text-blue-600 break-words">${word.meaning}</p>
                                     </div>
-                                    <p class="text-gray-500 text-xs sm:text-sm mb-1 sm:mb-2 truncate">${word.phonetic}</p>
-                                    <p class="text-base sm:text-lg font-semibold text-blue-600 truncate">${word.meaning}</p>
+                                    <button class="play-audio-btn w-10 h-10 rounded-full bg-blue-50 text-blue-500 hover:bg-blue-100 transition-colors duration-200 flex items-center justify-center ml-1 flex-shrink-0" data-word="${word.word}">
+                                        <i class="fa fa-volume-up text-sm"></i>
+                                    </button>
                                 </div>
-                                <button class="play-audio-btn w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-blue-50 text-blue-500 hover:bg-blue-100 transition-colors duration-200 flex items-center justify-center ml-2 flex-shrink-0" data-word="${word.word}">
-                                    <i class="fa fa-volume-up text-xs sm:text-base"></i>
-                                </button>
+                                
+                                <div class="mb-2">
+                                    <div class="bg-gray-50 rounded-md p-1.5">
+                                        <p class="text-[10px] text-gray-600 italic break-words">${word.example}</p>
+                                        <p class="text-[10px] text-gray-500 mt-0.5 break-words">${word.translation}</p>
+                                        <div class="mt-1 flex justify-end">
+                                            <button class="read-example-btn px-2 py-0.5 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-md text-[10px] font-medium transition-colors duration-200 flex items-center min-h-[24px]" data-example="${word.example}">
+                                                <i class="fa fa-volume-up mr-0.5 text-[10px]"></i> 朗读
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                             
-                            <div class="mb-3 sm:mb-4">
-                                <div class="bg-gray-50 rounded-md sm:rounded-lg p-2 sm:p-3">
-                                    <p class="text-xs sm:text-sm text-gray-600 italic truncate">${word.example}</p>
-                                    <p class="text-xs sm:text-sm text-gray-500 mt-0.5 sm:mt-1 truncate">${word.translation}</p>
-                                    <div class="mt-1 sm:mt-2 flex justify-end">
-                                        <button class="read-example-btn px-2 sm:px-3 py-0.5 sm:py-1 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-md text-[10px] sm:text-xs font-medium transition-colors duration-200 flex items-center" data-example="${word.example}">
-                                            <i class="fa fa-volume-up mr-0.5 sm:mr-1 text-[10px]"></i> 朗读
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="flex justify-between items-center">
-                                <div class="flex flex-wrap gap-0.5 sm:gap-1 max-w-[60%]">
+                            <div class="flex justify-between items-center flex-wrap gap-2">
+                                <div class="flex flex-wrap gap-0.5 sm:gap-1 max-w-full">
                                     ${word.categories ? word.categories.map(cat => `
-                                        <span class="px-1.5 sm:px-2 py-0.5 sm:py-1 bg-gray-100 text-gray-600 text-[10px] sm:text-xs rounded-full truncate">
+                                        <span class="px-1.5 sm:px-2 py-0.5 sm:py-1 bg-gray-100 text-gray-600 text-[10px] sm:text-xs rounded-full break-words whitespace-nowrap">
                                             ${utils.getCategoryName(cat)}
                                         </span>
                                     `).join('') : ''}
                                 </div>
-                                <button class="mark-learned-btn px-3 sm:px-4 py-1 sm:py-2 rounded-md sm:rounded-lg text-[10px] sm:text-sm font-medium transition-all duration-200 ${isLearned ? 'bg-gray-100 text-gray-600' : 'bg-blue-500 text-white hover:bg-blue-600'} min-w-[55px] flex-shrink-0" data-word="${word.word}">
-                                    ${isLearned ? '已学 ✓' : '标记'}
+                                <button class="mark-learned-btn px-3 sm:px-4 py-1 sm:py-2 rounded-md sm:rounded-lg text-[10px] sm:text-sm font-medium transition-all duration-200 ${isLearned ? 'bg-gray-100 text-gray-600' : 'bg-blue-500 text-white hover:bg-blue-600'} min-w-[55px] min-h-[30px] flex-shrink-0 flex items-center justify-center" data-word="${word.word}">
+                                    ${isLearned ? '已学 ✓' : '学习'}
                                 </button>
                             </div>
                         </div>
@@ -8344,57 +8633,370 @@
             },
             
             // 切换单词学习状态
-            toggleLearnedWord(word) {
-                const index = state.userData.learnedWords.indexOf(word);
+            async toggleLearnedWord(word) {
+                // 查找单词是否已被标记为学习
+                const index = state.userData.learnedWords.findIndex(item => item.word === word);
+                const isLearned = index !== -1;
+                const newState = !isLearned;
                 
-                if (index === -1) {
-                    // 标记为已学习
-                    state.userData.learnedWords.push(word);
-                    state.userData.dailyProgress.words++;
-                    utils.showNotification(`已学习单词: ${word}`, 'success');
+                // UI更新已在事件监听器中直接处理
+                
+                try {
+                    // 2. 获取单词详情
+                    const wordDetail = wordDatabase.find(w => w.word === word) || { 
+                        word: word, 
+                        phonetic: '', 
+                        meaning: '暂无释义', 
+                        example: '', 
+                        translation: '',
+                        categories: []
+                    };
+                    
+                    // 3. 更新本地状态
+                    if (isLearned) {
+                        // 取消标记：从已学列表中移除
+                        state.userData.learnedWords.splice(index, 1);
+                        state.userData.dailyProgress.words--;
+                    } else {
+                        // 标记为已学习：添加到已学列表
+                        const learnedWordItem = {
+                            word: word,
+                            timestamp: new Date().toISOString(),
+                            details: {
+                                phonetic: wordDetail.phonetic,
+                                meaning: wordDetail.meaning,
+                                example: wordDetail.example,
+                                translation: wordDetail.translation,
+                                categories: [...wordDetail.categories]
+                            }
+                        };
+                        
+                        // 添加到已学列表
+                        state.userData.learnedWords.push(learnedWordItem);
+                        
+                        // 按字母顺序排序
+                        state.userData.learnedWords.sort((a, b) => {
+                            if (!a || !a.word || !b || !b.word) {
+                                return 0;
+                            }
+                            return a.word.localeCompare(b.word);
+                        });
+                        
+                        state.userData.dailyProgress.words++;
+                    }
+                    
+                    // 4. 保存到本地存储
+                    utils.saveData();
+                    
+                    // 5. 同步到后端数据库（模拟异步请求）
+                    await this.syncToBackend(word, newState, isLearned ? null : wordDetail);
+                    
+                    // 6. 更新其他相关UI
+                    this.updateStats();
+                    this.updateDailyProgress();
+                    this.checkAchievements();
+                    
+                    // 7. 显示成功通知
+                    if (newState) {
+                        utils.showNotification(`已学习单词: ${word}`, 'success');
+                    } else {
+                        utils.showNotification(`已取消学习: ${word}`, 'info');
+                    }
+                } catch (error) {
+                    // 8. 恢复本地状态
+                    if (isLearned) {
+                        // 如果是取消标记失败，确保单词仍然在已学列表中
+                        if (!state.userData.learnedWords.some(item => item.word === word)) {
+                            const wordDetail = wordDatabase.find(w => w.word === word) || { 
+                                word: word, 
+                                phonetic: '', 
+                                meaning: '暂无释义', 
+                                example: '', 
+                                translation: '',
+                                categories: []
+                            };
+                            
+                            const learnedWordItem = {
+                                word: word,
+                                timestamp: new Date().toISOString(),
+                                details: {
+                                    phonetic: wordDetail.phonetic,
+                                    meaning: wordDetail.meaning,
+                                    example: wordDetail.example,
+                                    translation: wordDetail.translation,
+                                    categories: [...wordDetail.categories]
+                                }
+                            };
+                            
+                            state.userData.learnedWords.push(learnedWordItem);
+                            state.userData.learnedWords.sort((a, b) => {
+                                if (!a || !a.word || !b || !b.word) {
+                                    return 0;
+                                }
+                                return a.word.localeCompare(b.word);
+                            });
+                            state.userData.dailyProgress.words++;
+                        }
+                    } else {
+                        // 如果是标记失败，确保单词不在已学列表中
+                        const failedIndex = state.userData.learnedWords.findIndex(item => item.word === word);
+                        if (failedIndex !== -1) {
+                            state.userData.learnedWords.splice(failedIndex, 1);
+                            state.userData.dailyProgress.words--;
+                        }
+                    }
+                    
+                    // 10. 保存恢复后的状态
+                    utils.saveData();
+                    
+                    // 11. 显示错误通知
+                    utils.showNotification(`操作失败: ${error.message}`, 'error');
+                    console.error('Toggle learned word failed:', error);
+                    
+                    // 12. 恢复UI状态
+                    // 由于我们在事件监听器中直接更新了UI，这里需要重新查找并更新按钮状态
+                    const buttons = document.querySelectorAll(`.mark-learned-btn[data-word="${word}"], .mark-daily-learned-btn[data-word="${word}"]`);
+                    buttons.forEach(btn => {
+                        if (isLearned) {
+                            // 恢复为已学状态
+                            btn.innerHTML = '已学 <i class="fa fa-check"></i>';
+                            if (btn.classList.contains('mark-learned-btn')) {
+                                btn.className = 'mark-learned-btn px-3 sm:px-4 py-1 sm:py-2 rounded-md sm:rounded-lg text-[10px] sm:text-sm font-medium transition-all duration-200 bg-white text-gray-700 border-2 border-gray-300 min-w-[55px] min-h-[30px] flex-shrink-0 flex items-center justify-center';
+                            } else {
+                                btn.className = 'mark-daily-learned-btn px-3 py-1 rounded text-sm font-medium transition-all bg-white text-gray-700 border-2 border-gray-300';
+                            }
+                        } else {
+                            // 恢复为学习状态
+                            btn.innerHTML = '学习';
+                            if (btn.classList.contains('mark-learned-btn')) {
+                                btn.className = 'mark-learned-btn px-3 sm:px-4 py-1 sm:py-2 rounded-md sm:rounded-lg text-[10px] sm:text-sm font-medium transition-all duration-200 bg-blue-500 text-white hover:bg-blue-600 min-w-[55px] min-h-[30px] flex-shrink-0 flex items-center justify-center';
+                            } else {
+                                btn.className = 'mark-daily-learned-btn px-3 py-1 rounded text-sm font-medium transition-all bg-blue-500 text-white hover:bg-blue-600';
+                            }
+                        }
+                        
+                        // 恢复卡片样式
+                        const card = btn.closest('.word-card-hover');
+                        if (card) {
+                            if (isLearned) {
+                                card.classList.add('border-l-4', 'border-green-500');
+                                // 恢复已学习标记
+                                const wordContainer = card.querySelector('.flex.items-center.mb-1.flex-wrap.gap-1') || card.querySelector('.flex.items-start.mb-3 div:first-child');
+                                if (wordContainer && !card.querySelector('.bg-green-100.text-green-800.text-[10px]')) {
+                                    const badge = document.createElement('span');
+                                    badge.className = 'px-1.5 py-0.5 bg-green-100 text-green-800 text-[10px] font-medium rounded-full whitespace-nowrap';
+                                    badge.textContent = '已学习';
+                                    const h4 = wordContainer.querySelector('h4');
+                                    if (h4) {
+                                        h4.parentNode.insertBefore(badge, h4.nextSibling);
+                                    } else {
+                                        wordContainer.appendChild(badge);
+                                    }
+                                }
+                            } else {
+                                card.classList.remove('border-l-4', 'border-green-500');
+                                // 移除已学习标记
+                                const badge = card.querySelector('.bg-green-100.text-green-800.text-[10px]');
+                                if (badge) {
+                                    badge.remove();
+                                }
+                            }
+                        }
+                    });
+                }
+            },
+            
+            // 模拟同步到后端数据库
+            syncToBackend(word, isLearned, wordDetail = null) {
+                // 模拟网络延迟
+                return new Promise((resolve, reject) => {
+                    setTimeout(() => {
+                        // 模拟成功率95%
+                        if (Math.random() > 0.05) {
+                            // 模拟API调用成功
+                            resolve({
+                                success: true,
+                                word: word,
+                                isLearned: isLearned,
+                                timestamp: new Date().toISOString(),
+                                details: wordDetail
+                            });
+                        } else {
+                            // 模拟API调用失败
+                            reject(new Error('网络连接失败，请稍后重试'));
+                        }
+                    }, 300); // 模拟300ms网络延迟
+                });
+            },
+            
+            // 局部更新单词卡片状态
+            updateWordCardState(word, isLearned, isLoading = false) {
+                // 查找包含该单词的卡片
+                const wordCards = document.querySelectorAll('.word-card-hover');
+                wordCards.forEach(card => {
+                    // 1. 处理词汇库中的学习按钮
+                    const markButton = card.querySelector('.mark-learned-btn');
+                    if (markButton && markButton.getAttribute('data-word') === word) {
+                        this.updateSingleButtonState(card, markButton, word, isLearned, isLoading);
+                    }
+                    
+                    // 2. 处理打卡页面中的学习按钮
+                    const dailyMarkButton = card.querySelector('.mark-daily-learned-btn');
+                    if (dailyMarkButton && dailyMarkButton.getAttribute('data-word') === word) {
+                        // 更新卡片边框样式
+                        if (isLearned) {
+                            card.classList.add('border-green-300');
+                        } else {
+                            card.classList.remove('border-green-300');
+                        }
+                        
+                        // 更新已学习标记
+                        const learnedBadge = card.querySelector('.bg-green-100.text-green-800.text-[10px]');
+                        if (isLearned && !learnedBadge) {
+                            // 添加已学习标记
+                            const wordContainer = card.querySelector('.flex.items-start.mb-3 div:first-child');
+                            if (wordContainer) {
+                                const h4 = wordContainer.querySelector('h4');
+                                if (h4) {
+                                    const badge = document.createElement('span');
+                                    badge.className = 'px-1.5 py-0.5 bg-green-100 text-green-800 text-xs font-medium rounded-full whitespace-nowrap ml-2';
+                                    badge.textContent = '已学习';
+                                    h4.parentNode.insertBefore(badge, h4.nextSibling);
+                                }
+                            }
+                        } else if (!isLearned && learnedBadge) {
+                            // 移除已学习标记
+                            learnedBadge.remove();
+                        }
+                        
+                        // 更新标记按钮
+                        if (dailyMarkButton) {
+                            dailyMarkButton.disabled = isLoading;
+                            
+                            if (isLoading) {
+                                dailyMarkButton.innerHTML = '<i class="fa fa-spinner fa-spin mr-1"></i> 处理中...';
+                                dailyMarkButton.className = 'mark-daily-learned-btn px-3 py-1 rounded text-sm font-medium transition-all bg-gray-200 text-gray-600 cursor-not-allowed';
+                            } else {
+                                if (isLearned) {
+                                    dailyMarkButton.innerHTML = '已学 <i class="fa fa-check"></i>';
+                                    dailyMarkButton.className = 'mark-daily-learned-btn px-3 py-1 rounded text-sm font-medium transition-all bg-white text-gray-700 border-2 border-gray-300';
+                                } else {
+                                    dailyMarkButton.innerHTML = '学习';
+                                    dailyMarkButton.className = 'mark-daily-learned-btn px-3 py-1 rounded text-sm font-medium transition-all bg-blue-500 text-white hover:bg-blue-600';
+                                }
+                            }
+                        }
+                    }
+                });
+            },
+            
+            // 辅助函数：更新单个按钮状态
+            updateSingleButtonState(card, button, word, isLearned, isLoading) {
+                // 更新卡片边框样式
+                if (isLearned) {
+                    card.classList.add('border-l-4', 'border-green-500');
                 } else {
-                    // 取消标记
-                    state.userData.learnedWords.splice(index, 1);
-                    state.userData.dailyProgress.words--;
+                    card.classList.remove('border-l-4', 'border-green-500');
                 }
                 
-                utils.saveData();
-                this.updateStats();
-                
-                // 重新渲染当前视图
-                if (state.currentPage === 'library') {
-                    this.searchWords();
-                } else if (state.currentPage === 'checkin') {
-                    this.renderDailyWords();
+                // 更新已学习标记
+                const learnedBadge = card.querySelector('.bg-green-100.text-green-800.text-[10px]');
+                if (isLearned && !learnedBadge) {
+                    // 添加已学习标记
+                    const wordContainer = card.querySelector('.flex.items-center.mb-1.flex-wrap.gap-1');
+                    if (wordContainer) {
+                        const badge = document.createElement('span');
+                        badge.className = 'px-1.5 py-0.5 bg-green-100 text-green-800 text-[10px] font-medium rounded-full whitespace-nowrap';
+                        badge.textContent = '已学习';
+                        wordContainer.appendChild(badge);
+                    }
+                } else if (!isLearned && learnedBadge) {
+                    // 移除已学习标记
+                    learnedBadge.remove();
                 }
                 
-                // 更新每日进度，检查是否可以完成打卡
-                this.updateDailyProgress();
-                
-                // 检查成就
-                this.checkAchievements();
+                // 更新标记按钮
+                if (button) {
+                    // 禁用按钮并显示加载状态
+                    button.disabled = isLoading;
+                    
+                    if (isLoading) {
+                        // 显示加载状态
+                        button.innerHTML = '<i class="fa fa-spinner fa-spin mr-1"></i> 处理中...';
+                        button.className = 'mark-learned-btn px-3 sm:px-4 py-1 sm:py-2 rounded-md sm:rounded-lg text-[10px] sm:text-sm font-medium transition-all duration-200 bg-gray-300 text-gray-700 min-w-[55px] min-h-[30px] flex-shrink-0 flex items-center justify-center cursor-not-allowed';
+                    } else {
+                        // 显示正常状态
+                        if (isLearned) {
+                            button.innerHTML = '已学 <i class="fa fa-check"></i>';
+                            button.className = 'mark-learned-btn px-3 sm:px-4 py-1 sm:py-2 rounded-md sm:rounded-lg text-[10px] sm:text-sm font-medium transition-all duration-200 bg-white text-gray-700 border-2 border-gray-300 min-w-[55px] min-h-[30px] flex-shrink-0 flex items-center justify-center';
+                        } else {
+                            button.innerHTML = '学习';
+                            button.className = 'mark-learned-btn px-3 sm:px-4 py-1 sm:py-2 rounded-md sm:rounded-lg text-[10px] sm:text-sm font-medium transition-all duration-200 bg-blue-500 text-white hover:bg-blue-600 min-w-[55px] min-h-[30px] flex-shrink-0 flex items-center justify-center';
+                        }
+                    }
+                }
             },
             
             // 朗读单词
             speakWord(word) {
-                if (!('speechSynthesis' in window)) {
-                    utils.showNotification('您的浏览器不支持语音合成', 'error');
-                    return;
+                // 清理之前的语音请求
+                if ('speechSynthesis' in window) {
+                    speechSynthesis.cancel();
                 }
                 
-                const utterance = new SpeechSynthesisUtterance(word);
-                utterance.lang = 'en-US';
+                // 1. 优先尝试Web Speech API
+                if ('speechSynthesis' in window) {
+                    try {
+                        const utterance = new SpeechSynthesisUtterance(word);
+                        utterance.lang = 'en-US';
+                        
+                        // 获取用户设置的语音参数
+                        const voiceSetting = state.userData.voiceSettings.voice;
+                        let rate = state.userData.voiceSettings.rate;
+                        let pitch = state.userData.voiceSettings.pitch;
+                        
+                        // 直接应用用户设置的语速和音调
+                        utterance.rate = rate;
+                        utterance.pitch = pitch;
+                        
+                        // 针对不同浏览器和系统的适配
+                        // 针对Android Chrome的特殊处理
+                        if (navigator.userAgent.match(/Android/i) && navigator.userAgent.match(/Chrome/i)) {
+                            // Android Chrome需要延迟执行以确保正常工作
+                            setTimeout(() => {
+                                speechSynthesis.speak(utterance);
+                            }, 100);
+                        } else {
+                            speechSynthesis.speak(utterance);
+                        }
+                        return;
+                    } catch (error) {
+                        console.error('Web Speech API failed:', error);
+                        // 降级处理
+                    }
+                }
                 
-                // 获取用户设置的语音参数
-                const voiceSetting = state.userData.voiceSettings.voice;
-                let rate = state.userData.voiceSettings.rate;
-                let pitch = state.userData.voiceSettings.pitch;
+                // 2. 尝试使用Audio元素播放预生成的音频（如果有）
+                try {
+                    // 这里可以添加预生成音频的播放逻辑
+                    // 例如：const audio = new Audio(`/audio/${word}.mp3`);
+                    // audio.play().catch(/* 降级处理 */);
+                    // 由于没有预生成音频，这里直接进入下一步
+                } catch (error) {
+                    console.error('Audio element failed:', error);
+                    // 降级处理
+                }
                 
-                // 直接应用用户设置的语速和音调
-                utterance.rate = rate;
-                utterance.pitch = pitch;
-                
-                speechSynthesis.speak(utterance);
+                // 3. 最后尝试使用第三方TTS服务（模拟）
+                try {
+                    // 这里可以添加第三方TTS服务的调用逻辑
+                    // 例如：调用Google Cloud TTS或其他API
+                    utils.showNotification(`正在使用第三方TTS服务朗读: ${word}`, 'info');
+                    // 由于是模拟，这里仅显示通知
+                } catch (error) {
+                    console.error('Third-party TTS failed:', error);
+                    utils.showNotification('无法使用语音合成服务，请检查浏览器设置或网络连接', 'error');
+                }
             },
             
             // 切换页面
@@ -8469,9 +9071,9 @@
                 dom.dailyWordsContainer.innerHTML = '';
                 
                 state.dailyCheckin.words.forEach(word => {
-                    const isLearned = state.userData.learnedWords.includes(word.word);
+                    const isLearned = state.userData.learnedWords.some(item => item.word === word.word);
                     const card = document.createElement('div');
-                    card.className = `word-card-hover bg-white rounded-lg shadow border border-gray-200 ${isLearned ? 'border-green-300' : ''}`;
+                    card.className = `word-card-hover bg-white rounded-lg shadow border border-gray-200 animate-float-up ${isLearned ? 'border-green-300' : ''}`;
                     
                     card.innerHTML = `
                         <div class="p-4">
@@ -9866,16 +10468,206 @@
                         }
                     });
                 });
+                
+                // 查看已学单词按钮
+                document.addEventListener('click', (e) => {
+                    if (e.target.closest('.view-day-words-btn')) {
+                        const btn = e.target.closest('.view-day-words-btn');
+                        const dayIndex = parseInt(btn.dataset.day);
+                        this.showLearnedWordsByDay(dayIndex);
+                    }
+                    // 查看全部已学单词按钮
+                    else if (e.target.closest('#view-learned-words-btn')) {
+                        this.showAllLearnedWords();
+                    }
+                });
+                
+                // 模态框搜索输入
+                dom.modalSearchInput.addEventListener('input', (e) => {
+                    const searchTerm = e.target.value;
+                    this.searchModalWords(searchTerm);
+                });
             },
             
             // 附加单词卡片事件
             attachWordCardEvents() {
+                // 保存对象实例的引用，以便在事件监听器中使用
+                const appInstance = this;
+                
+                // 移除旧的事件监听器，防止重复绑定
+                document.querySelectorAll('.play-audio-btn, .mark-learned-btn, .mark-daily-learned-btn, .read-example-btn').forEach(btn => {
+                    btn.replaceWith(btn.cloneNode(true));
+                });
+                
                 // 播放音频
                 document.querySelectorAll('.play-audio-btn').forEach(btn => {
                     btn.addEventListener('click', (e) => {
                         e.stopPropagation();
                         const word = btn.getAttribute('data-word');
-                        this.speakWord(word);
+                        appInstance.speakWord(word);
+                    });
+                });
+                
+                // 标记学习 - 处理词汇库中的学习按钮
+                document.querySelectorAll('.mark-learned-btn').forEach(btn => {
+                    btn.addEventListener('click', async (e) => {
+                        e.stopPropagation();
+                        const word = btn.getAttribute('data-word');
+                        
+                        // 立即更新按钮状态，使用更可靠的方式检查状态
+                        const isCurrentlyLearned = btn.textContent.includes('已学');
+                        
+                        if (isCurrentlyLearned) {
+                            // 取消标记
+                            btn.innerHTML = '学习';
+                            btn.className = 'mark-learned-btn px-3 sm:px-4 py-1 sm:py-2 rounded-md sm:rounded-lg text-[10px] sm:text-sm font-medium transition-all duration-200 bg-blue-500 text-white hover:bg-blue-600 min-w-[55px] min-h-[30px] flex-shrink-0 flex items-center justify-center';
+                        } else {
+                            // 标记为已学
+                            btn.innerHTML = '已学 <i class="fa fa-check"></i>';
+                            btn.className = 'mark-learned-btn px-3 sm:px-4 py-1 sm:py-2 rounded-md sm:rounded-lg text-[10px] sm:text-sm font-medium transition-all duration-200 bg-white text-gray-700 border-2 border-gray-300 min-w-[55px] min-h-[30px] flex-shrink-0 flex items-center justify-center';
+                        }
+                        
+                        // 更新卡片样式
+                        const card = btn.closest('.word-card-hover');
+                        if (card) {
+                            if (isCurrentlyLearned) {
+                                card.classList.remove('border-l-4', 'border-green-500');
+                                // 移除已学习标记
+                                const badge = card.querySelector('.bg-green-100.text-green-800');
+                                if (badge) {
+                                    badge.remove();
+                                }
+                            } else {
+                                card.classList.add('border-l-4', 'border-green-500');
+                                // 添加已学习标记
+                                const wordContainer = card.querySelector('.flex.items-center.mb-1.flex-wrap.gap-1');
+                                if (wordContainer && !card.querySelector('.bg-green-100.text-green-800')) {
+                                    const badge = document.createElement('span');
+                                    badge.className = 'px-1.5 py-0.5 bg-green-100 text-green-800 text-[10px] font-medium rounded-full whitespace-nowrap';
+                                    badge.textContent = '已学习';
+                                    wordContainer.appendChild(badge);
+                                }
+                            }
+                        }
+                        
+                        // 在后台处理数据更新
+                        try {
+                            await appInstance.toggleLearnedWord(word);
+                        } catch (error) {
+                            // 如果更新失败，恢复按钮状态
+                            console.error('更新单词学习状态失败:', error);
+                            if (isCurrentlyLearned) {
+                                btn.innerHTML = '已学 <i class="fa fa-check"></i>';
+                                btn.className = 'mark-learned-btn px-3 sm:px-4 py-1 sm:py-2 rounded-md sm:rounded-lg text-[10px] sm:text-sm font-medium transition-all duration-200 bg-white text-gray-700 border-2 border-gray-300 min-w-[55px] min-h-[30px] flex-shrink-0 flex items-center justify-center';
+                                if (card) {
+                                    card.classList.add('border-l-4', 'border-green-500');
+                                    // 重新添加已学习标记
+                                    const wordContainer = card.querySelector('.flex.items-center.mb-1.flex-wrap.gap-1');
+                                    if (wordContainer && !card.querySelector('.bg-green-100.text-green-800')) {
+                                        const badge = document.createElement('span');
+                                        badge.className = 'px-1.5 py-0.5 bg-green-100 text-green-800 text-[10px] font-medium rounded-full whitespace-nowrap';
+                                        badge.textContent = '已学习';
+                                        wordContainer.appendChild(badge);
+                                    }
+                                }
+                            } else {
+                                btn.innerHTML = '学习';
+                                btn.className = 'mark-learned-btn px-3 sm:px-4 py-1 sm:py-2 rounded-md sm:rounded-lg text-[10px] sm:text-sm font-medium transition-all duration-200 bg-blue-500 text-white hover:bg-blue-600 min-w-[55px] min-h-[30px] flex-shrink-0 flex items-center justify-center';
+                                if (card) {
+                                    card.classList.remove('border-l-4', 'border-green-500');
+                                    // 移除已学习标记
+                                    const badge = card.querySelector('.bg-green-100.text-green-800');
+                                    if (badge) {
+                                        badge.remove();
+                                    }
+                                }
+                            }
+                        }
+                    });
+                });
+                
+                // 标记学习 - 处理打卡页面中的学习按钮
+                document.querySelectorAll('.mark-daily-learned-btn').forEach(btn => {
+                    btn.addEventListener('click', async (e) => {
+                        e.stopPropagation();
+                        const word = btn.getAttribute('data-word');
+                        
+                        // 立即更新按钮状态，使用更可靠的方式检查状态
+                        const isCurrentlyLearned = btn.textContent.includes('已学');
+                        
+                        if (isCurrentlyLearned) {
+                            // 取消标记
+                            btn.innerHTML = '学习';
+                            btn.className = 'mark-daily-learned-btn px-3 py-1 rounded text-sm font-medium transition-all bg-blue-500 text-white hover:bg-blue-600';
+                        } else {
+                            // 标记为已学
+                            btn.innerHTML = '已学 <i class="fa fa-check"></i>';
+                            btn.className = 'mark-daily-learned-btn px-3 py-1 rounded text-sm font-medium transition-all bg-white text-gray-700 border-2 border-gray-300';
+                        }
+                        
+                        // 更新卡片样式
+                        const card = btn.closest('.word-card-hover');
+                        if (card) {
+                            if (isCurrentlyLearned) {
+                                card.classList.remove('border-green-300');
+                                // 移除已学习标记
+                                const badge = card.querySelector('.bg-green-100.text-green-800');
+                                if (badge) {
+                                    badge.remove();
+                                }
+                            } else {
+                                card.classList.add('border-green-300');
+                                // 添加已学习标记
+                                const wordContainer = card.querySelector('.flex.items-start.mb-3 div:first-child');
+                                if (wordContainer) {
+                                    const h4 = wordContainer.querySelector('h4');
+                                    if (h4 && !card.querySelector('.bg-green-100.text-green-800')) {
+                                        const badge = document.createElement('span');
+                                        badge.className = 'px-1.5 py-0.5 bg-green-100 text-green-800 text-xs font-medium rounded-full whitespace-nowrap ml-2';
+                                        badge.textContent = '已学习';
+                                        h4.parentNode.insertBefore(badge, h4.nextSibling);
+                                    }
+                                }
+                            }
+                        }
+                        
+                        // 在后台处理数据更新
+                        try {
+                            await appInstance.toggleLearnedWord(word);
+                            appInstance.updateDailyProgress();
+                        } catch (error) {
+                            // 如果更新失败，恢复按钮状态
+                            console.error('更新单词学习状态失败:', error);
+                            if (isCurrentlyLearned) {
+                                btn.innerHTML = '已学 <i class="fa fa-check"></i>';
+                                btn.className = 'mark-daily-learned-btn px-3 py-1 rounded text-sm font-medium transition-all bg-white text-gray-700 border-2 border-gray-300';
+                                if (card) {
+                                    card.classList.add('border-green-300');
+                                    // 重新添加已学习标记
+                                    const wordContainer = card.querySelector('.flex.items-start.mb-3 div:first-child');
+                                    if (wordContainer) {
+                                        const h4 = wordContainer.querySelector('h4');
+                                        if (h4 && !card.querySelector('.bg-green-100.text-green-800')) {
+                                            const badge = document.createElement('span');
+                                            badge.className = 'px-1.5 py-0.5 bg-green-100 text-green-800 text-xs font-medium rounded-full whitespace-nowrap ml-2';
+                                            badge.textContent = '已学习';
+                                            h4.parentNode.insertBefore(badge, h4.nextSibling);
+                                        }
+                                    }
+                                }
+                            } else {
+                                btn.innerHTML = '学习';
+                                btn.className = 'mark-daily-learned-btn px-3 py-1 rounded text-sm font-medium transition-all bg-blue-500 text-white hover:bg-blue-600';
+                                if (card) {
+                                    card.classList.remove('border-green-300');
+                                    // 移除已学习标记
+                                    const badge = card.querySelector('.bg-green-100.text-green-800');
+                                    if (badge) {
+                                        badge.remove();
+                                    }
+                                }
+                            }
+                        }
                     });
                 });
                 
@@ -9884,23 +10676,127 @@
                     btn.addEventListener('click', (e) => {
                         e.stopPropagation();
                         const example = btn.getAttribute('data-example');
-                        this.speakWord(example);
+                        appInstance.speakWord(example);
                     });
+                });
+            },
+            
+            // 显示指定日期的已学单词
+            showLearnedWordsByDay(dayIndex) {
+                const days = ['周一', '周二', '周三', '周四', '周五', '周六', '周日'];
+                dom.modalDate.textContent = days[dayIndex];
+                
+                // 模拟获取当日已学单词（实际应根据日期从数据中获取）
+                // 这里我们使用learnedWords作为示例
+                const learnedWords = state.userData.learnedWords.slice(0, 15); // 模拟15个已学单词
+                
+                this.renderLearnedWordsModal(learnedWords);
+                dom.learnedWordsModal.classList.remove('hidden');
+            },
+            
+            // 显示全部已学单词
+            showAllLearnedWords() {
+                dom.modalDate.textContent = '全部已学单词';
+                
+                // 获取所有已学单词并去重排序
+                const learnedWords = [...new Set(state.userData.learnedWords)].sort();
+                
+                this.renderLearnedWordsModal(learnedWords);
+                dom.learnedWordsModal.classList.remove('hidden');
+            },
+            
+            // 渲染已学单词模态框
+            renderLearnedWordsModal(words) {
+                if (words.length === 0) {
+                    dom.modalWordsList.innerHTML = '';
+                    dom.modalEmptyState.classList.remove('hidden');
+                    return;
+                }
+                
+                dom.modalEmptyState.classList.add('hidden');
+                dom.modalWordsList.innerHTML = '';
+                
+                words.forEach(word => {
+                    // 获取单词详情
+                    const wordDetail = wordDatabase.find(w => w.word === word) || { word: word, phonetic: '', meaning: '暂无释义', example: '', translation: '' };
+                    
+                    const wordItem = document.createElement('div');
+                    wordItem.className = 'bg-white border border-gray-200 rounded-lg p-3 mb-3 hover:shadow-sm transition-all duration-200';
+                    
+                    wordItem.innerHTML = `
+                        <div class="flex justify-between items-start mb-2">
+                            <div class="flex-1">
+                                <div class="flex items-center gap-2">
+                                    <h4 class="text-lg font-bold text-gray-800">${wordDetail.word}</h4>
+                                    <span class="text-sm text-gray-500">${wordDetail.phonetic}</span>
+                                </div>
+                                <p class="text-sm text-blue-600 font-medium mb-1">${wordDetail.meaning}</p>
+                                ${wordDetail.example ? `<p class="text-xs text-gray-600 italic mb-1">${wordDetail.example}</p>` : ''}
+                                ${wordDetail.translation ? `<p class="text-xs text-gray-500">${wordDetail.translation}</p>` : ''}
+                            </div>
+                            <button class="play-modal-audio-btn w-8 h-8 rounded-full bg-blue-50 text-blue-500 flex items-center justify-center hover:bg-blue-100 transition-colors" data-word="${wordDetail.word}">
+                                <i class="fa fa-volume-up text-xs"></i>
+                            </button>
+                        </div>
+                    `;
+                    
+                    dom.modalWordsList.appendChild(wordItem);
                 });
                 
-                // 标记学习
-                document.querySelectorAll('.mark-learned-btn').forEach(btn => {
+                // 为播放音频按钮添加事件
+                dom.modalWordsList.querySelectorAll('.play-modal-audio-btn').forEach(btn => {
                     btn.addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        const word = btn.getAttribute('data-word');
-                        this.toggleLearnedWord(word);
+                        const word = btn.dataset.word;
+                        this.speakWord(word);
                     });
                 });
+            },
+            
+            // 搜索模态框中的单词
+            searchModalWords(searchTerm) {
+                const days = ['周一', '周二', '周三', '周四', '周五', '周六', '周日'];
+                const currentDay = dom.modalDate.textContent;
+                
+                // 获取所有已学单词
+                let allLearnedWords;
+                if (days.includes(currentDay)) {
+                    // 如果是按日期查看，模拟获取当日已学单词
+                    allLearnedWords = state.userData.learnedWords.slice(0, 15);
+                } else {
+                    // 如果是查看全部已学单词，使用所有已学单词并排序
+                    allLearnedWords = [...state.userData.learnedWords].sort((a, b) => a.word.localeCompare(b.word));
+                }
+                
+                let filteredWords = allLearnedWords;
+                if (searchTerm) {
+                    const term = searchTerm.toLowerCase();
+                    filteredWords = allLearnedWords.filter(learnedItem => {
+                        const word = learnedItem.word || learnedItem;
+                        const wordDetail = wordDatabase.find(w => w.word === word) || { word: word, meaning: '' };
+                        return word.toLowerCase().includes(term) || wordDetail.meaning.toLowerCase().includes(term);
+                    });
+                }
+                
+                // 提取单词文本数组传递给渲染函数
+                const wordTexts = filteredWords.map(item => item.word || item);
+                this.renderLearnedWordsModal(wordTexts);
+            },
+            
+            // 关闭已学单词模态框
+            closeLearnedWordsModal() {
+                dom.learnedWordsModal.classList.add('hidden');
+                dom.modalSearchInput.value = '';
             },
             
             // 附加每日单词事件
             attachDailyWordEvents() {
                 // 播放音频
+                document.querySelectorAll('.play-daily-audio-btn').forEach(btn => {
+                    // 移除旧的监听器，防止重复绑定
+                    btn.replaceWith(btn.cloneNode(true));
+                });
+                
+                // 重新获取所有按钮并添加监听器
                 document.querySelectorAll('.play-daily-audio-btn').forEach(btn => {
                     btn.addEventListener('click', (e) => {
                         e.stopPropagation();
@@ -9911,6 +10807,12 @@
                 
                 // 标记学习
                 document.querySelectorAll('.mark-daily-learned-btn').forEach(btn => {
+                    // 移除旧的监听器，防止重复绑定
+                    btn.replaceWith(btn.cloneNode(true));
+                });
+                
+                // 重新获取所有按钮并添加监听器
+                document.querySelectorAll('.mark-daily-learned-btn').forEach(btn => {
                     btn.addEventListener('click', (e) => {
                         e.stopPropagation();
                         const word = btn.getAttribute('data-word');
@@ -9920,6 +10822,12 @@
                 });
                 
                 // 朗读例句
+                document.querySelectorAll('.read-example-btn').forEach(btn => {
+                    // 移除旧的监听器，防止重复绑定
+                    btn.replaceWith(btn.cloneNode(true));
+                });
+                
+                // 重新获取所有按钮并添加监听器
                 document.querySelectorAll('.read-example-btn').forEach(btn => {
                     btn.addEventListener('click', (e) => {
                         e.stopPropagation();
@@ -10065,6 +10973,8 @@
         
         // 为按钮添加科技效果
         function enhanceButtons() {
+            // 暂时禁用此功能，因为它可能导致按钮失效
+            /*
             const buttons = document.querySelectorAll('button');
             buttons.forEach(btn => {
                 btn.classList.add('tech-button');
@@ -10080,15 +10990,13 @@
                     btn.style.boxShadow = '';
                 });
             });
+            */
         }
         
         // ==================== 启动应用 ====================        
         window.addEventListener('DOMContentLoaded', () => {
             // 初始化科技动画效果
             initTechEffects();
-            
-            // 初始化激励和引导系统
-            initMotivationSystem();
             
             // 先显示底部小鹿形象
             setTimeout(() => {
@@ -10105,7 +11013,11 @@
                 enhanceButtons();
             }, 500);
             
+            // 先初始化应用，确保主容器和单词卡片已经被渲染
             app.init();
+            
+            // 初始化激励和引导系统，确保应用已经完全初始化
+            initMotivationSystem();
         });
         
         // 激励和引导系统
