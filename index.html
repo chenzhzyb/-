@@ -8958,7 +8958,7 @@
                 }
             },
             
-            // 朗读单词
+            // 朗读单词 - 优化版本，解决安卓浏览器兼容性问题
             speakWord(word) {
                 // 清理之前的语音请求
                 if ('speechSynthesis' in window) {
@@ -8971,25 +8971,53 @@
                         const utterance = new SpeechSynthesisUtterance(word);
                         utterance.lang = 'en-US';
                         
-                        // 获取用户设置的语音参数
-                        const voiceSetting = state.userData.voiceSettings.voice;
-                        let rate = state.userData.voiceSettings.rate;
-                        let pitch = state.userData.voiceSettings.pitch;
-                        
-                        // 直接应用用户设置的语速和音调
-                        utterance.rate = rate;
-                        utterance.pitch = pitch;
-                        
-                        // 针对不同浏览器和系统的适配
-                        // 针对Android Chrome的特殊处理
-                        if (navigator.userAgent.match(/Android/i) && navigator.userAgent.match(/Chrome/i)) {
-                            // Android Chrome需要延迟执行以确保正常工作
-                            setTimeout(() => {
-                                speechSynthesis.speak(utterance);
-                            }, 100);
+                        // 针对安卓浏览器的兼容性设置
+                        if (navigator.userAgent.match(/Android/i)) {
+                            // 安卓浏览器可能需要使用默认语音和更保守的参数
+                            utterance.rate = 1.0;
+                            utterance.pitch = 1.0;
                         } else {
-                            speechSynthesis.speak(utterance);
+                            // 获取用户设置的语音参数
+                            const voiceSetting = state.userData.voiceSettings.voice;
+                            let rate = state.userData.voiceSettings.rate;
+                            let pitch = state.userData.voiceSettings.pitch;
+                            
+                            // 应用用户设置的语速和音调
+                            utterance.rate = rate;
+                            utterance.pitch = pitch;
                         }
+                        
+                        // 确保语音引擎已加载完成
+                        const speakWithEngine = () => {
+                            // 检查是否有可用的语音引擎
+                            if (speechSynthesis.getVoices().length > 0) {
+                                // 针对不同浏览器的适配
+                                if (navigator.userAgent.match(/Android/i)) {
+                                    // 安卓浏览器需要延迟执行以确保正常工作
+                                    setTimeout(() => {
+                                        speechSynthesis.speak(utterance);
+                                    }, 200);
+                                } else {
+                                    speechSynthesis.speak(utterance);
+                                }
+                            } else {
+                                // 语音引擎尚未加载，等待加载完成
+                                setTimeout(speakWithEngine, 100);
+                            }
+                        };
+                        
+                        // 初始化语音引擎
+                        if (speechSynthesis.getVoices().length === 0) {
+                            // 监听语音引擎加载完成事件
+                            speechSynthesis.onvoiceschanged = () => {
+                                speakWithEngine();
+                                // 清除事件监听
+                                speechSynthesis.onvoiceschanged = null;
+                            };
+                        }
+                        
+                        // 立即尝试朗读
+                        speakWithEngine();
                         return;
                     } catch (error) {
                         console.error('Web Speech API failed:', error);
