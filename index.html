@@ -2877,10 +2877,13 @@
                     <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
                         <!-- 搜索栏 -->
                         <div class="flex flex-col md:flex-row md:items-center justify-between mb-6">
-                            <div class="relative w-full md:w-96 mb-4 md:mb-0">
+                            <div class="relative w-full md:w-96 mb-4 md:mb-0 flex">
                                 <input type="text" id="search-input" placeholder="搜索单词或中文意思..." 
-                                       class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-lg shadow-sm transition-all duration-300 hover:shadow-md">
+                                       class="w-full pl-12 pr-20 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-lg shadow-sm transition-all duration-300 hover:shadow-md">
                                 <i class="fa fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-lg"></i>
+                                <button id="search-button" class="absolute right-12 top-1/2 transform -translate-y-1/2 bg-blue-500 hover:bg-blue-600 text-white px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-300">
+                                    搜索
+                                </button>
                                 <button id="clear-search" class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 hidden">
                                     <i class="fa fa-times"></i>
                                 </button>
@@ -3241,10 +3244,13 @@
             </div>
             
             <!-- 搜索框 -->
-            <div class="relative mb-4">
+            <div class="relative mb-4 flex">
                 <input type="text" id="modal-search-input" placeholder="搜索单词..." 
-                       class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm">
+                       class="w-full pl-10 pr-16 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm">
                 <i class="fa fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm"></i>
+                <button id="modal-search-button" class="absolute right-3 top-1/2 transform -translate-y-1/2 bg-blue-500 hover:bg-blue-600 text-white px-2.5 py-1 rounded-lg text-xs font-medium transition-all duration-300">
+                    搜索
+                </button>
             </div>
             
             <!-- 单词列表 -->
@@ -7803,6 +7809,7 @@
             totalWords: document.getElementById('total-words'),
             wordList: document.getElementById('word-list'),
             searchInput: document.getElementById('search-input'),
+            searchButton: document.getElementById('search-button'),
             clearSearch: document.getElementById('clear-search'),
             emptyState: document.getElementById('empty-state'),
             resetSearch: document.getElementById('reset-search'),
@@ -7991,10 +7998,14 @@
                 if (saved) {
                     const data = JSON.parse(saved);
                     Object.assign(state.userData, data);
-                    // 确保已学习单词列表去重
-                    state.userData.learnedWords = [...new Set(state.userData.learnedWords)];
-                    // 按字母顺序排序已学习单词
-                    state.userData.learnedWords.sort();
+                    // 确保成就数据正确初始化
+                    if (!state.userData.achievements || !Array.isArray(state.userData.achievements)) {
+                        state.userData.achievements = [...achievements];
+                    }
+                    // 确保已学习单词列表格式正确
+                    if (!Array.isArray(state.userData.learnedWords)) {
+                        state.userData.learnedWords = [];
+                    }
                 }
             },
             
@@ -8448,7 +8459,7 @@
                                         <p class="text-gray-500 text-[10px] mb-1 break-words">${word.phonetic}</p>
                                         <p class="text-base font-semibold text-blue-600 break-words">${word.meaning}</p>
                                     </div>
-                                    <button class="play-audio-btn w-10 h-10 rounded-full bg-blue-50 text-blue-500 hover:bg-blue-100 transition-colors duration-200 flex items-center justify-center ml-1 flex-shrink-0" data-word="${word.word}">
+                                    <button class="play-audio-btn w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-blue-50 text-blue-500 hover:bg-blue-100 transition-colors duration-200 flex items-center justify-center ml-1 flex-shrink-0" data-word="${word.word}">
                                         <i class="fa fa-volume-up text-sm"></i>
                                     </button>
                                 </div>
@@ -8467,14 +8478,14 @@
                             </div>
                             
                             <div class="flex justify-between items-center flex-wrap gap-2">
-                                <div class="flex flex-wrap gap-0.5 sm:gap-1 max-w-full">
+                                <div class="flex flex-wrap gap-0.5 sm:gap-1 max-w-[calc(100%-65px)] sm:max-w-full">
                                     ${word.categories ? word.categories.map(cat => `
                                         <span class="px-1.5 sm:px-2 py-0.5 sm:py-1 bg-gray-100 text-gray-600 text-[10px] sm:text-xs rounded-full break-words whitespace-nowrap">
                                             ${utils.getCategoryName(cat)}
                                         </span>
                                     `).join('') : ''}
                                 </div>
-                                <button class="mark-learned-btn px-3 sm:px-4 py-1 sm:py-2 rounded-md sm:rounded-lg text-[10px] sm:text-sm font-medium transition-all duration-200 ${isLearned ? 'bg-gray-100 text-gray-600' : 'bg-blue-500 text-white hover:bg-blue-600'} min-w-[55px] min-h-[30px] flex-shrink-0 flex items-center justify-center" data-word="${word.word}">
+                                <button class="mark-learned-btn px-2 sm:px-3 py-1 sm:py-2 rounded-md sm:rounded-lg text-[10px] sm:text-sm font-medium transition-all duration-200 ${isLearned ? 'bg-gray-100 text-gray-600' : 'bg-blue-500 text-white hover:bg-blue-600'} min-w-[50px] sm:min-w-[55px] min-h-[28px] sm:min-h-[30px] flex-shrink-0 flex items-center justify-center" data-word="${word.word}">
                                     ${isLearned ? '已学 ✓' : '学习'}
                                 </button>
                             </div>
@@ -9046,6 +9057,10 @@
                     });
                 }
                 
+                // 过滤已学单词
+                const learnedWordsSet = new Set(state.userData.learnedWords.map(item => item.word));
+                availableWords = availableWords.filter(word => !learnedWordsSet.has(word.word));
+                
                 // 从筛选后的词汇库中随机选择10个单词
                 state.dailyCheckin.words = [];
                 for (let i = 0; i < 10 && availableWords.length > 0; i++) {
@@ -9076,28 +9091,28 @@
                     card.className = `word-card-hover bg-white rounded-lg shadow border border-gray-200 animate-float-up ${isLearned ? 'border-green-300' : ''}`;
                     
                     card.innerHTML = `
-                        <div class="p-4">
-                            <div class="flex justify-between items-start mb-3">
-                                <div>
-                                    <h4 class="text-lg font-bold text-gray-800 mb-1">${word.word}</h4>
-                                    <p class="text-sm text-gray-500 mb-2">${word.phonetic}</p>
-                                    <p class="text-base font-semibold text-blue-600">${word.meaning}</p>
+                        <div class="p-3 sm:p-4">
+                            <div class="flex justify-between items-start mb-2 sm:mb-3">
+                                <div class="flex-1 min-w-0">
+                                    <h4 class="text-base sm:text-lg font-bold text-gray-800 mb-1">${word.word}</h4>
+                                    <p class="text-xs sm:text-sm text-gray-500 mb-1 sm:mb-2">${word.phonetic}</p>
+                                    <p class="text-sm sm:text-base font-semibold text-blue-600 break-words">${word.meaning}</p>
                                 </div>
-                                <div class="flex space-x-2">
-                                    <button class="play-daily-audio-btn w-8 h-8 rounded-full bg-blue-50 text-blue-500 hover:bg-blue-100 transition-colors" data-word="${word.word}">
-                                        <i class="fa fa-volume-up text-sm"></i>
+                                <div class="flex space-x-1 sm:space-x-2">
+                                    <button class="play-daily-audio-btn w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-blue-50 text-blue-500 hover:bg-blue-100 transition-colors" data-word="${word.word}">
+                                        <i class="fa fa-volume-up text-xs sm:text-sm"></i>
                                     </button>
-                                    <button class="mark-daily-learned-btn px-3 py-1 rounded text-sm font-medium transition-all ${isLearned ? 'bg-green-100 text-green-700' : 'bg-blue-500 text-white hover:bg-blue-600'}" data-word="${word.word}">
+                                    <button class="mark-daily-learned-btn px-2 sm:px-3 py-1 rounded text-xs sm:text-sm font-medium transition-all ${isLearned ? 'bg-green-100 text-green-700' : 'bg-blue-500 text-white hover:bg-blue-600'} min-w-[50px] sm:min-w-[55px]" data-word="${word.word}">
                                         ${isLearned ? '已学' : '学习'}
                                     </button>
                                 </div>
                             </div>
                             <div class="bg-gray-50 rounded p-2">
-                                <p class="text-sm text-gray-600 italic">${word.example}</p>
-                                <p class="text-xs text-gray-500 mt-1">${word.translation}</p>
+                                <p class="text-xs sm:text-sm text-gray-600 italic break-words">${word.example}</p>
+                                <p class="text-xs text-gray-500 mt-1 break-words">${word.translation}</p>
                                 <div class="mt-2 flex justify-end">
-                                    <button class="read-example-btn px-3 py-1 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg text-xs font-medium transition-colors duration-200 flex items-center" data-example="${word.example}">
-                                        <i class="fa fa-volume-up mr-1"></i> 朗读例句
+                                    <button class="read-example-btn px-2 sm:px-3 py-1 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg text-xs font-medium transition-colors duration-200 flex items-center" data-example="${word.example}">
+                                        <i class="fa fa-volume-up mr-0.5 sm:mr-1 text-[10px] sm:text-xs"></i> 朗读例句
                                     </button>
                                 </div>
                             </div>
@@ -10354,8 +10369,14 @@
                     });
                 });
                 
-                // 搜索功能
-                dom.searchInput.addEventListener('input', () => this.searchWords());
+                // 搜索输入事件 - 改为点击搜索按钮触发
+                dom.searchButton.addEventListener('click', () => this.searchWords());
+                // 也支持回车键搜索
+                dom.searchInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        this.searchWords();
+                    }
+                });
                 dom.clearSearch.addEventListener('click', () => {
                     dom.searchInput.value = '';
                     dom.clearSearch.classList.add('hidden');
@@ -10482,11 +10503,21 @@
                     }
                 });
                 
-                // 模态框搜索输入
-                dom.modalSearchInput.addEventListener('input', (e) => {
-                    const searchTerm = e.target.value;
-                    this.searchModalWords(searchTerm);
-                });
+                // 模态框搜索输入 - 改为点击搜索按钮触发
+                const modalSearchButton = document.getElementById('modal-search-button');
+                if (modalSearchButton) {
+                    modalSearchButton.addEventListener('click', () => {
+                        const searchTerm = dom.modalSearchInput.value;
+                        this.searchModalWords(searchTerm);
+                    });
+                    // 也支持回车键搜索
+                    dom.modalSearchInput.addEventListener('keypress', (e) => {
+                        if (e.key === 'Enter') {
+                            const searchTerm = dom.modalSearchInput.value;
+                            this.searchModalWords(searchTerm);
+                        }
+                    });
+                }
             },
             
             // 附加单词卡片事件
@@ -10698,8 +10729,8 @@
             showAllLearnedWords() {
                 dom.modalDate.textContent = '全部已学单词';
                 
-                // 获取所有已学单词并去重排序
-                const learnedWords = [...new Set(state.userData.learnedWords)].sort();
+                // 获取所有已学单词，直接使用数组，因为toggleLearnedWord函数已经保证了唯一性
+                const learnedWords = [...state.userData.learnedWords];
                 
                 this.renderLearnedWordsModal(learnedWords);
                 dom.learnedWordsModal.classList.remove('hidden');
@@ -10754,31 +10785,33 @@
             
             // 搜索模态框中的单词
             searchModalWords(searchTerm) {
-                const days = ['周一', '周二', '周三', '周四', '周五', '周六', '周日'];
-                const currentDay = dom.modalDate.textContent;
-                
-                // 获取所有已学单词
-                let allLearnedWords;
-                if (days.includes(currentDay)) {
-                    // 如果是按日期查看，模拟获取当日已学单词
-                    allLearnedWords = state.userData.learnedWords.slice(0, 15);
-                } else {
-                    // 如果是查看全部已学单词，使用所有已学单词并排序
-                    allLearnedWords = [...state.userData.learnedWords].sort((a, b) => a.word.localeCompare(b.word));
-                }
+                // 获取所有已学单词作为搜索范围，不限制日期
+                let allLearnedWords = [...state.userData.learnedWords].filter(item => item.word).sort((a, b) => a.word.localeCompare(b.word));
                 
                 let filteredWords = allLearnedWords;
                 if (searchTerm) {
                     const term = searchTerm.toLowerCase();
                     filteredWords = allLearnedWords.filter(learnedItem => {
-                        const word = learnedItem.word || learnedItem;
-                        const wordDetail = wordDatabase.find(w => w.word === word) || { word: word, meaning: '' };
-                        return word.toLowerCase().includes(term) || wordDetail.meaning.toLowerCase().includes(term);
+                        if (!learnedItem || !learnedItem.word) return false;
+                        
+                        const word = learnedItem.word;
+                        const wordDetail = wordDatabase.find(w => w.word === word) || {
+                            word: word, 
+                            meaning: learnedItem.details?.meaning || '',
+                            example: learnedItem.details?.example || '',
+                            translation: learnedItem.details?.translation || ''
+                        };
+                        
+                        // 支持中英文混合搜索，匹配单词、释义、例句和翻译
+                        return word.toLowerCase().includes(term) ||
+                               (wordDetail.meaning && wordDetail.meaning.toLowerCase().includes(term)) ||
+                               (wordDetail.example && wordDetail.example.toLowerCase().includes(term)) ||
+                               (wordDetail.translation && wordDetail.translation.toLowerCase().includes(term));
                     });
                 }
                 
                 // 提取单词文本数组传递给渲染函数
-                const wordTexts = filteredWords.map(item => item.word || item);
+                const wordTexts = filteredWords.map(item => item.word);
                 this.renderLearnedWordsModal(wordTexts);
             },
             
@@ -10790,49 +10823,114 @@
             
             // 附加每日单词事件
             attachDailyWordEvents() {
-                // 播放音频
-                document.querySelectorAll('.play-daily-audio-btn').forEach(btn => {
-                    // 移除旧的监听器，防止重复绑定
+                // 保存对象实例的引用，以便在事件监听器中使用
+                const appInstance = this;
+                
+                // 移除旧的事件监听器，防止重复绑定
+                document.querySelectorAll('.play-daily-audio-btn, .mark-daily-learned-btn, .read-example-btn').forEach(btn => {
                     btn.replaceWith(btn.cloneNode(true));
                 });
                 
-                // 重新获取所有按钮并添加监听器
+                // 播放音频
                 document.querySelectorAll('.play-daily-audio-btn').forEach(btn => {
                     btn.addEventListener('click', (e) => {
                         e.stopPropagation();
                         const word = btn.getAttribute('data-word');
-                        this.speakWord(word);
+                        appInstance.speakWord(word);
                     });
                 });
                 
-                // 标记学习
+                // 标记学习 - 处理打卡页面中的学习按钮
                 document.querySelectorAll('.mark-daily-learned-btn').forEach(btn => {
-                    // 移除旧的监听器，防止重复绑定
-                    btn.replaceWith(btn.cloneNode(true));
-                });
-                
-                // 重新获取所有按钮并添加监听器
-                document.querySelectorAll('.mark-daily-learned-btn').forEach(btn => {
-                    btn.addEventListener('click', (e) => {
+                    btn.addEventListener('click', async (e) => {
                         e.stopPropagation();
                         const word = btn.getAttribute('data-word');
-                        this.toggleLearnedWord(word);
-                        this.updateDailyProgress();
+                        
+                        // 立即更新按钮状态，使用更可靠的方式检查状态
+                        const isCurrentlyLearned = btn.textContent.includes('已学');
+                        
+                        if (isCurrentlyLearned) {
+                            // 取消标记
+                            btn.innerHTML = '学习';
+                            btn.className = 'mark-daily-learned-btn px-3 py-1 rounded text-sm font-medium transition-all bg-blue-500 text-white hover:bg-blue-600';
+                        } else {
+                            // 标记为已学
+                            btn.innerHTML = '已学 <i class="fa fa-check"></i>';
+                            btn.className = 'mark-daily-learned-btn px-3 py-1 rounded text-sm font-medium transition-all bg-white text-gray-700 border-2 border-gray-300';
+                        }
+                        
+                        // 更新卡片样式
+                        const card = btn.closest('.word-card-hover');
+                        if (card) {
+                            if (isCurrentlyLearned) {
+                                card.classList.remove('border-green-300');
+                                // 移除已学习标记
+                                const badge = card.querySelector('.bg-green-100.text-green-800');
+                                if (badge) {
+                                    badge.remove();
+                                }
+                            } else {
+                                card.classList.add('border-green-300');
+                                // 添加已学习标记
+                                const wordContainer = card.querySelector('.flex.items-start.mb-3 div:first-child');
+                                if (wordContainer) {
+                                    const h4 = wordContainer.querySelector('h4');
+                                    if (h4 && !card.querySelector('.bg-green-100.text-green-800')) {
+                                        const badge = document.createElement('span');
+                                        badge.className = 'px-1.5 py-0.5 bg-green-100 text-green-800 text-xs font-medium rounded-full whitespace-nowrap ml-2';
+                                        badge.textContent = '已学习';
+                                        h4.parentNode.insertBefore(badge, h4.nextSibling);
+                                    }
+                                }
+                            }
+                        }
+                        
+                        // 在后台处理数据更新
+                        try {
+                            await appInstance.toggleLearnedWord(word);
+                            appInstance.updateDailyProgress();
+                        } catch (error) {
+                            // 如果更新失败，恢复按钮状态
+                            console.error('更新单词学习状态失败:', error);
+                            if (isCurrentlyLearned) {
+                                btn.innerHTML = '已学 <i class="fa fa-check"></i>';
+                                btn.className = 'mark-daily-learned-btn px-3 py-1 rounded text-sm font-medium transition-all bg-white text-gray-700 border-2 border-gray-300';
+                                if (card) {
+                                    card.classList.add('border-green-300');
+                                    // 重新添加已学习标记
+                                    const wordContainer = card.querySelector('.flex.items-start.mb-3 div:first-child');
+                                    if (wordContainer) {
+                                        const h4 = wordContainer.querySelector('h4');
+                                        if (h4 && !card.querySelector('.bg-green-100.text-green-800')) {
+                                            const badge = document.createElement('span');
+                                            badge.className = 'px-1.5 py-0.5 bg-green-100 text-green-800 text-xs font-medium rounded-full whitespace-nowrap ml-2';
+                                            badge.textContent = '已学习';
+                                            h4.parentNode.insertBefore(badge, h4.nextSibling);
+                                        }
+                                    }
+                                }
+                            } else {
+                                btn.innerHTML = '学习';
+                                btn.className = 'mark-daily-learned-btn px-3 py-1 rounded text-sm font-medium transition-all bg-blue-500 text-white hover:bg-blue-600';
+                                if (card) {
+                                    card.classList.remove('border-green-300');
+                                    // 移除已学习标记
+                                    const badge = card.querySelector('.bg-green-100.text-green-800');
+                                    if (badge) {
+                                        badge.remove();
+                                    }
+                                }
+                            }
+                        }
                     });
                 });
                 
                 // 朗读例句
                 document.querySelectorAll('.read-example-btn').forEach(btn => {
-                    // 移除旧的监听器，防止重复绑定
-                    btn.replaceWith(btn.cloneNode(true));
-                });
-                
-                // 重新获取所有按钮并添加监听器
-                document.querySelectorAll('.read-example-btn').forEach(btn => {
                     btn.addEventListener('click', (e) => {
                         e.stopPropagation();
                         const example = btn.getAttribute('data-example');
-                        this.speakWord(example);
+                        appInstance.speakWord(example);
                     });
                 });
             }
