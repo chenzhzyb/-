@@ -8958,94 +8958,164 @@
                 }
             },
             
-            // 朗读单词 - 优化版本，解决安卓浏览器兼容性问题
+            // 朗读单词 - 优化版本，解决多设备兼容性问题
             speakWord(word) {
                 // 清理之前的语音请求
                 if ('speechSynthesis' in window) {
                     speechSynthesis.cancel();
                 }
                 
-                // 1. 优先尝试Web Speech API
+                // 标记播放状态
+                let playbackStarted = false;
+                let timeoutId = null;
+                
+                // 针对不同设备的配置
+                const isAndroid = navigator.userAgent.match(/Android/i);
+                const isDesktop = !isAndroid && !navigator.userAgent.match(/iPhone|iPad|iPod/i);
+                
+                // 设置合理的超时时间
+                const timeout = isAndroid ? 8000 : 5000;
+                
+                // 超时处理函数
+                const handleTimeout = () => {
+                    if (!playbackStarted) {
+                        console.error('Speech synthesis timed out after', timeout, 'ms');
+                        // 只有在超时且没有播放时才显示通知
+                        utils.showNotification(`朗读单词: ${word}`, 'info');
+                    }
+                };
+                
+                // 设置超时
+                timeoutId = setTimeout(handleTimeout, timeout);
+                
+                // 1. 优先尝试Web Speech API，针对不同设备进行优化
                 if ('speechSynthesis' in window) {
                     try {
+                        // 创建语音合成实例
                         const utterance = new SpeechSynthesisUtterance(word);
-                        utterance.lang = 'en-US';
                         
-                        // 针对安卓浏览器的兼容性设置
-                        if (navigator.userAgent.match(/Android/i)) {
-                            // 安卓浏览器可能需要使用默认语音和更保守的参数
+                        // 基础设置，确保兼容性
+                        utterance.lang = 'en-US';
+                        utterance.volume = 1.0;
+                        
+                        // 根据设备类型调整参数
+                        if (isAndroid) {
+                            // 安卓浏览器需要更保守的设置
+                            utterance.rate = 0.9; // 稍慢一点，提高兼容性
+                            utterance.pitch = 1.0;
+                        } else if (isDesktop) {
+                            // 电脑端使用用户设置或默认值
+                            utterance.rate = state.userData.voiceSettings?.rate || 1.0;
+                            utterance.pitch = state.userData.voiceSettings?.pitch || 1.0;
+                        } else {
+                            // 其他移动设备
                             utterance.rate = 1.0;
                             utterance.pitch = 1.0;
-                        } else {
-                            // 获取用户设置的语音参数
-                            const voiceSetting = state.userData.voiceSettings.voice;
-                            let rate = state.userData.voiceSettings.rate;
-                            let pitch = state.userData.voiceSettings.pitch;
-                            
-                            // 应用用户设置的语速和音调
-                            utterance.rate = rate;
-                            utterance.pitch = pitch;
                         }
                         
-                        // 确保语音引擎已加载完成
-                        const speakWithEngine = () => {
-                            // 检查是否有可用的语音引擎
-                            if (speechSynthesis.getVoices().length > 0) {
-                                // 针对不同浏览器的适配
-                                if (navigator.userAgent.match(/Android/i)) {
-                                    // 安卓浏览器需要延迟执行以确保正常工作
-                                    setTimeout(() => {
-                                        speechSynthesis.speak(utterance);
-                                    }, 200);
+                        // 监听语音播放事件，确认播放开始
+                        utterance.onstart = () => {
+                            console.log('Speech started successfully');
+                            playbackStarted = true;
+                            clearTimeout(timeoutId);
+                        };
+                        
+                        // 监听语音结束事件
+                        utterance.onend = () => {
+                            console.log('Speech ended successfully');
+                            clearTimeout(timeoutId);
+                        };
+                        
+                        // 监听语音错误事件
+                        utterance.onerror = (event) => {
+                            console.error('Speech error occurred:', event.error);
+                            clearTimeout(timeoutId);
+                            
+                            // 只有在播放失败时才显示通知
+                            utils.showNotification(`朗读单词: ${word}`, 'info');
+                        };
+                        
+                        // 确保语音引擎已完全加载
+                        const attemptToSpeak = () => {
+                            const voices = speechSynthesis.getVoices();
+                            console.log('Available voices:', voices.length);
+                            
+                            if (voices.length > 0) {
+                                // 尝试使用英文语音
+                                let englishVoice = null;
+                                
+                                // 根据设备类型选择不同的语音优先策略
+                                if (isDesktop) {
+                                    // 电脑端优先使用本地语音引擎
+                                    englishVoice = voices.find(voice => 
+                                        (voice.lang.startsWith('en-') || voice.lang.startsWith('en_')) && 
+                                        voice.localService
+                                    );
                                 } else {
-                                    speechSynthesis.speak(utterance);
+                                    // 移动设备优先使用任何可用的英文语音
+                                    englishVoice = voices.find(voice => 
+                                        voice.lang.startsWith('en-') || voice.lang.startsWith('en_')
+                                    );
                                 }
+                                
+                                // 如果没有找到英文语音，使用第一个可用语音
+                                if (!englishVoice && voices.length > 0) {
+                                    englishVoice = voices[0];
+                                    console.log('No English voice found, using default voice:', englishVoice.name, englishVoice.lang);
+                                }
+                                
+                                if (englishVoice) {
+                                    utterance.voice = englishVoice;
+                                    console.log('Using voice:', englishVoice.name, englishVoice.lang, englishVoice.localService ? '(local)' : '(remote)');
+                                }
+                                
+                                // 执行语音播放
+                                const executeSpeech = () => {
+                                    try {
+                                        // 确保没有残留的语音请求
+                                        speechSynthesis.cancel();
+                                        
+                                        // 开始语音合成
+                                        speechSynthesis.speak(utterance);
+                                        console.log('Speech synthesis initiated');
+                                    } catch (error) {
+                                        console.error('Speech synthesis failed:', error);
+                                        clearTimeout(timeoutId);
+                                        // 播放失败，显示通知
+                                        utils.showNotification(`朗读单词: ${word}`, 'info');
+                                    }
+                                };
+                                
+                                // 执行语音播放
+                                executeSpeech();
                             } else {
-                                // 语音引擎尚未加载，等待加载完成
-                                setTimeout(speakWithEngine, 100);
+                                // 语音引擎尚未加载，等待并重试
+                                console.log('No voices available, waiting...');
+                                setTimeout(attemptToSpeak, 300);
                             }
                         };
                         
-                        // 初始化语音引擎
-                        if (speechSynthesis.getVoices().length === 0) {
-                            // 监听语音引擎加载完成事件
-                            speechSynthesis.onvoiceschanged = () => {
-                                speakWithEngine();
-                                // 清除事件监听
-                                speechSynthesis.onvoiceschanged = null;
-                            };
-                        }
+                        // 立即尝试
+                        attemptToSpeak();
                         
-                        // 立即尝试朗读
-                        speakWithEngine();
+                        // 同时监听语音引擎加载完成事件
+                        speechSynthesis.onvoiceschanged = () => {
+                            attemptToSpeak();
+                            // 只触发一次
+                            speechSynthesis.onvoiceschanged = null;
+                        };
+                        
                         return;
                     } catch (error) {
                         console.error('Web Speech API failed:', error);
+                        clearTimeout(timeoutId);
                         // 降级处理
                     }
                 }
                 
-                // 2. 尝试使用Audio元素播放预生成的音频（如果有）
-                try {
-                    // 这里可以添加预生成音频的播放逻辑
-                    // 例如：const audio = new Audio(`/audio/${word}.mp3`);
-                    // audio.play().catch(/* 降级处理 */);
-                    // 由于没有预生成音频，这里直接进入下一步
-                } catch (error) {
-                    console.error('Audio element failed:', error);
-                    // 降级处理
-                }
-                
-                // 3. 最后尝试使用第三方TTS服务（模拟）
-                try {
-                    // 这里可以添加第三方TTS服务的调用逻辑
-                    // 例如：调用Google Cloud TTS或其他API
-                    utils.showNotification(`正在使用第三方TTS服务朗读: ${word}`, 'info');
-                    // 由于是模拟，这里仅显示通知
-                } catch (error) {
-                    console.error('Third-party TTS failed:', error);
-                    utils.showNotification('无法使用语音合成服务，请检查浏览器设置或网络连接', 'error');
-                }
+                // 2. 如果Web Speech API不可用，显示通知
+                clearTimeout(timeoutId);
+                utils.showNotification(`朗读单词: ${word}`, 'info');
             },
             
             // 切换页面
