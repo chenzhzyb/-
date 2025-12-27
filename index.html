@@ -2650,6 +2650,16 @@
 
     <!-- 通知容器 -->
     <div id="notification-container" class="fixed top-4 right-4 z-50"></div>
+    <!-- 单词朗读弹窗 -->
+    <div id="reading-word-popup" class="fixed top-4 left-1/2 transform -translate-x-1/2 bg-blue-600 text-white px-8 py-3 rounded-lg shadow-lg z-50 hidden">
+        <div class="flex items-center">
+            <i class="fa fa-volume-up mr-3"></i>
+            <span id="reading-word-text" class="font-bold text-lg"></span>
+            <button id="close-reading-popup" class="ml-4 text-white/80 hover:text-white">
+                <i class="fa fa-times"></i>
+            </button>
+        </div>
+    </div>
 
     <!-- 主容器 -->
     <div id="app" class="max-w-full w-full mx-auto px-4 sm:px-6 lg:px-8 py-4 hidden">
@@ -7808,6 +7818,10 @@
             loadingText: document.getElementById('loading-text'),
             app: document.getElementById('app'),
             notificationContainer: document.getElementById('notification-container'),
+            // 单词朗读弹窗元素
+            readingWordPopup: document.getElementById('reading-word-popup'),
+            readingWordText: document.getElementById('reading-word-text'),
+            closeReadingPopup: document.getElementById('close-reading-popup'),
             currentDate: document.getElementById('current-date'),
             totalWordCount: document.getElementById('total-word-count'),
             totalWords: document.getElementById('total-words'),
@@ -8073,8 +8087,10 @@
 
         // ==================== 核心功能 ====================
         
-        // 初始化全局变量：TTS解锁状态
+        // 初始化全局变量
         window._ttsUnlocked = window._ttsUnlocked || false;
+        // 全局播放状态，防止重复播放
+        window._isSpeaking = false;
         
         const app = {
             // 初始化应用
@@ -8136,6 +8152,16 @@
                 
                 // 初始化事件监听
                 this.initEvents();
+                
+                // 初始化单词朗读弹窗关闭按钮
+                if (dom.closeReadingPopup) {
+                    dom.closeReadingPopup.addEventListener('click', () => {
+                        if (dom.readingWordPopup) {
+                            dom.readingWordPopup.classList.add('hidden');
+                            console.log('[TTS Debug] Reading popup closed by user');
+                        }
+                    });
+                }
                 
                 // 创建星星背景
                 const starryBg = document.querySelector('.starry-bg');
@@ -8969,6 +8995,13 @@
                 console.log('[TTS Debug] Raw word input:', word);
                 console.log('[TTS Debug] Timestamp:', new Date().toISOString());
                 
+                // 检查全局播放状态，防止重复播放
+                if (window._isSpeaking) {
+                    console.log('[TTS Warning] Already speaking, ignoring new request for:', word);
+                    console.log('[TTS Debug] ====== TTS Request Skipped - Already Speaking ======');
+                    return;
+                }
+                
                 // 检查参数是否存在
                 if (word === undefined || word === null) {
                     console.error('[TTS Error] No word provided to speakWord function');
@@ -9002,8 +9035,17 @@
                     console.log('[TTS Debug] Truncated word to:', validatedWord);
                 }
                 
+                // 针对不同设备的配置 - 提前定义，避免变量提升问题
+                const isAndroid = navigator.userAgent.match(/Android/i);
+                const isIOS = navigator.userAgent.match(/iPhone|iPad|iPod/i);
+                const isHarmonyOS = navigator.userAgent.match(/HarmonyOS/i);
+                const isDesktop = !isAndroid && !isIOS && !isHarmonyOS;
+                
                 console.log('[TTS Debug] Validated word:', validatedWord);
-                console.log('[TTS Debug] Device info - Android:', isAndroid, 'Desktop:', isDesktop);
+                console.log('[TTS Debug] Device info - Android:', isAndroid, 'iOS:', isIOS, 'HarmonyOS:', isHarmonyOS, 'Desktop:', isDesktop);
+                
+                // 设置合理的超时时间，安卓设备需要更长时间
+                const timeout = isAndroid ? 10000 : 6000;
                 
                 // 清理之前的语音请求
                 if ('speechSynthesis' in window) {
@@ -9015,98 +9057,30 @@
                 let timeoutId = null;
                 let audioContext = null;
                 
-                // 针对不同设备的配置
-                const isAndroid = navigator.userAgent.match(/Android/i);
-                const isDesktop = !isAndroid && !navigator.userAgent.match(/iPhone|iPad|iPod/i);
+                console.log('[TTS Debug] Speaking word:', validatedWord, 'on', isAndroid ? 'Android' : isIOS ? 'iOS' : isHarmonyOS ? 'HarmonyOS' : isDesktop ? 'Desktop' : 'Other Mobile');
                 
-                // 设置合理的超时时间，安卓设备需要更长时间
-                const timeout = isAndroid ? 10000 : 6000;
-                
-                console.log('[TTS Debug] Speaking word:', validatedWord, 'on', isAndroid ? 'Android' : isDesktop ? 'Desktop' : 'Other Mobile');
-                
-                // 检查设备音量和音频状态
-                const checkAudioStatus = async () => {
+                // 简化的音频状态检查，专注于语音合成API本身
+                const checkAudioStatus = (currentVolume) => {
                     let audioStatus = {
-                        hasAudioContext: false,
-                        audioContextState: 'unsupported',
-                        volume: utterance.volume,
-                        isMuted: false,
+                        volume: currentVolume,
                         permissionGranted: true
                     };
                     
-                    if (window.AudioContext || window.webkitAudioContext) {
-                        audioStatus.hasAudioContext = true;
-                        
-                        try {
-                            // 创建并配置AudioContext
-                            audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                            
-                            // 检查AudioContext状态
-                            audioStatus.audioContextState = audioContext.state;
-                            console.log('[TTS Debug] AudioContext initial state:', audioContext.state);
-                            
-                            // 如果AudioContext被挂起，尝试恢复
-                            if (audioContext.state === 'suspended') {
-                                console.log('[TTS Debug] AudioContext is suspended, attempting to resume...');
-                                await audioContext.resume();
-                                audioStatus.audioContextState = audioContext.state;
-                                console.log('[TTS Debug] AudioContext resumed successfully, new state:', audioContext.state);
-                            }
-                            
-                            // 检查设备是否可能处于静音状态
-                            if (audioContext.state === 'running') {
-                                // 尝试创建一个简单的音频源来测试音量
-                                try {
-                                    const oscillator = audioContext.createOscillator();
-                                    const gainNode = audioContext.createGain();
-                                    
-                                    oscillator.connect(gainNode);
-                                    gainNode.connect(audioContext.destination);
-                                    
-                                    // 设置极低音量，避免产生声音
-                                    gainNode.gain.value = 0.001;
-                                    oscillator.frequency.value = 440;
-                                    
-                                    // 启动并立即停止，仅用于测试音频系统是否可用
-                                    oscillator.start();
-                                    oscillator.stop(audioContext.currentTime + 0.01);
-                                    
-                                    console.log('[TTS Debug] Audio system test passed, audio should be available');
-                                } catch (error) {
-                                    console.warn('[TTS Warning] Audio system test failed, device might be muted:', error.message);
-                                    audioStatus.isMuted = true;
-                                }
-                            } else {
-                                console.warn('[TTS Warning] AudioContext is not running, audio might be unavailable');
-                                audioStatus.isMuted = true;
-                            }
-                        } catch (error) {
-                            console.error('[TTS Error] AudioContext permission check failed:', {
-                                error: error,
-                                message: error.message,
-                                stack: error.stack
-                            });
-                            audioStatus.permissionGranted = false;
-                        }
-                    } else {
-                        console.log('[TTS Debug] AudioContext not supported, skipping permission check');
-                    }
-                    
                     // 验证并调整音量设置
-                    if (utterance.volume < 0.5) {
-                        console.warn('[TTS Warning] Low volume setting detected:', utterance.volume, '- increasing to 0.8 for better audibility');
-                        utterance.volume = 0.8;
-                        audioStatus.volume = utterance.volume;
+                    if (audioStatus.volume < 0.5) {
+                        console.warn('[TTS Warning] Low volume setting detected:', audioStatus.volume, '- increasing to 0.8 for better audibility');
+                        audioStatus.volume = 0.8;
                     }
                     
                     console.log('[TTS Debug] Final audio status:', audioStatus);
                     
-                    // 如果检测到可能的静音状态，提供用户反馈
-                    if (audioStatus.isMuted && audioStatus.permissionGranted) {
-                        console.warn('[TTS Warning] Device might be muted or audio disabled, please check volume settings');
+                    // 检查语音合成API是否可用
+                    if (!('speechSynthesis' in window)) {
+                        console.error('[TTS Error] Speech synthesis API not supported');
+                        audioStatus.permissionGranted = false;
                     }
                     
-                    return audioStatus.permissionGranted;
+                    return audioStatus;
                 };
                 
                 // 超时处理函数
@@ -9115,6 +9089,9 @@
                         console.error('[TTS Error] Speech synthesis timed out after', timeout, 'ms');
                         // 只有在超时且没有播放时才显示通知
                         utils.showNotification(`朗读单词: ${validatedWord}`, 'info');
+                        // 重置全局播放状态
+                        window._isSpeaking = false;
+                        console.log('[TTS Debug] Reset playback state due to timeout');
                     }
                 };
                 
@@ -9148,53 +9125,62 @@
                             utterance.pitch = 1.0;
                         }
                         
-                        // 关闭AudioContext的辅助函数
-                        const closeAudioContext = () => {
-                            if (audioContext && audioContext.state !== 'closed') {
-                                try {
-                                    audioContext.close();
-                                    console.log('[TTS Debug] AudioContext closed successfully');
-                                } catch (error) {
-                                    console.error('[TTS Error] Failed to close AudioContext:', error);
-                                }
+                        // 显示单词朗读弹窗
+                        const showReadingPopup = (word) => {
+                            if (dom.readingWordPopup && dom.readingWordText) {
+                                dom.readingWordText.textContent = word;
+                                dom.readingWordPopup.classList.remove('hidden');
+                                console.log('[TTS Debug] Reading word popup shown for:', word);
+                            }
+                        };
+                        
+                        // 隐藏单词朗读弹窗
+                        const hideReadingPopup = () => {
+                            if (dom.readingWordPopup) {
+                                dom.readingWordPopup.classList.add('hidden');
+                                console.log('[TTS Debug] Reading word popup hidden');
                             }
                         };
                         
                         // 监听语音播放事件，确认播放开始
                         utterance.onstart = () => {
                             console.log('[TTS Success] Speech started successfully');
+                            // 设置全局播放状态为true
+                            window._isSpeaking = true;
                             playbackStarted = true;
                             clearTimeout(timeoutId);
+                            // 显示单词朗读弹窗
+                            showReadingPopup(validatedWord);
+                        };
+                        
+                        // 重置全局播放状态的辅助函数
+                        const resetPlaybackState = () => {
+                            window._isSpeaking = false;
+                            console.log('[TTS Debug] Reset playback state - not speaking');
                         };
                         
                         // 监听语音结束事件
                         utterance.onend = () => {
                             console.log('[TTS Success] Speech ended successfully');
                             clearTimeout(timeoutId);
-                            // 关闭AudioContext
-                            closeAudioContext();
+                            // 隐藏单词朗读弹窗
+                            hideReadingPopup();
+                            // 重置全局播放状态
+                            resetPlaybackState();
                         };
                         
                         // 监听语音错误事件，提供详细错误信息
                         utterance.onerror = (event) => {
                             console.error('[TTS Error] Speech error occurred:', { error: event.error, event });
                             clearTimeout(timeoutId);
-                            // 关闭AudioContext
-                            closeAudioContext();
+                            // 隐藏单词朗读弹窗
+                            hideReadingPopup();
+                            // 重置全局播放状态
+                            resetPlaybackState();
                             
                             // 显示通知作为回退
-                                        utils.showNotification(`朗读单词: ${validatedWord}`, 'info');
+                            utils.showNotification(`朗读单词: ${validatedWord}`, 'info');
                         };
-                        
-                        // 超时处理函数中也需要关闭AudioContext
-                        const originalHandleTimeout = handleTimeout;
-                        const handleTimeoutWithCleanup = () => {
-                            originalHandleTimeout();
-                            closeAudioContext();
-                        };
-                        
-                        // 替换超时处理函数
-                        timeoutId = setTimeout(handleTimeoutWithCleanup, timeout);
                         
                         // 安卓设备TTS解锁机制
                         const unlockAndroidTTS = () => {
@@ -9219,213 +9205,155 @@
                                     window._ttsUnlocked = true;
                                 } catch (error) {
                                     console.error('[TTS Error] Failed to unlock Android TTS:', error);
+                                    // 即使解锁失败，也尝试继续，可能不需要解锁
+                                    window._ttsUnlocked = true;
                                 }
                             }
                         };
                         
-                        // 增强的语音引擎可用性检查
-                        const checkVoiceAvailability = () => {
+                        // 简化的语音选择逻辑，确保能找到合适的语音
+                        const selectVoice = () => {
                             const voices = speechSynthesis.getVoices();
-                            console.log('[TTS Debug] Checking voice availability - Found', voices.length, 'voices:', voices.map(v => `${v.name} (${v.lang})`));
+                            console.log('[TTS Debug] Available voices:', voices.length, 'found');
                             
-                            // 验证语音合成API的基本功能
+                            // 简化的语音选择逻辑：优先选择英语语音，否则使用第一个可用语音
+                            let selectedVoice = null;
+                            
+                            // 尝试查找英语语音
+                            selectedVoice = voices.find(voice => voice.lang.toLowerCase().startsWith('en'));
+                            
+                            // 如果没有找到英语语音，使用第一个可用语音
+                            if (!selectedVoice && voices.length > 0) {
+                                selectedVoice = voices[0];
+                                console.log('[TTS Warning] No English voice found, using first available voice:', selectedVoice.name, selectedVoice.lang);
+                            }
+                            
+                            return selectedVoice;
+                        };
+                        
+                        // 执行语音播放的核心函数
+                        const executeSpeech = () => {
                             try {
-                                // 尝试创建并配置语音实例，验证API是否真正可用
-                                const testUtterance = new SpeechSynthesisUtterance('test');
-                                testUtterance.lang = 'en-US';
-                                testUtterance.rate = 1.0;
-                                testUtterance.volume = 1.0;
+                                // 1. 检查语音合成器的基本状态
+                                console.log('[TTS Debug] SpeechSynthesis state check:', {
+                                    pending: speechSynthesis.pending,
+                                    speaking: speechSynthesis.speaking,
+                                    paused: speechSynthesis.paused
+                                });
                                 
-                                // 检查是否至少有一个可用语音
-                                return voices.length > 0;
+                                // 2. 清理之前的语音请求
+                                console.log('[TTS Debug] Canceling any pending speech requests');
+                                speechSynthesis.cancel();
+                                
+                                // 3. 选择合适的语音
+                                const selectedVoice = selectVoice();
+                                if (selectedVoice) {
+                                    utterance.voice = selectedVoice;
+                                    console.log('[TTS Debug] Using voice:', selectedVoice.name, selectedVoice.lang);
+                                } else {
+                                    console.log('[TTS Warning] No voice selected, using default voice');
+                                }
+                                
+                                // 4. 验证utterance对象的完整性
+                                console.log('[TTS Debug] Final utterance config:', {
+                                    text: utterance.text,
+                                    lang: utterance.lang,
+                                    rate: utterance.rate,
+                                    pitch: utterance.pitch,
+                                    volume: utterance.volume,
+                                    voice: utterance.voice ? `${utterance.voice.name} (${utterance.voice.lang})` : 'default'
+                                });
+                                
+                                // 5. 验证单词文本
+                                if (!utterance.text || utterance.text.trim() === '') {
+                                    console.error('[TTS Error] Empty text provided for speech synthesis');
+                                    handleSpeechFailure();
+                                    return;
+                                }
+                                
+                                // 6. 对于安卓设备，执行解锁机制
+                                if (isAndroid) {
+                                    // 立即执行解锁操作（在同步执行栈中）
+                                    unlockAndroidTTS();
+                                }
+                                
+                                // 7. 尝试播放语音
+                                console.log('[TTS Debug] Initiating speech synthesis');
+                                speechSynthesis.speak(utterance);
+                                console.log('[TTS Debug] Speech synthesis initiated successfully');
+                                
+                                // 记录发送后的状态
+                                setTimeout(() => {
+                                    console.log('[TTS Debug] SpeechSynthesis state after speak call:', {
+                                        pending: speechSynthesis.pending,
+                                        speaking: speechSynthesis.speaking,
+                                        paused: speechSynthesis.paused
+                                    });
+                                }, 100);
                             } catch (error) {
-                                console.error('[TTS Error] Voice availability check failed:', error);
-                                return false;
+                                console.error('[TTS Error] Failed to initiate speech synthesis:', {
+                                    error: error,
+                                    message: error.message,
+                                    stack: error.stack
+                                });
+                                handleSpeechFailure();
                             }
                         };
                         
-                        // 确保语音引擎已完全加载
+                        const handleSpeechFailure = () => {
+                            console.error('[TTS Error] All speech attempts failed');
+                            clearTimeout(timeoutId);
+                            utils.showNotification(`朗读单词: ${validatedWord}`, 'info');
+                        };
+                        
+                        // 立即尝试朗读，先检查音频状态和音量
+                        const performSpeechWithAudioCheck = () => {
+                            // 获取初始音量值
+                            const initialVolume = utterance.volume;
+                            
+                            // 调用检查音频状态函数
+                            const audioStatus = checkAudioStatus(initialVolume);
+                            
+                            // 更新实际音量
+                            utterance.volume = audioStatus.volume;
+                            
+                            if (audioStatus.permissionGranted) {
+                                console.log('[TTS Debug] Audio status check passed, proceeding with speech synthesis');
+                                executeSpeech();
+                            } else {
+                                console.error('[TTS Error] Audio status check failed, cannot proceed with speech synthesis');
+                                handleSpeechFailure();
+                            }
+                        };
+                        
+                        // 检查语音是否可用，并尝试播放
                         const attemptToSpeak = () => {
-                            if (checkVoiceAvailability()) {
-                                const voices = speechSynthesis.getVoices();
-                                
-                                // 尝试使用英文语音
-                                let englishVoice = null;
-                                
-                                // 优先查找明确的英语语音
-                                const preferredLangs = ['en-US', 'en-GB', 'en-AU', 'en-CA', 'en-IN'];
-                                
-                                // 根据设备类型选择不同的语音优先策略
-                                if (isDesktop) {
-                                    // 电脑端优先使用本地语音引擎
-                                    for (const lang of preferredLangs) {
-                                        englishVoice = voices.find(voice => 
-                                            voice.lang === lang && voice.localService
-                                        );
-                                        if (englishVoice) break;
-                                    }
-                                } else {
-                                    // 移动设备优先使用任何可用的英文语音
-                                    for (const lang of preferredLangs) {
-                                        englishVoice = voices.find(voice => voice.lang === lang);
-                                        if (englishVoice) break;
-                                    }
-                                }
-                                
-                                // 如果没有找到首选语言，尝试查找任何英语语音
-                                if (!englishVoice) {
-                                    englishVoice = voices.find(voice => 
-                                        voice.lang.startsWith('en-') || voice.lang.startsWith('en_')
-                                    );
-                                }
-                                
-                                // 如果仍然没有找到英文语音，使用第一个可用语音
-                                if (!englishVoice && voices.length > 0) {
-                                    englishVoice = voices[0];
-                                    console.log('[TTS Warning] No English voice found, using default voice:', englishVoice.name, englishVoice.lang);
-                                }
-                                
-                                if (englishVoice) {
-                                    utterance.voice = englishVoice;
-                                    console.log('[TTS Debug] Using voice:', englishVoice.name, englishVoice.lang, englishVoice.localService ? '(local)' : '(remote)');
-                                }
-                                
-                                // 执行语音播放
-                                const executeSpeech = () => {
-                                    try {
-                                        // 1. 检查语音合成器的基本状态
-                                        console.log('[TTS Debug] SpeechSynthesis state check:', {
-                                            pending: speechSynthesis.pending,
-                                            speaking: speechSynthesis.speaking,
-                                            paused: speechSynthesis.paused
-                                        });
-                                        
-                                        // 2. 清理之前的语音请求
-                                        console.log('[TTS Debug] Canceling any pending speech requests');
-                                        speechSynthesis.cancel();
-                                        
-                                        // 3. 验证utterance对象的完整性
-                                        console.log('[TTS Debug] Final utterance config:', {
-                                            text: utterance.text,
-                                            lang: utterance.lang,
-                                            rate: utterance.rate,
-                                            pitch: utterance.pitch,
-                                            volume: utterance.volume,
-                                            voice: utterance.voice ? `${utterance.voice.name} (${utterance.voice.lang})` : 'default',
-                                            onstart: typeof utterance.onstart === 'function',
-                                            onend: typeof utterance.onend === 'function',
-                                            onerror: typeof utterance.onerror === 'function'
-                                        });
-                                        
-                                        // 4. 验证单词文本
-                                        if (!utterance.text || utterance.text.trim() === '') {
-                                            console.error('[TTS Error] Empty text provided for speech synthesis');
-                                            handleSpeechFailure();
-                                            return;
-                                        }
-                                        
-                                        // 5. 对于安卓设备，执行解锁机制
-                                        if (isAndroid) {
-                                            // 立即执行解锁操作（在同步执行栈中）
-                                            unlockAndroidTTS();
-                                            
-                                            // 验证解锁状态
-                                            console.log('[TTS Debug] Android TTS unlock status after unlock attempt:', window._ttsUnlocked);
-                                            
-                                            // 直接朗读实际内容，不再延迟
-                                            try {
-                                                console.log('[TTS Debug] Initiating speech synthesis for Android device');
-                                                speechSynthesis.speak(utterance);
-                                                console.log('[TTS Debug] Speech synthesis initiated (Android unlocked)');
-                                                
-                                                // 记录发送后的状态
-                                                setTimeout(() => {
-                                                    console.log('[TTS Debug] SpeechSynthesis state after speak call:', {
-                                                        pending: speechSynthesis.pending,
-                                                        speaking: speechSynthesis.speaking,
-                                                        paused: speechSynthesis.paused
-                                                    });
-                                                }, 100);
-                                            } catch (innerError) {
-                                                console.error('[TTS Error] Android speech failed:', {
-                                                    error: innerError,
-                                                    message: innerError.message,
-                                                    stack: innerError.stack
-                                                });
-                                                handleSpeechFailure();
-                                            }
-                                        } else {
-                                            // 6. 其他设备正常播放
-                                            try {
-                                                console.log('[TTS Debug] Initiating speech synthesis for non-Android device');
-                                                speechSynthesis.speak(utterance);
-                                                console.log('[TTS Debug] Speech synthesis initiated (normal)');
-                                                
-                                                // 记录发送后的状态
-                                                setTimeout(() => {
-                                                    console.log('[TTS Debug] SpeechSynthesis state after speak call:', {
-                                                        pending: speechSynthesis.pending,
-                                                        speaking: speechSynthesis.speaking,
-                                                        paused: speechSynthesis.paused
-                                                    });
-                                                }, 100);
-                                            } catch (error) {
-                                                console.error('[TTS Error] Non-Android speech failed:', {
-                                                    error: error,
-                                                    message: error.message,
-                                                    stack: error.stack
-                                                });
-                                                handleSpeechFailure();
-                                            }
-                                        }
-                                    } catch (error) {
-                                        console.error('[TTS Error] Failed to initiate speech synthesis:', {
-                                            error: error,
-                                            message: error.message,
-                                            stack: error.stack
-                                        });
-                                        handleSpeechFailure();
-                                    }
-                                };
-                                
-                                const handleSpeechFailure = () => {
-                                    console.error('[TTS Error] All speech attempts failed');
-                                    clearTimeout(timeoutId);
-                                    utils.showNotification(`朗读单词: ${validatedWord}`, 'info');
-                                };
-                                
-                                // 立即尝试朗读，先检查音频状态和音量
-                                const performSpeechWithAudioCheck = async () => {
-                                    const audioPermissionGranted = await checkAudioStatus();
-                                    
-                                    if (audioPermissionGranted) {
-                                        console.log('[TTS Debug] Audio status check passed, proceeding with speech synthesis');
-                                        executeSpeech();
-                                    } else {
-                                        console.error('[TTS Error] Audio status check failed, cannot proceed with speech synthesis');
-                                        handleSpeechFailure();
-                                    }
-                                };
-                                
+                            const voices = speechSynthesis.getVoices();
+                            
+                            if (voices.length > 0) {
+                                console.log('[TTS Debug] Voices available, proceeding with speech synthesis');
                                 performSpeechWithAudioCheck();
                             } else {
-                                // 语音引擎尚未加载，等待并重试，最多尝试5次
+                                // 语音引擎尚未加载，等待并重试
                                 let retryCount = 0;
-                                const maxRetries = 8; // 增加重试次数
-                                const retryDelay = 800; // 增加重试间隔
+                                const maxRetries = 8;
+                                const retryDelay = 500;
                                 
                                 const retryVoiceCheck = () => {
                                     retryCount++;
+                                    const currentVoices = speechSynthesis.getVoices();
                                     
-                                    if (checkVoiceAvailability()) {
+                                    if (currentVoices.length > 0) {
                                         console.log('[TTS Debug] Voices loaded after retry:', retryCount);
-                                        attemptToSpeak();
+                                        performSpeechWithAudioCheck();
                                     } else if (retryCount < maxRetries) {
                                         console.log('[TTS Debug] No voices yet, retrying in', retryDelay, 'ms... (attempt', retryCount + 1, '/', maxRetries, ')');
                                         setTimeout(retryVoiceCheck, retryDelay);
                                     } else {
                                         console.error('[TTS Error] Failed to get voices after', maxRetries, 'attempts');
-                                        handleSpeechFailure();
+                                        // 即使没有语音，也尝试播放，让浏览器使用默认语音
+                                        console.log('[TTS Warning] No voices found, trying to use default voice anyway');
+                                        performSpeechWithAudioCheck();
                                     }
                                 };
                                 
@@ -9440,7 +9368,12 @@
                         // 同时监听语音引擎加载完成事件
                         const voicesChangedHandler = () => {
                             console.log('[TTS Debug] Voices changed event triggered');
-                            attemptToSpeak();
+                            // 只有在没有正在播放时才尝试播放
+                            if (!window._isSpeaking) {
+                                attemptToSpeak();
+                            } else {
+                                console.log('[TTS Debug] Already speaking, skipping voices changed event');
+                            }
                             // 只触发一次
                             speechSynthesis.onvoiceschanged = null;
                         };
@@ -9454,7 +9387,12 @@
                             // 立即触发一次检查，以防事件已经触发过
                             setTimeout(() => {
                                 console.log('[TTS Debug] Manually checking voices due to existing onvoiceschanged handler');
-                                attemptToSpeak();
+                                // 只有在没有正在播放时才尝试播放
+                                if (!window._isSpeaking) {
+                                    attemptToSpeak();
+                                } else {
+                                    console.log('[TTS Debug] Already speaking, skipping manual voice check');
+                                }
                             }, 100);
                         }
                         
@@ -9462,6 +9400,9 @@
                     } catch (error) {
                         console.error('[TTS Error] Web Speech API failed:', error);
                         clearTimeout(timeoutId);
+                        // 重置全局播放状态
+                        window._isSpeaking = false;
+                        console.log('[TTS Debug] Reset playback state due to Web Speech API error');
                         // 降级处理
                     }
                 }
