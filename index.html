@@ -8072,6 +8072,10 @@
         };
 
         // ==================== 核心功能 ====================
+        
+        // 初始化全局变量：TTS解锁状态
+        window._ttsUnlocked = window._ttsUnlocked || false;
+        
         const app = {
             // 初始化应用
             init() {
@@ -9039,6 +9043,33 @@
                             utils.showNotification(`朗读单词: ${word}`, 'info');
                         };
                         
+                        // 安卓设备TTS解锁机制
+                        const unlockAndroidTTS = () => {
+                            console.log('[TTS Debug] Android TTS unlock status:', window._ttsUnlocked);
+                            
+                            // 只有安卓设备且未解锁时需要执行解锁操作
+                            if (isAndroid && !window._ttsUnlocked) {
+                                console.log('[TTS Debug] Performing Android TTS unlock...');
+                                
+                                try {
+                                    // 1. 首先使用空文本触发speechSynthesis.speak()来解锁
+                                    const unlockUtterance = new SpeechSynthesisUtterance('');
+                                    unlockUtterance.lang = 'en-US';
+                                    unlockUtterance.rate = 0.8;
+                                    unlockUtterance.volume = 1.3;
+                                    
+                                    // 2. 立即执行空文本朗读（必须在用户点击事件的同步执行栈中）
+                                    speechSynthesis.speak(unlockUtterance);
+                                    console.log('[TTS Debug] Android TTS unlocked with empty utterance');
+                                    
+                                    // 3. 标记解锁状态
+                                    window._ttsUnlocked = true;
+                                } catch (error) {
+                                    console.error('[TTS Error] Failed to unlock Android TTS:', error);
+                                }
+                            }
+                        };
+                        
                         // 确保语音引擎已完全加载
                         const attemptToSpeak = () => {
                             const voices = speechSynthesis.getVoices();
@@ -9079,18 +9110,21 @@
                                         // 确保没有残留的语音请求
                                         speechSynthesis.cancel();
                                         
-                                        // 对于安卓设备，添加额外的延迟确保成功
+                                        // 对于安卓设备，执行解锁机制
                                         if (isAndroid) {
-                                            setTimeout(() => {
-                                                try {
-                                                    speechSynthesis.speak(utterance);
-                                                    console.log('[TTS Debug] Speech synthesis initiated (Android delayed)');
-                                                } catch (innerError) {
-                                                    console.error('[TTS Error] Android delayed speech failed:', innerError);
-                                                    handleSpeechFailure();
-                                                }
-                                            }, 100);
+                                            // 立即执行解锁操作（在同步执行栈中）
+                                            unlockAndroidTTS();
+                                            
+                                            // 直接朗读实际内容，不再延迟
+                                            try {
+                                                speechSynthesis.speak(utterance);
+                                                console.log('[TTS Debug] Speech synthesis initiated (Android unlocked)');
+                                            } catch (innerError) {
+                                                console.error('[TTS Error] Android speech failed:', innerError);
+                                                handleSpeechFailure();
+                                            }
                                         } else {
+                                            // 其他设备正常播放
                                             speechSynthesis.speak(utterance);
                                             console.log('[TTS Debug] Speech synthesis initiated (normal)');
                                         }
