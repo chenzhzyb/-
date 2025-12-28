@@ -2792,7 +2792,7 @@
                         <div class="relative z-10">
                             <h2 class="text-2xl sm:text-3xl font-bold mb-3">欢迎使用小鹿AI编程全能英语词汇库！</h2>
                             <p class="text-base sm:text-lg mb-4">今天是 <span id="current-date" class="font-semibold"></span>，包含<span id="total-word-count" class="font-bold">0</span>个单词，让我们开始学习吧！</p>
-                            <div class="flex flex-col sm:flex-row gap-3">
+                            <div class="flex flex-col sm:flex-row gap-3 mb-8">
                                 <button id="start-daily-btn" class="btn-primary flex items-center justify-center w-full sm:w-auto px-5 sm:px-6 py-3 sm:py-4 rounded-xl text-base sm:text-lg font-semibold active:bg-blue-700 min-h-[44px]">
                                     <i class="fa fa-calendar-check mr-2 sm:mr-3 text-lg sm:text-xl"></i>
                                     开始今日打卡
@@ -2805,7 +2805,265 @@
                         </div>
                     </div>
                 </section>
+                
+                <!-- 新增的5个预习按钮 - 放在欢迎区域之外，确保下拉菜单有独立的堆叠上下文 -->
+                <section id="preview-section" class="mb-8 relative z-50">
+                    <div id="preview-buttons" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 relative">
+                        <!-- 小鹿ai编程智能环---单词预习 -->
+                        <div class="relative z-[1]" id="ai-ring-container">
+                            <button id="preview-ai-ring-btn" class="bg-gradient-to-r from-blue-500 to-blue-600 text-white hover:from-blue-600 hover:to-blue-700 flex flex-col items-center justify-center p-4 rounded-xl shadow-lg transition-all duration-200 active:opacity-90 min-h-[80px] w-full">
+                                <i class="fa fa-ring text-xl mb-2"></i>
+                                <span class="text-center">小鹿ai编程智能环---单词预习</span>
+                            </button>
+                        </div>
+                        
+                        <!-- 帮帮号---单词预习 -->
+                        <div class="relative z-[1]" id="help-number-container">
+                            <button id="preview-help-number-btn" class="bg-gradient-to-r from-green-500 to-green-600 text-white hover:from-green-600 hover:to-green-700 flex flex-col items-center justify-center p-4 rounded-xl shadow-lg transition-all duration-200 active:opacity-90 min-h-[80px] w-full">
+                                <i class="fa fa-phone text-xl mb-2"></i>
+                                <span class="text-center">帮帮号---单词预习</span>
+                            </button>
+                        </div>
+                        
+                        <!-- 硬件拼搭机器人---单词预习 -->
+                        <div class="relative z-[1]" id="robot-container">
+                            <button id="preview-robot-btn" class="bg-gradient-to-r from-purple-500 to-purple-600 text-white hover:from-purple-600 hover:to-purple-700 flex flex-col items-center justify-center p-4 rounded-xl shadow-lg transition-all duration-200 active:opacity-90 min-h-[80px] w-full">
+                                <i class="fa fa-robot text-xl mb-2"></i>
+                                <span class="text-center">硬件拼搭机器人---单词预习</span>
+                            </button>
+                        </div>
+                        
+                        <!-- 小鹿ai编程（纯软课）---单词预习 -->
+                        <div class="relative z-[1]" id="pure-ai-container">
+                            <button id="preview-pure-ai-btn" class="bg-gradient-to-r from-orange-500 to-orange-600 text-white hover:from-orange-600 hover:to-orange-700 flex flex-col items-center justify-center p-4 rounded-xl shadow-lg transition-all duration-200 active:opacity-90 min-h-[80px] w-full">
+                                <i class="fa fa-code text-xl mb-2"></i>
+                                <span class="text-center">小鹿ai编程（纯软课）---单词预习</span>
+                            </button>
+                        </div>
+                        
+                        <!-- 编程科普工坊（纯软课）---单词预习 -->
+                        <div class="relative z-[1]" id="science-container">
+                            <button id="preview-science-btn" class="bg-gradient-to-r from-pink-500 to-pink-600 text-white hover:from-pink-600 hover:to-pink-700 flex flex-col items-center justify-center p-4 rounded-xl shadow-lg transition-all duration-200 active:opacity-90 min-h-[80px] w-full">
+                                <i class="fa fa-flask text-xl mb-2"></i>
+                                <span class="text-center">编程科普工坊（纯软课）---单词预习</span>
+                            </button>
+                        </div>
+                        
+                        <!-- 所有下拉菜单移到网格容器顶层，确保显示在所有按钮上方 -->
+                        <!-- 小鹿ai编程智能环下拉菜单 -->
+                        <div id="ai-ring-dropdown" class="absolute bg-white text-blue-800 rounded-xl shadow-xl py-2 hidden z-[9999] transition-all duration-300 transform origin-top scale-95 opacity-0">
+                            <button class="dropdown-item px-4 py-2 hover:bg-blue-50 transition-colors duration-200 w-full text-left" data-type="aiRing" data-lesson="1">第一课</button>
+                            <button class="dropdown-item px-4 py-2 hover:bg-blue-50 transition-colors duration-200 w-full text-left" data-type="aiRing" data-lesson="2">第二课</button>
+                            <button class="dropdown-item px-4 py-2 hover:bg-blue-50 transition-colors duration-200 w-full text-left" data-type="aiRing" data-lesson="3">第三课</button>
+                            <button class="dropdown-item px-4 py-2 hover:bg-blue-50 transition-colors duration-200 w-full text-left" data-type="aiRing" data-lesson="5">第五课</button>
+                        </div>
+                        
+                        <!-- 帮帮号下拉菜单 -->
+                        <div id="help-number-dropdown" class="absolute bg-white text-green-800 rounded-xl shadow-xl py-2 hidden z-[9999] transition-all duration-300 transform origin-top scale-95 opacity-0">
+                            <button class="dropdown-item px-4 py-2 hover:bg-green-50 transition-colors duration-200 w-full text-left" data-type="helpNumber" data-lesson="1">第一课</button>
+                            <button class="dropdown-item px-4 py-2 hover:bg-green-50 transition-colors duration-200 w-full text-left" data-type="helpNumber" data-lesson="2">第二课</button>
+                            <button class="dropdown-item px-4 py-2 hover:bg-green-50 transition-colors duration-200 w-full text-left" data-type="helpNumber" data-lesson="3">第三课</button>
+                            <button class="dropdown-item px-4 py-2 hover:bg-green-50 transition-colors duration-200 w-full text-left" data-type="helpNumber" data-lesson="4">第四课</button>
+                        </div>
+                        
+                        <!-- 硬件拼搭机器人下拉菜单 -->
+                        <div id="robot-dropdown" class="absolute bg-white text-purple-800 rounded-xl shadow-xl py-2 hidden z-[9999] transition-all duration-300 transform origin-top scale-95 opacity-0">
+                            <button class="dropdown-item px-4 py-2 hover:bg-purple-50 transition-colors duration-200 w-full text-left" data-type="robot" data-lesson="1">第一课</button>
+                            <button class="dropdown-item px-4 py-2 hover:bg-purple-50 transition-colors duration-200 w-full text-left" data-type="robot" data-lesson="2">第二课</button>
+                            <button class="dropdown-item px-4 py-2 hover:bg-purple-50 transition-colors duration-200 w-full text-left" data-type="robot" data-lesson="3">第三课</button>
+                            <button class="dropdown-item px-4 py-2 hover:bg-purple-50 transition-colors duration-200 w-full text-left" data-type="robot" data-lesson="6">第六课</button>
+                        </div>
+                        
+                        <!-- 小鹿ai编程（纯软课）下拉菜单 -->
+                        <div id="pure-ai-dropdown" class="absolute bg-white text-orange-800 rounded-xl shadow-xl py-2 hidden z-[9999] transition-all duration-300 transform origin-top scale-95 opacity-0">
+                            <button class="dropdown-item px-4 py-2 hover:bg-orange-50 transition-colors duration-200 w-full text-left" data-type="pureAi" data-lesson="1">第一课</button>
+                            <button class="dropdown-item px-4 py-2 hover:bg-orange-50 transition-colors duration-200 w-full text-left" data-type="pureAi" data-lesson="2">第二课</button>
+                            <button class="dropdown-item px-4 py-2 hover:bg-orange-50 transition-colors duration-200 w-full text-left" data-type="pureAi" data-lesson="3">第三课</button>
+                            <button class="dropdown-item px-4 py-2 hover:bg-orange-50 transition-colors duration-200 w-full text-left" data-type="pureAi" data-lesson="5">第五课</button>
+                            <button class="dropdown-item px-4 py-2 hover:bg-orange-50 transition-colors duration-200 w-full text-left" data-type="pureAi" data-lesson="6">第六课</button>
+                        </div>
+                        
+                        <!-- 编程科普工坊（纯软课）下拉菜单 -->
+                        <div id="science-dropdown" class="absolute bg-white text-pink-800 rounded-xl shadow-xl py-2 hidden z-[9999] transition-all duration-300 transform origin-top scale-95 opacity-0">
+                            <button class="dropdown-item px-4 py-2 hover:bg-pink-50 transition-colors duration-200 w-full text-left" data-type="science" data-lesson="1">第一课</button>
+                            <button class="dropdown-item px-4 py-2 hover:bg-pink-50 transition-colors duration-200 w-full text-left" data-type="science" data-lesson="2">第二课</button>
+                            <button class="dropdown-item px-4 py-2 hover:bg-pink-50 transition-colors duration-200 w-full text-left" data-type="science" data-lesson="3">第三课</button>
+                            <button class="dropdown-item px-4 py-2 hover:bg-pink-50 transition-colors duration-200 w-full text-left" data-type="science" data-lesson="5">第五课</button>
+                            <button class="dropdown-item px-4 py-2 hover:bg-pink-50 transition-colors duration-200 w-full text-left" data-type="science" data-lesson="6">第六课</button>
+                        </div>
+                    </div>
+                    
+                    <script>
+                    // 为预习按钮添加事件监听器，处理下拉菜单的显示和定位
+                    document.addEventListener('DOMContentLoaded', function() {
+                        const dropdownMap = {
+                            'preview-ai-ring-btn': 'ai-ring-dropdown',
+                            'preview-help-number-btn': 'help-number-dropdown',
+                            'preview-robot-btn': 'robot-dropdown',
+                            'preview-pure-ai-btn': 'pure-ai-dropdown',
+                            'preview-science-btn': 'science-dropdown'
+                        };
+                        
+                        // 当前打开的下拉菜单ID
+                        let currentOpenDropdown = null;
+                        let dropdownAnimationTimeout = null;
+                        
+                        // 显示下拉菜单
+                        function showDropdown(dropdownId, button) {
+                            // 清除之前的动画超时
+                            if (dropdownAnimationTimeout) {
+                                clearTimeout(dropdownAnimationTimeout);
+                                dropdownAnimationTimeout = null;
+                            }
+                            
+                            // 如果已经打开了同一个菜单，先关闭
+                            if (currentOpenDropdown === dropdownId) {
+                                hideDropdown(dropdownId);
+                                currentOpenDropdown = null;
+                                return;
+                            }
+                            
+                            // 关闭其他所有下拉菜单
+                            hideAllDropdowns();
+                            
+                            const dropdown = document.getElementById(dropdownId);
+                            const rect = button.getBoundingClientRect();
+                            const containerRect = document.getElementById('preview-buttons').getBoundingClientRect();
+                            
+                            // 设置下拉菜单位置
+                            dropdown.style.left = `${rect.left - containerRect.left}px`;
+                            dropdown.style.top = `${rect.bottom - containerRect.top + 8}px`;
+                            dropdown.style.width = `${rect.width}px`;
+                            
+                            // 确保下拉菜单在正确的堆叠顺序
+                            dropdown.style.zIndex = '9999';
+                            
+                            // 显示并添加动画
+                            dropdown.classList.remove('hidden');
+                            // 强制重排，确保动画生效
+                            dropdown.offsetHeight;
+                            dropdown.classList.add('scale-100', 'opacity-100');
+                            dropdown.classList.remove('scale-95', 'opacity-0');
+                            
+                            // 更新当前打开的下拉菜单
+                            currentOpenDropdown = dropdownId;
+                        }
+                        
+                        // 隐藏下拉菜单
+                        function hideDropdown(dropdownId) {
+                            const dropdown = document.getElementById(dropdownId);
+                            if (!dropdown) return;
+                            
+                            dropdown.classList.remove('scale-100', 'opacity-100');
+                            dropdown.classList.add('scale-95', 'opacity-0');
+                            
+                            // 使用超时隐藏元素
+                            dropdownAnimationTimeout = setTimeout(() => {
+                                dropdown.classList.add('hidden');
+                            }, 300);
+                            
+                            if (currentOpenDropdown === dropdownId) {
+                                currentOpenDropdown = null;
+                            }
+                        }
+                        
+                        // 隐藏所有下拉菜单
+                        function hideAllDropdowns() {
+                            // 清除之前的动画超时
+                            if (dropdownAnimationTimeout) {
+                                clearTimeout(dropdownAnimationTimeout);
+                                dropdownAnimationTimeout = null;
+                            }
+                            
+                            Object.values(dropdownMap).forEach(dropdownId => {
+                                const dropdown = document.getElementById(dropdownId);
+                                if (dropdown && !dropdown.classList.contains('hidden')) {
+                                    hideDropdown(dropdownId);
+                                }
+                            });
+                            currentOpenDropdown = null;
+                        }
+                        
+                        // 为每个按钮添加事件监听器
+                        Object.entries(dropdownMap).forEach(([btnId, dropdownId]) => {
+                            const button = document.getElementById(btnId);
+                            const dropdown = document.getElementById(dropdownId);
+                            
+                            if (button && dropdown) {
+                                // 点击按钮显示/隐藏下拉菜单
+                                button.addEventListener('click', (e) => {
+                                    e.stopPropagation(); // 阻止事件冒泡
+                                    showDropdown(dropdownId, button);
+                                });
+                            }
+                        });
+                        
+                        // 点击页面其他地方关闭所有下拉菜单
+                        document.addEventListener('click', (e) => {
+                            // 检查点击目标是否在按钮或下拉菜单内
+                            const isClickOnButton = e.target.closest('#preview-buttons button');
+                            const isClickOnDropdown = e.target.closest('[id$=-dropdown]');
+                            
+                            // 如果点击的不是按钮也不是下拉菜单，关闭所有下拉菜单
+                            if (!isClickOnButton && !isClickOnDropdown) {
+                                hideAllDropdowns();
+                            }
+                        });
+                        
+                        // 为下拉菜单项添加事件监听，防止点击时关闭菜单
+                        document.addEventListener('click', (e) => {
+                            if (e.target.classList.contains('dropdown-item')) {
+                                e.stopPropagation(); // 阻止事件冒泡
+                            }
+                        });
+                    });
+                    </script>
+                </section>
 
+                <!-- 单词预习模态框 -->
+                <div id="preview-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+                    <div class="bg-white rounded-xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto">
+                        <!-- 模态框头部 -->
+                        <div class="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-6 py-4 rounded-t-xl flex justify-between items-center">
+                            <h2 id="modal-title" class="text-xl font-bold">单词预习</h2>
+                            <button id="close-modal-btn" class="text-white hover:text-blue-100 transition-colors duration-200">
+                                <i class="fa fa-times text-xl"></i>
+                            </button>
+                        </div>
+                        
+                        <!-- 模态框内容 -->
+                        <div id="modal-content" class="p-6">
+                            <h3 id="modal-lesson-title" class="text-lg font-bold text-gray-800 mb-4"></h3>
+                            <div id="modal-word-cards" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"></div>
+                        </div>
+                        
+                        <!-- 模态框底部 -->
+                        <div class="bg-gray-50 px-6 py-4 rounded-b-xl flex justify-end">
+                            <button id="modal-close-btn" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-all duration-200">
+                                关闭
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 单词预习页面 -->
+                <section id="preview-page" class="hidden container mx-auto px-4 py-8 bg-white rounded-xl shadow-md mb-8">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 id="preview-title" class="text-2xl font-bold text-gray-800">单词预习</h2>
+                        <button id="back-to-home-btn" class="bg-blue-500 text-white hover:bg-blue-600 px-4 py-2 rounded-lg flex items-center transition-all duration-200">
+                            <i class="fa fa-arrow-left mr-2"></i>返回首页
+                        </button>
+                    </div>
+                    
+                    <div id="lesson-selector" class="mb-6 flex flex-wrap gap-3">
+                        <!-- 课程按钮将通过JavaScript动态生成 -->
+                    </div>
+                    
+                    <div id="preview-content" class="space-y-6">
+                        <!-- 单词卡片将通过JavaScript动态生成 -->
+                    </div>
+                </section>
+                
                 <!-- 移动端快捷操作按钮 -->
                 <section id="mobile-actions" class="md:hidden mb-8">
                     <div class="bg-white rounded-xl shadow-md p-4 space-y-3">
@@ -3395,6 +3653,136 @@
 
     <script>
         // ==================== 数据层 ====================
+        // 单词预习数据
+        const previewData = {
+            aiRing: {
+                title: "小鹿ai编程智能环---单词预习",
+                lessons: {
+                    1: { title: "第一课", words: ["pal", "open", "role", "voice", "upload", "prompt"] },
+                    2: { title: "第二课", words: ["get", "sound", "action", "while", "true"] },
+                    3: { title: "第三课", words: ["aim", "shoot", "button", "motion", "forward"] },
+                    5: { title: "第五课", words: ["key", "down", "up", "right", "left", "action"] }
+                }
+            },
+            helpNumber: {
+                title: "帮帮号---单词预习",
+                lessons: {
+                    1: { title: "第一课", words: [
+                        { word: "from", part: "prep.", meaning: "从……起" },
+                        { word: "import", part: "v.", meaning: "导入" },
+                        { word: "lab", part: "n.", meaning: "实验室" },
+                        { word: "move", part: "v.", meaning: "移动" },
+                        { word: "while", part: "conj.", meaning: "当……的时候" },
+                        { word: "true", part: "adj.", meaning: "真实的" },
+                        { word: "play", part: "v.", meaning: "玩，演奏" },
+                        { word: "background", part: "n.", meaning: "背景" },
+                        { word: "music", part: "n.", meaning: "音乐" }
+                    ] },
+                    2: { title: "第二课", words: [
+                        { word: "button", part: "n.", meaning: "按钮" },
+                        { word: "if", part: "conj.", meaning: "如果" },
+                        { word: "speech", part: "n.", meaning: "讲话、言语" },
+                        { word: "command", part: "n.", meaning: "指令" },
+                        { word: "is", part: "v.", meaning: "是" },
+                        { word: "gesture", part: "n.", meaning: "手势，姿势" }
+                    ] },
+                    3: { title: "第三课", words: [
+                        { word: "load", part: "v.", meaning: "加载、载入" },
+                        { word: "sound", part: "n.", meaning: "声音、声响" },
+                        { word: "forward", part: "v.", meaning: "向前、前进" },
+                        { word: "jump", part: "v.", meaning: "跳、跳跃" }
+                    ] },
+                    4: { title: "第四课", words: [
+                        { word: "AI", part: "n.", meaning: "人工智能" },
+                        { word: "artificial", part: "adj.", meaning: "人造的，人工的" },
+                        { word: "intelligence", part: "n.", meaning: "智力，才智" }
+                    ] }
+                }
+            },
+            robot: {
+                title: "硬件拼搭机器人---单词预习",
+                lessons: {
+                    1: { title: "第一课", words: [
+                        { word: "motor", meaning: "电机" },
+                        { word: "play", meaning: "播放" },
+                        { word: "background", meaning: "背景" },
+                        { word: "music", meaning: "音乐" },
+                        { word: "time", meaning: "时间" },
+                        { word: "sleep", meaning: "睡觉" }
+                    ] },
+                    2: { title: "第二课", words: [
+                        { word: "while", meaning: "当.....时候" },
+                        { word: "True", meaning: "真实的" },
+                        { word: "Speak", meaning: "说话" }
+                    ] },
+                    3: { title: "第三课", words: [
+                        { word: "if", meaning: "如果" },
+                        { word: "ultrasonic", meaning: "超声波" }
+                    ] },
+                    6: { title: "第六课", words: [
+                        { word: "Speak", meaning: "说话" },
+                        { word: "Dance", meaning: "跳舞" },
+                        { word: "Music", meaning: "音乐" },
+                        { word: "Actor", meaning: "角色" },
+                        { word: "Background", meaning: "背景" }
+                    ] }
+                }
+            },
+            pureAi: {
+                title: "小鹿ai编程（纯软课）---单词预习",
+                lessons: {
+                    1: { title: "第一课", words: ["show", "add", "recognition", "eyes", "nose"] },
+                    2: { title: "第二课", words: ["import", "shoot", "light", "random"] },
+                    3: { title: "第三课", words: ["key", "gold", "open"] },
+                    5: { title: "第五课", words: ["translate", "if", "poem", "speak", "click"] },
+                    6: { title: "第六课", words: ["number", "play", "music"] }
+                }
+            },
+            science: {
+                title: "编程科普工坊（纯软课）---单词预习",
+                lessons: {
+                    1: { title: "第一课", words: [
+                        { word: "kit", meaning: "工具箱" },
+                        { word: "show", meaning: "显示" },
+                        { word: "recognition", meaning: "识别" },
+                        { word: "add", meaning: "添加" },
+                        { word: "head", meaning: "头" },
+                        { word: "eyes", meaning: "眼睛" },
+                        { word: "face", meaning: "脸" },
+                        { word: "left", meaning: "左边" },
+                        { word: "right", meaning: "右边" }
+                    ] },
+                    2: { title: "第二课", words: [
+                        { word: "shoot", meaning: "射门" },
+                        { word: "show", meaning: "显示" },
+                        { word: "football", meaning: "足球" },
+                        { word: "light", meaning: "照亮" },
+                        { word: "random", meaning: "随机" }
+                    ] },
+                    3: { title: "第三课", words: [
+                        { word: "key", meaning: "按键" },
+                        { word: "show", meaning: "显示" },
+                        { word: "gold", meaning: "金色" },
+                        { word: "random", meaning: "随机" },
+                        { word: "open", meaning: "打开" }
+                    ] },
+                    5: { title: "第五课", words: [
+                        { word: "translate", meaning: "翻译" },
+                        { word: "if", meaning: "如果" },
+                        { word: "poem", meaning: "诗" },
+                        { word: "speak", meaning: "说话" },
+                        { word: "click", meaning: "点击" }
+                    ] },
+                    6: { title: "第六课", words: [
+                        { word: "show", meaning: "展示" },
+                        { word: "play", meaning: "播放" },
+                        { word: "key", meaning: "键盘" },
+                        { word: "music", meaning: "音乐" }
+                    ] }
+                }
+            }
+        };
+        
         // 单词数据库 - 包含所有提供的单词
         const wordDatabase = [
 { "word": "abandon", "phonetic": "/əˈbændən/", "meaning": "放弃", "example": "Never abandon your dreams.", "translation": "永远不要放弃你的梦想。", "categories": ["动词"], "difficulty": 2 },
@@ -7895,7 +8283,29 @@
             // 模态框元素
             voiceModal: document.getElementById('voice-modal'),
             userModal: document.getElementById('user-modal'),
-            achievementsModal: document.getElementById('achievements-modal')
+            achievementsModal: document.getElementById('achievements-modal'),
+            
+            // 单词预习页面元素
+            previewPage: document.getElementById('preview-page'),
+            previewTitle: document.getElementById('preview-title'),
+            backToHomeBtn: document.getElementById('back-to-home-btn'),
+            lessonSelector: document.getElementById('lesson-selector'),
+            previewContent: document.getElementById('preview-content'),
+            
+            // 预习按钮
+            previewAiRingBtn: document.getElementById('preview-ai-ring-btn'),
+            previewHelpNumberBtn: document.getElementById('preview-help-number-btn'),
+            previewRobotBtn: document.getElementById('preview-robot-btn'),
+            previewPureAiBtn: document.getElementById('preview-pure-ai-btn'),
+            previewScienceBtn: document.getElementById('preview-science-btn'),
+            
+            // 预习模态框
+            previewModal: document.getElementById('preview-modal'),
+            modalTitle: document.getElementById('modal-title'),
+            closeModalBtn: document.getElementById('close-modal-btn'),
+            modalCloseBtn: document.getElementById('modal-close-btn'),
+            modalLessonTitle: document.getElementById('modal-lesson-title'),
+            modalWordCards: document.getElementById('modal-word-cards')
         };
 
         // ==================== 工具函数 ====================
@@ -8142,6 +8552,9 @@
                 
                 // 更新学习统计
                 this.updateStats();
+                
+                // 初始化单词预习功能
+                this.initPreview();
                 
                 // 生成单词列表
                 this.renderWordList(wordDatabase);
@@ -9351,7 +9764,7 @@
             // 切换页面
             switchPage(page) {
                 // 隐藏所有页面
-                [dom.homePage, dom.libraryPage, dom.checkinPage, dom.gamePage].forEach(p => {
+                [dom.homePage, dom.libraryPage, dom.checkinPage, dom.gamePage, dom.previewPage].forEach(p => {
                     p.classList.add('hidden');
                 });
                 
@@ -9371,9 +9784,246 @@
                     case 'game':
                         dom.gamePage.classList.remove('hidden');
                         break;
+                    case 'preview':
+                        dom.previewPage.classList.remove('hidden');
+                        break;
                 }
                 
                 state.currentPage = page;
+            },
+            
+            // 初始化单词预习功能
+            initPreview() {
+                // 添加模态框关闭事件
+                dom.closeModalBtn.addEventListener('click', () => this.closePreviewModal());
+                dom.modalCloseBtn.addEventListener('click', () => this.closePreviewModal());
+                
+                // 点击模态框外部关闭
+                dom.previewModal.addEventListener('click', (e) => {
+                    if (e.target === dom.previewModal) {
+                        this.closePreviewModal();
+                    }
+                });
+                
+                // 添加返回首页按钮事件
+                dom.backToHomeBtn.addEventListener('click', () => this.switchPage('home'));
+                
+                // 重新为所有下拉菜单项添加点击事件（延迟执行，确保DOM元素已加载）
+                setTimeout(() => {
+                    this.bindDropdownItemEvents();
+                }, 100);
+            },
+            
+            // 绑定下拉菜单项点击事件
+            bindDropdownItemEvents() {
+                // 先移除之前绑定的所有下拉菜单项点击事件（如果有）
+                // 直接替换整个元素，确保清除所有事件监听器
+                document.querySelectorAll('.dropdown-item').forEach(btn => {
+                    const newBtn = btn.cloneNode(true);
+                    btn.parentNode.replaceChild(newBtn, btn);
+                });
+                
+                // 为所有下拉菜单项添加新的点击事件监听器
+                document.querySelectorAll('.dropdown-item').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        console.log('bindDropdownItemEvents 中的点击事件被触发');
+                        e.stopPropagation(); // 阻止事件冒泡
+                        const type = e.target.dataset.type;
+                        const lessonNum = e.target.dataset.lesson;
+                        console.log('点击了下拉菜单项:', type, lessonNum); // 添加调试日志
+                        this.showPreviewModal(type, lessonNum);
+                    });
+                });
+                
+                console.log('已重新绑定', document.querySelectorAll('.dropdown-item').length, '个下拉菜单项的点击事件');
+            },
+            
+            // 显示预习模态框
+            showPreviewModal(type, lessonNum) {
+                // 获取预习数据
+                const data = previewData[type];
+                if (!data || !data.lessons[lessonNum]) return;
+                
+                // 获取课程数据
+                const lesson = data.lessons[lessonNum];
+                
+                // 设置模态框标题
+                dom.modalTitle.textContent = data.title;
+                dom.modalLessonTitle.textContent = lesson.title;
+                
+                // 生成单词卡片
+                this.generateModalWordCards(lesson);
+                
+                // 显示模态框
+                dom.previewModal.classList.remove('hidden');
+                // 添加动画效果
+                dom.previewModal.querySelector('.bg-white').classList.add('animate-fade-in');
+            },
+            
+            // 生成模态框中的单词卡片
+            generateModalWordCards(lesson) {
+                const container = dom.modalWordCards;
+                container.innerHTML = '';
+                
+                // 遍历单词，生成卡片
+                lesson.words.forEach(wordItem => {
+                    const wordCard = document.createElement('div');
+                    wordCard.className = 'word-preview-card bg-white rounded-xl shadow-md p-4 hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 border border-gray-100 animate-float-up';
+                    
+                    // 检查单词项的类型（字符串或对象）
+                    let word, part, meaning;
+                    if (typeof wordItem === 'string') {
+                        word = wordItem;
+                        part = '';
+                        meaning = '';
+                    } else {
+                        word = wordItem.word;
+                        part = wordItem.part || '';
+                        meaning = wordItem.meaning || '';
+                    }
+                    
+                    // 单词卡片内容
+                    wordCard.innerHTML = `
+                        <div class="flex flex-col items-center text-center">
+                            <h4 class="text-lg font-bold text-blue-600 mb-2">${word}</h4>
+                            ${part ? `<p class="text-sm text-gray-500 mb-1">${part}</p>` : ''}
+                            ${meaning ? `<p class="text-base text-gray-700">${meaning}</p>` : ''}
+                            <button class="mt-3 bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-full text-sm transition-all duration-200 play-word-btn">
+                                <i class="fa fa-volume-up mr-1"></i> 朗读
+                            </button>
+                        </div>
+                    `;
+                    
+                    // 添加朗读按钮事件
+                    const playBtn = wordCard.querySelector('.play-word-btn');
+                    playBtn.addEventListener('click', () => this.speakWord(word));
+                    
+                    // 添加到容器
+                    container.appendChild(wordCard);
+                });
+            },
+            
+            // 关闭预习模态框
+            closePreviewModal() {
+                dom.previewModal.classList.add('hidden');
+                // 移除动画效果
+                dom.previewModal.querySelector('.bg-white').classList.remove('animate-fade-in');
+            },
+            
+            // 显示预习页面
+            showPreview(type) {
+                // 获取预习数据
+                const data = previewData[type];
+                if (!data) return;
+                
+                // 设置页面标题
+                dom.previewTitle.textContent = data.title;
+                
+                // 生成课程按钮
+                this.generateLessonButtons(data.lessons);
+                
+                // 显示第一个课程
+                const firstLessonKey = Object.keys(data.lessons)[0];
+                this.showLessonWords(data.lessons[firstLessonKey]);
+                
+                // 切换到预习页面
+                this.switchPage('preview');
+            },
+            
+            // 生成课程按钮
+            generateLessonButtons(lessons) {
+                const lessonSelector = dom.lessonSelector;
+                lessonSelector.innerHTML = '';
+                
+                // 遍历所有课程，生成按钮
+                Object.entries(lessons).forEach(([key, lesson]) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'lesson-btn bg-blue-100 hover:bg-blue-200 text-blue-800 px-4 py-2 rounded-lg transition-all duration-200 active:bg-blue-300';
+                    btn.textContent = lesson.title;
+                    btn.dataset.lesson = JSON.stringify(lesson);
+                    
+                    // 添加点击事件
+                    btn.addEventListener('click', () => {
+                        // 移除所有按钮的活跃状态
+                        lessonSelector.querySelectorAll('.lesson-btn').forEach(b => {
+                            b.classList.remove('bg-blue-500', 'text-white', 'hover:bg-blue-600');
+                            b.classList.add('bg-blue-100', 'text-blue-800', 'hover:bg-blue-200');
+                        });
+                        
+                        // 添加当前按钮的活跃状态
+                        btn.classList.remove('bg-blue-100', 'text-blue-800', 'hover:bg-blue-200');
+                        btn.classList.add('bg-blue-500', 'text-white', 'hover:bg-blue-600');
+                        
+                        // 显示当前课程的单词
+                        this.showLessonWords(lesson);
+                    });
+                    
+                    // 添加到容器
+                    lessonSelector.appendChild(btn);
+                });
+                
+                // 设置第一个按钮为活跃状态
+                const firstBtn = lessonSelector.querySelector('.lesson-btn');
+                if (firstBtn) {
+                    firstBtn.classList.remove('bg-blue-100', 'text-blue-800', 'hover:bg-blue-200');
+                    firstBtn.classList.add('bg-blue-500', 'text-white', 'hover:bg-blue-600');
+                }
+            },
+            
+            // 显示课程单词
+            showLessonWords(lesson) {
+                const previewContent = dom.previewContent;
+                previewContent.innerHTML = '';
+                
+                // 显示课程标题
+                const lessonTitle = document.createElement('h3');
+                lessonTitle.className = 'text-xl font-bold text-gray-800 mb-4';
+                lessonTitle.textContent = lesson.title;
+                previewContent.appendChild(lessonTitle);
+                
+                // 创建单词卡片容器
+                const wordsContainer = document.createElement('div');
+                wordsContainer.className = 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4';
+                
+                // 遍历单词，生成卡片
+                lesson.words.forEach(wordItem => {
+                    const wordCard = document.createElement('div');
+                    wordCard.className = 'word-preview-card bg-white rounded-xl shadow-md p-4 hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 border border-gray-100';
+                    
+                    // 检查单词项的类型（字符串或对象）
+                    let word, part, meaning;
+                    if (typeof wordItem === 'string') {
+                        word = wordItem;
+                        part = '';
+                        meaning = '';
+                    } else {
+                        word = wordItem.word;
+                        part = wordItem.part || '';
+                        meaning = wordItem.meaning || '';
+                    }
+                    
+                    // 单词卡片内容
+                    wordCard.innerHTML = `
+                        <div class="flex flex-col items-center text-center">
+                            <h4 class="text-lg font-bold text-blue-600 mb-2">${word}</h4>
+                            ${part ? `<p class="text-sm text-gray-500 mb-1">${part}</p>` : ''}
+                            ${meaning ? `<p class="text-base text-gray-700">${meaning}</p>` : ''}
+                            <button class="mt-3 bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-full text-sm transition-all duration-200 play-word-btn">
+                                <i class="fa fa-volume-up mr-1"></i> 朗读
+                            </button>
+                        </div>
+                    `;
+                    
+                    // 添加朗读按钮事件
+                    const playBtn = wordCard.querySelector('.play-word-btn');
+                    playBtn.addEventListener('click', () => this.speakWord(word));
+                    
+                    // 添加到容器
+                    wordsContainer.appendChild(wordCard);
+                });
+                
+                // 添加到预览内容
+                previewContent.appendChild(wordsContainer);
             },
             
             // 准备每日打卡
