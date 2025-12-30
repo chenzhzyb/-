@@ -11735,9 +11735,18 @@
                 dom.modalEmptyState.classList.add('hidden');
                 dom.modalWordsList.innerHTML = '';
                 
-                words.forEach(word => {
+                words.forEach(item => {
+                    // 从对象中提取单词字符串
+                    const wordStr = typeof item === 'object' && item !== null ? item.word : item;
+                    
                     // 获取单词详情
-                    const wordDetail = wordDatabase.find(w => w.word === word) || { word: word, phonetic: '', meaning: '暂无释义', example: '', translation: '' };
+                    const wordDetail = wordDatabase.find(w => w.word === wordStr) || { 
+                        word: wordStr, 
+                        phonetic: '', 
+                        meaning: '暂无释义', 
+                        example: '', 
+                        translation: '' 
+                    };
                     
                     const wordItem = document.createElement('div');
                     wordItem.className = 'bg-white border border-gray-200 rounded-lg p-3 mb-3 hover:shadow-sm transition-all duration-200';
