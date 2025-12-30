@@ -3785,6 +3785,11 @@
         
         // 单词数据库 - 包含所有提供的单词
         const wordDatabase = [
+{ "word": "ultrasonic", "phonetic": "/ˌʌltrəˈsɒnɪk/", "meaning": "超声波", "example": "The device uses ultrasonic technology.", "translation": "该设备使用超声波技术。", "categories": ["形容词"], "difficulty": 2 },
+{ "word": "pal", "phonetic": "/pæl/", "meaning": "伙伴", "example": "He is my old pal.", "translation": "他是我的老伙伴。", "categories": ["名词"], "difficulty": 2 },
+{ "word": "kit", "phonetic": "/kɪt/", "meaning": "工具箱", "example": "I bought a first aid kit.", "translation": "我买了一个急救工具箱。", "categories": ["名词"], "difficulty": 2 },
+{ "word": "random", "phonetic": "/ˈrændəm/", "meaning": "随机", "example": "Choose a random number.", "translation": "选择一个随机数字。", "categories": ["形容词"], "difficulty": 2 },
+{ "word": "eyes", "phonetic": "/aɪz/", "meaning": "眼睛", "example": "She has beautiful eyes.", "translation": "她有美丽的眼睛。", "categories": ["名词"], "difficulty": 2 },
 { "word": "abandon", "phonetic": "/əˈbændən/", "meaning": "放弃", "example": "Never abandon your dreams.", "translation": "永远不要放弃你的梦想。", "categories": ["动词"], "difficulty": 2 },
 { "word": "eight", "phonetic": "/eɪt/", "meaning": "八", "example": "I have eight apples.", "translation": "我有八个苹果。", "categories": ["数词"], "difficulty": 1 },
 { "word": "pencil-case", "phonetic": "/ˈpensl keɪs/", "meaning": "铅笔盒", "example": "My pencil-case is blue.", "translation": "我的铅笔盒是蓝色的。", "categories": ["名词"], "difficulty": 1 },
@@ -9882,12 +9887,24 @@
                         meaning = wordItem.meaning || '';
                     }
                     
+                    // 从单词数据库中查找详细信息
+                    const wordDetails = wordDatabase.find(w => w.word.toLowerCase() === word.toLowerCase());
+                    const phonetic = wordDetails ? wordDetails.phonetic || '' : '';
+                    const detailedMeaning = wordDetails ? wordDetails.meaning || meaning : meaning;
+                    const example = wordDetails ? wordDetails.example || '' : '';
+                    const translation = wordDetails ? wordDetails.translation || '' : '';
+                    
                     // 单词卡片内容
                     wordCard.innerHTML = `
                         <div class="flex flex-col items-center text-center">
-                            <h4 class="text-lg font-bold text-blue-600 mb-2">${word}</h4>
+                            <h4 class="text-lg font-bold text-blue-600 mb-1">${word}</h4>
+                            ${phonetic ? `<p class="text-sm text-purple-600 mb-1">${phonetic}</p>` : ''}
                             ${part ? `<p class="text-sm text-gray-500 mb-1">${part}</p>` : ''}
-                            ${meaning ? `<p class="text-base text-gray-700">${meaning}</p>` : ''}
+                            ${detailedMeaning ? `<p class="text-base text-gray-700 mb-2">${detailedMeaning}</p>` : ''}
+                            ${example ? `<div class="w-full p-2 bg-blue-50 rounded-lg text-sm text-gray-600 mb-1">
+                                <p class="italic">${example}</p>
+                                ${translation ? `<p class="text-xs text-gray-500 mt-1">${translation}</p>` : ''}
+                            </div>` : ''}
                             <button class="mt-3 bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-full text-sm transition-all duration-200 play-word-btn">
                                 <i class="fa fa-volume-up mr-1"></i> 朗读
                             </button>
@@ -10002,12 +10019,24 @@
                         meaning = wordItem.meaning || '';
                     }
                     
+                    // 从单词数据库中查找详细信息
+                    const wordDetails = wordDatabase.find(w => w.word.toLowerCase() === word.toLowerCase());
+                    const phonetic = wordDetails ? wordDetails.phonetic || '' : '';
+                    const detailedMeaning = wordDetails ? wordDetails.meaning || meaning : meaning;
+                    const example = wordDetails ? wordDetails.example || '' : '';
+                    const translation = wordDetails ? wordDetails.translation || '' : '';
+                    
                     // 单词卡片内容
                     wordCard.innerHTML = `
                         <div class="flex flex-col items-center text-center">
-                            <h4 class="text-lg font-bold text-blue-600 mb-2">${word}</h4>
+                            <h4 class="text-lg font-bold text-blue-600 mb-1">${word}</h4>
+                            ${phonetic ? `<p class="text-sm text-purple-600 mb-1">${phonetic}</p>` : ''}
                             ${part ? `<p class="text-sm text-gray-500 mb-1">${part}</p>` : ''}
-                            ${meaning ? `<p class="text-base text-gray-700">${meaning}</p>` : ''}
+                            ${detailedMeaning ? `<p class="text-base text-gray-700 mb-2">${detailedMeaning}</p>` : ''}
+                            ${example ? `<div class="w-full p-2 bg-blue-50 rounded-lg text-sm text-gray-600 mb-1">
+                                <p class="italic">${example}</p>
+                                ${translation ? `<p class="text-xs text-gray-500 mt-1">${translation}</p>` : ''}
+                            </div>` : ''}
                             <button class="mt-3 bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-full text-sm transition-all duration-200 play-word-btn">
                                 <i class="fa fa-volume-up mr-1"></i> 朗读
                             </button>
